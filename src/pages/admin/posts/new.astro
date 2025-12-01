@@ -1,0 +1,45 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+
+export const prerender = false;
+---
+
+<AdminLayout title="New Post">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold tracking-tight mb-6">Create New Post</h2>
+    <Card>
+      <CardContent className="pt-6">
+        <form action="/api/posts" method="POST" class="space-y-4">
+          <div class="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" name="title" required placeholder="Post Title" />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="slug">Slug</Label>
+            <Input id="slug" name="slug" required placeholder="post-slug" />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="content">Content (Markdown)</Label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              class="flex min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="# Hello World"
+            ></textarea>
+          </div>
+          <div class="flex justify-end gap-4">
+            <Button variant="outline" asChild>
+              <a href="/admin/posts">Cancel</a>
+            </Button>
+            <Button type="submit">Create Post</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
+</AdminLayout>

@@ -1,0 +1,53 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
+import { format } from "date-fns";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+
+// export const prerender = true;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const publishedPosts = await db.select().from(posts).where(eq(posts.status, 'published')).orderBy(desc(posts.publishedAt)).all();
+---
+
+<PublicLayout title="Home">
+  <section class="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
+    <div class="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+      <h1 class="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
+        Yang Zhen Blog
+      </h1>
+      <p class="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+        Thoughts, stories, and ideas.
+      </p>
+    </div>
+  </section>
+  
+  <section class="container max-w-4xl py-6 lg:py-10">
+    <div class="grid gap-10 sm:grid-cols-2">
+      {publishedPosts.map((post) => (
+        <Card key={post.id} className="flex flex-col justify-between">
+          <CardHeader>
+            <CardTitle>
+                <a href={`/posts/${post.slug}`} class="hover:underline">
+                    {post.title}
+                </a>
+            </CardTitle>
+            <CardDescription>
+              {post.publishedAt ? format(post.publishedAt, "MMMM dd, yyyy") : ""}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p class="text-muted-foreground line-clamp-3">
+                {post.excerpt || "No excerpt available."}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+      {publishedPosts.length === 0 && (
+        <p class="text-muted-foreground">No posts found.</p>
+      )}
+    </div>
+  </section>
+</PublicLayout>

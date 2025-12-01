@@ -1,0 +1,56 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Yang Zhen's Personal Blog" } = Astro.props;
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} - Yang Zhen Blog</title>
+    <meta name="description" content={description} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+  </head>
+  <body class="flex flex-col min-h-screen bg-background text-foreground font-sans antialiased">
+    <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div class="container flex h-14 items-center">
+        <div class="mr-4 hidden md:flex">
+          <a class="mr-6 flex items-center space-x-2" href="/">
+            <span class="hidden font-bold sm:inline-block">Yang Zhen Blog</span>
+          </a>
+          <nav class="flex items-center space-x-6 text-sm font-medium">
+            <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/">Blog</a>
+            <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/about">About</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main class="flex-1 container py-6 md:py-10">
+      <slot />
+    </main>
+    <footer class="py-6 md:px-8 md:py-0">
+      <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+        <p class="text-center text-sm leading-loose text-muted-foreground md:text-left">
+          Built by Yang Zhen. The source code is available on GitHub.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

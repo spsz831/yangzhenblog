@@ -1,0 +1,68 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect("/admin/posts");
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const post = await db.select().from(posts).where(eq(posts.id, Number(id))).get();
+
+if (!post) return Astro.redirect("/admin/posts");
+---
+
+<AdminLayout title="Edit Post">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold tracking-tight">Edit Post</h2>
+      <form action={`/api/posts/${post.id}/delete`} method="POST" onsubmit="return confirm('Are you sure?');">
+        <Button variant="destructive" type="submit">Delete Post</Button>
+      </form>
+    </div>
+    
+    <Card>
+      <CardContent className="pt-6">
+        <form action={`/api/posts/${post.id}`} method="POST" class="space-y-4">
+          <div class="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input id="title" name="title" required defaultValue={post.title} />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="slug">Slug</Label>
+            <Input id="slug" name="slug" required defaultValue={post.slug} />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <option value="draft" selected={post.status === 'draft'}>Draft</option>
+                <option value="published" selected={post.status === 'published'}>Published</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="content">Content (Markdown)</Label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              class="flex min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >{post.content}</textarea>
+          </div>
+          <div class="flex justify-end gap-4">
+            <Button variant="outline" asChild>
+              <a href="/admin/posts">Cancel</a>
+            </Button>
+            <Button type="submit">Update Post</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
+</AdminLayout>

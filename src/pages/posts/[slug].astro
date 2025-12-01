@@ -1,0 +1,39 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { marked } from "marked";
+import { format } from "date-fns";
+
+// export const prerender = true;
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const post = await db.select().from(posts).where(eq(posts.slug, slug)).get();
+
+if (!post) return Astro.redirect("/404");
+
+const content = marked.parse(post.content);
+
+---
+
+<PublicLayout title={post.title} description={post.excerpt || ""}>
+  <article class="container max-w-3xl py-6 lg:py-10">
+    <div class="flex flex-col items-start gap-4 border-b pb-10">
+        <div class="flex w-full items-center justify-between">
+            <div class="flex items-center space-x-2 text-sm text-muted-foreground">
+                <time datetime={post.publishedAt?.toISOString()}>
+                    {post.publishedAt ? format(post.publishedAt, "MMMM dd, yyyy") : ""}
+                </time>
+            </div>
+        </div>
+        <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">
+            {post.title}
+        </h1>
+    </div>
+    <div class="prose prose-stone dark:prose-invert max-w-none py-10" set:html={content} />
+  </article>
+</PublicLayout>

@@ -1,0 +1,40 @@
+---
+import "@/styles/global.css";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+export const prerender = false;
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>管理员登录 - 杨振博客</title>
+  </head>
+  <body class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>管理员登录</CardTitle>
+        <CardDescription>请输入您的凭据以访问后台</CardDescription>
+      </CardHeader>
+      <form action="/api/auth/login" method="POST">
+        <CardContent className="space-y-4">
+          <div class="space-y-2">
+            <Label htmlFor="email">邮箱</Label>
+            <Input id="email" name="email" type="email" placeholder="admin@example.com" required />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="password">密码</Label>
+            <Input id="password" name="password" type="password" required />
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" className="w-full">登录</Button>
+        </CardFooter>
+      </form>
+    </Card>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+---
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { desc } from "drizzle-orm";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { format } from "date-fns";
+import { Plus } from "lucide-react";
+
+export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt)).all();
+---
+
+<AdminLayout title="Posts">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold tracking-tight">Posts</h2>
+    <Button asChild>
+      <a href="/admin/posts/new">
+        <Plus className="mr-2 h-4 w-4" />
+        New Post
+      </a>
+    </Button>
+  </div>
+
+  <div class="rounded-md border">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Title</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Published At</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {allPosts.map((post) => (
+          <TableRow key={post.id}>
+            <TableCell className="font-medium">{post.title}</TableCell>
+            <TableCell>{post.status}</TableCell>
+            <TableCell>
+              {post.publishedAt ? format(post.publishedAt, "yyyy-MM-dd") : "-"}
+            </TableCell>
+            <TableCell className="text-right">
+              <Button variant="ghost" size="sm" asChild>
+                <a href={`/admin/posts/${post.id}/edit`}>Edit</a>
+              </Button>
+            </TableCell>
+          </TableRow>
+        ))}
+        {allPosts.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={4} className="h-24 text-center">
+              No posts found.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  </div>
+</AdminLayout>
