@@ -23,48 +23,69 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
       <!-- Current Status -->
       <div class="space-y-4 animate-item" style="--delay: 2;">
         <h2 class="text-2xl font-bold tracking-tight">目前</h2>
-        <p class="text-lg text-muted-foreground leading-relaxed">
-          一边搬砖，一边做产品。
-        </p>
-        <p class="text-lg text-muted-foreground leading-relaxed">
-          做自媒体，持续创作分享。
-        </p>
-        <p class="text-lg text-muted-foreground leading-relaxed">
-          坐标上海，欢迎各位小伙伴面基~
-        </p>
+        <ul class="list-disc list-inside text-lg text-muted-foreground leading-relaxed space-y-2 ml-4">
+          <li>一边搬砖，一边做产品。</li>
+          <li>做自媒体，持续创作分享。</li>
+          <li>坐标上海，欢迎各位小伙伴面基~</li>
+        </ul>
       </div>
 
       <!-- Skills -->
       <div class="space-y-4 animate-item" style="--delay: 3;">
         <h2 class="text-2xl font-bold tracking-tight">我的技能</h2>
         
-        <div class="space-y-2">
+        <div class="space-y-3">
           <h3 class="text-lg font-semibold">前端</h3>
-          <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-            <li>Vue + JavaScript，熟练使用</li>
-            <li>React + TypeScript，熟练使用</li>
-            <li>HTML + CSS + Tailwind CSS，熟练使用</li>
-            <li>Next.js / Astro，熟练使用</li>
+          <ul class="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+            <li class="flex items-center flex-wrap gap-1">
+              Vue <span class="icon-[logos--vue] w-4 h-4 mx-1 translate-y-0.5"></span> + 
+              JavaScript <span class="icon-[logos--javascript] w-4 h-4 mx-1 translate-y-0.5"></span>，熟练使用
+            </li>
+            <li class="flex items-center flex-wrap gap-1">
+              React <span class="icon-[logos--react] w-4 h-4 mx-1 translate-y-0.5"></span> + 
+              TypeScript <span class="icon-[logos--typescript-icon] w-4 h-4 mx-1 translate-y-0.5"></span>，熟练使用
+            </li>
+            <li class="flex items-center flex-wrap gap-1">
+              HTML <span class="icon-[logos--html-5] w-4 h-4 mx-1 translate-y-0.5"></span> + 
+              CSS <span class="icon-[logos--css-3] w-4 h-4 mx-1 translate-y-0.5"></span> + 
+              Tailwind CSS <span class="icon-[logos--tailwindcss-icon] w-4 h-4 mx-1 translate-y-0.5"></span>，熟练使用
+            </li>
+            <li class="flex items-center flex-wrap gap-1">
+              Next.js <span class="icon-[logos--nextjs-icon] w-4 h-4 mx-1 translate-y-0.5"></span> / 
+              Astro <span class="icon-[logos--astro-icon] w-4 h-4 mx-1 translate-y-0.5"></span>，熟练使用
+            </li>
           </ul>
         </div>
 
-        <div class="space-y-2 mt-4">
+        <div class="space-y-3 mt-6">
           <h3 class="text-lg font-semibold">后端</h3>
-          <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-            <li>Node.js，简单 CRUD 水平</li>
-            <li>Drizzle ORM / Prisma 会一点</li>
+          <ul class="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+            <li class="flex items-center flex-wrap gap-1">
+              Node.js <span class="icon-[logos--nodejs-icon] w-4 h-4 mx-1 translate-y-0.5"></span>，简单 CRUD 水平
+            </li>
+            <li class="flex items-center flex-wrap gap-1">
+              Drizzle ORM <span class="icon-[simple-icons--drizzle] w-4 h-4 mx-1 translate-y-0.5 text-[#C5F74F]"></span> / 
+              Prisma <span class="icon-[logos--prisma] w-4 h-4 mx-1 translate-y-0.5"></span> 会一点
+            </li>
           </ul>
         </div>
-      </div>
 
-      <!-- Others -->
-      <div class="space-y-4 animate-item" style="--delay: 4;">
-        <h2 class="text-2xl font-bold tracking-tight">其它</h2>
-        <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-            <li>Google Antigravity、Claude Code 敲代码用起来爽飞~</li>
+        <div class="space-y-3 mt-6">
+          <h3 class="text-lg font-semibold">其它</h3>
+          <ul class="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+            <li>新媒体运营、内容创作、短视频运营、短视频剪辑~</li>
+            <li class="flex items-center flex-wrap gap-1">
+              Google <span class="icon-[logos--google-icon] w-4 h-4 mx-1 translate-y-0.5"></span> Antigravity、Claude Code 敲代码用起来爽飞~
+            </li>
             <li>Cherry Studio，用起来还不错</li>
-            <li>熟练使用 Google /GitHub + Stack Overflow + AI 解决遇到的各种问题，复制粘贴我最行 🙋</li>
-        </ul>
+            <li class="flex items-center flex-wrap gap-1">
+              熟练使用 Google <span class="icon-[logos--google-icon] w-4 h-4 mx-1 translate-y-0.5"></span> /
+              GitHub <span class="icon-[logos--github-icon] w-4 h-4 mx-1 translate-y-0.5 dark:invert"></span> + 
+              Stack Overflow <span class="icon-[logos--stackoverflow-icon] w-4 h-4 mx-1 translate-y-0.5"></span> + 
+              AI 解决遇到的各种问题，复制粘贴我最行 🙋
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Contact -->
