@@ -16,7 +16,7 @@ export async function GET(context: APIContext) {
     return rss({
         title: 'Yang Zhen Blog',
         description: 'Thoughts, stories, and ideas.',
-        site: context.site ?? 'https://yangzhenblog.com',
+        site: context.site ?? 'https://yangzhenblog.pages.dev',
         items: publishedPosts.map((post) => ({
             title: post.title,
             pubDate: post.publishedAt!,

@@ -5,10 +5,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://yangzhenblog.com',
-  integrations: [react(), tailwind({
-    applyBaseStyles: false,
-  })],
   output: 'server',
-  adapter: cloudflare()
+  adapter: cloudflare(),
+  site: 'https://yangzhenblog.pages.dev',
 });
