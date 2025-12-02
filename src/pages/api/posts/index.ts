@@ -8,6 +8,8 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     const slug = formData.get("slug")?.toString();
     const content = formData.get("content")?.toString();
 
+    const status = formData.get("status")?.toString() || "draft";
+
     if (!title || !slug || !content) {
         return new Response("Missing required fields", { status: 400 });
     }
@@ -19,7 +21,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
             title,
             slug,
             content,
-            status: "draft",
+            status: status as "draft" | "published",
         });
     } catch (e) {
         return new Response("Error creating post: " + (e as Error).message, { status: 500 });

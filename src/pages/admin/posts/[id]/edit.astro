@@ -22,9 +22,9 @@ if (!post) return Astro.redirect("/admin/posts");
 <AdminLayout title="Edit Post">
   <div class="max-w-2xl mx-auto">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold tracking-tight">Edit Post</h2>
-      <form action={`/api/posts/${post.id}/delete`} method="POST" onsubmit="return confirm('Are you sure?');">
-        <Button variant="destructive" type="submit">Delete Post</Button>
+      <h2 class="text-2xl font-bold tracking-tight">编辑文章</h2>
+      <form action={`/api/posts/${post.id}/delete`} method="POST" onsubmit="return confirm('确定要删除这篇文章吗？');">
+        <Button variant="destructive" type="submit">删除文章</Button>
       </form>
     </div>
     
@@ -32,22 +32,22 @@ if (!post) return Astro.redirect("/admin/posts");
       <CardContent className="pt-6">
         <form action={`/api/posts/${post.id}`} method="POST" class="space-y-4">
           <div class="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">标题</Label>
             <Input id="title" name="title" required defaultValue={post.title} />
           </div>
           <div class="space-y-2">
-            <Label htmlFor="slug">Slug</Label>
+            <Label htmlFor="slug">Slug (URL 路径)</Label>
             <Input id="slug" name="slug" required defaultValue={post.slug} />
           </div>
           <div class="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">状态</Label>
             <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                <option value="draft" selected={post.status === 'draft'}>Draft</option>
-                <option value="published" selected={post.status === 'published'}>Published</option>
+                <option value="draft" selected={post.status === 'draft'}>草稿</option>
+                <option value="published" selected={post.status === 'published'}>发布</option>
             </select>
           </div>
           <div class="space-y-2">
-            <Label htmlFor="content">Content (Markdown)</Label>
+            <Label htmlFor="content">内容 (Markdown)</Label>
             <textarea
               id="content"
               name="content"
@@ -57,9 +57,9 @@ if (!post) return Astro.redirect("/admin/posts");
           </div>
           <div class="flex justify-end gap-4">
             <Button variant="outline" asChild>
-              <a href="/admin/posts">Cancel</a>
+              <a href="/admin/posts">取消</a>
             </Button>
-            <Button type="submit">Update Post</Button>
+            <Button type="submit">更新文章</Button>
           </div>
         </form>
       </CardContent>

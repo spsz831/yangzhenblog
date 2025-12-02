@@ -5,4 +5,4 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "yangzhenblog-db"
-database_id = "local-db" # This will be replaced with real ID for production
+database_id = "cef57fed-27b4-4bb9-9022-d3ccdc609677" # This will be replaced with real ID for production

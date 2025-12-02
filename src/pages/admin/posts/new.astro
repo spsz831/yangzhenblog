@@ -10,20 +10,27 @@ export const prerender = false;
 
 <AdminLayout title="New Post">
   <div class="max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold tracking-tight mb-6">Create New Post</h2>
+    <h2 class="text-2xl font-bold tracking-tight mb-6">新建文章</h2>
     <Card>
       <CardContent className="pt-6">
         <form action="/api/posts" method="POST" class="space-y-4">
           <div class="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" required placeholder="Post Title" />
+            <Label htmlFor="title">标题</Label>
+            <Input id="title" name="title" required placeholder="文章标题" />
           </div>
           <div class="space-y-2">
-            <Label htmlFor="slug">Slug</Label>
+            <Label htmlFor="slug">Slug (URL 路径)</Label>
             <Input id="slug" name="slug" required placeholder="post-slug" />
           </div>
           <div class="space-y-2">
-            <Label htmlFor="content">Content (Markdown)</Label>
+            <Label htmlFor="status">状态</Label>
+            <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <option value="draft">草稿</option>
+                <option value="published">发布</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="content">内容 (Markdown)</Label>
             <textarea
               id="content"
               name="content"
@@ -34,9 +41,9 @@ export const prerender = false;
           </div>
           <div class="flex justify-end gap-4">
             <Button variant="outline" asChild>
-              <a href="/admin/posts">Cancel</a>
+              <a href="/admin/posts">取消</a>
             </Button>
-            <Button type="submit">Create Post</Button>
+            <Button type="submit">创建文章</Button>
           </div>
         </form>
       </CardContent>

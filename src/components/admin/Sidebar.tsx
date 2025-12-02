@@ -11,25 +11,25 @@ export function Sidebar({ className }: SidebarProps) {
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
                     <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-                        Yang Zhen Blog
+                        杨振博客
                     </h2>
                     <div className="space-y-1">
                         <Button variant="secondary" className="w-full justify-start" asChild>
                             <a href="/admin">
                                 <LayoutDashboard className="mr-2 h-4 w-4" />
-                                Dashboard
+                                仪表盘
                             </a>
                         </Button>
                         <Button variant="ghost" className="w-full justify-start" asChild>
                             <a href="/admin/posts">
                                 <FileText className="mr-2 h-4 w-4" />
-                                Posts
+                                文章管理
                             </a>
                         </Button>
                         <Button variant="ghost" className="w-full justify-start" asChild>
                             <a href="/admin/settings">
                                 <Settings className="mr-2 h-4 w-4" />
-                                Settings
+                                设置
                             </a>
                         </Button>
                     </div>
@@ -39,7 +39,7 @@ export function Sidebar({ className }: SidebarProps) {
                 <form action="/api/auth/logout" method="POST">
                     <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100" type="submit">
                         <LogOut className="mr-2 h-4 w-4" />
-                        Logout
+                        退出登录
                     </Button>
                 </form>
             </div>
