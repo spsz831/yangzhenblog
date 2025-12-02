@@ -13,6 +13,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
     const content = formData.get("content")?.toString();
     const excerpt = formData.get("excerpt")?.toString();
     const publishedAtStr = formData.get("publishedAt")?.toString();
+    const status = formData.get("status")?.toString();
 
     // If publishedAt is provided in form, use it. 
     // Otherwise, if switching to published and no date exists, set to now.
