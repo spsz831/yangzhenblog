@@ -8,4 +8,7 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   site: 'https://yangzhenblog.pages.dev',
+  integrations: [react(), tailwind({
+    applyBaseStyles: false,
+  })],
 });
