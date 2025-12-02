@@ -7,3 +7,8 @@ binding = "DB"
 database_name = "yangzhenblog-db"
 database_id = "cef57fed-27b4-4bb9-9022-d3ccdc609677" # This will be replaced with real ID for production
 migrations_dir = "drizzle"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "yangzhenblog-assets"
+preview_bucket_name = "yangzhenblog-assets-preview"

@@ -1,5 +1,5 @@
----
 import AdminLayout from "@/layouts/AdminLayout.astro";
+import { ImageManager } from "@/components/admin/ImageManager";
 
 export const prerender = false;
 ---
@@ -8,7 +8,6 @@ export const prerender = false;
   <div class="flex items-center justify-between mb-8">
     <h2 class="text-3xl font-bold tracking-tight">图片管理</h2>
   </div>
-  <div class="rounded-lg border border-dashed p-8 text-center">
-    <p class="text-muted-foreground">图片管理功能开发中...</p>
-  </div>
+  
+  <ImageManager client:load />
 </AdminLayout>

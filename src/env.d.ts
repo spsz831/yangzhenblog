@@ -5,6 +5,7 @@
 
 interface ImportMetaEnv {
     readonly DB: D1Database;
+    readonly BUCKET: R2Bucket;
 }
 
 interface ImportMeta {
