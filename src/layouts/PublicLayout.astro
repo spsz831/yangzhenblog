@@ -69,13 +69,11 @@ const { title, description = "杨振的个人博客" } = Astro.props;
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/projects">项目</a>
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/about">关于</a>
             </nav>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-4">
                 <ModeToggle client:load />
-                <Button variant="ghost" size="icon" asChild>
-                    <a href="/rss.xml" target="_blank" aria-label="RSS Feed">
-                        <Rss className="h-[1.2rem] w-[1.2rem]" />
-                    </a>
-                </Button>
+                <a href="/rss.xml" target="_blank" aria-label="RSS Feed" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+                    <Rss className="h-[1.2rem] w-[1.2rem]" />
+                </a>
             </div>
         </div>
       </div>

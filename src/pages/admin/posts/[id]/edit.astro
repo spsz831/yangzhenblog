@@ -59,7 +59,8 @@ if (!post) return Astro.redirect("/admin/posts");
             <Button variant="outline" asChild>
               <a href="/admin/posts">取消</a>
             </Button>
-            <Button type="submit">更新文章</Button>
+            <Button type="submit" name="action" value="update" variant="secondary">保存草稿</Button>
+            <Button type="submit" name="action" value="publish" onclick="document.getElementById('status').value='published'">发布文章</Button>
           </div>
         </form>
       </CardContent>

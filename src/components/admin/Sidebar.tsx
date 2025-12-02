@@ -7,12 +7,17 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function Sidebar({ className }: SidebarProps) {
     return (
-        <div className={cn("pb-12", className)}>
+        <div className={cn("pb-12 min-h-screen border-r bg-muted/40", className)}>
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
-                    <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-                        杨振博客
-                    </h2>
+                    <div className="mb-6 px-4 flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span className="font-bold text-xs text-primary">YZ</span>
+                        </div>
+                        <h2 className="text-lg font-semibold tracking-tight">
+                            杨振博客
+                        </h2>
+                    </div>
                     <div className="space-y-1">
                         <Button variant="secondary" className="w-full justify-start" asChild>
                             <a href="/admin">
@@ -35,7 +40,7 @@ export function Sidebar({ className }: SidebarProps) {
                     </div>
                 </div>
             </div>
-            <div className="px-3 py-2">
+            <div className="px-3 py-2 mt-auto">
                 <form action="/api/auth/logout" method="POST">
                     <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100" type="submit">
                         <LogOut className="mr-2 h-4 w-4" />
