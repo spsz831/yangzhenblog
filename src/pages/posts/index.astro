@@ -6,7 +6,8 @@ import { desc, eq, lte, and } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const publishedPosts = await db.select().from(posts)
@@ -28,6 +29,10 @@ const publishedPosts = await db.select().from(posts)
           分享技术、生活和思考。
         </p>
       </div>
+      <Button variant="outline" className="hidden md:flex gap-2">
+        <Search className="h-4 w-4" />
+        搜索文章
+      </Button>
     </div>
     <hr class="my-8" />
     

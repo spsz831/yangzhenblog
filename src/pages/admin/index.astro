@@ -1,17 +1,37 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import { getDb } from "@/db";
+import { posts } from "@/db/schema";
+import { count } from "drizzle-orm";
 
 export const prerender = false;
+
+const db = getDb(Astro.locals.runtime.env.DB);
+const [{ value: totalPosts }] = await db.select({ value: count() }).from(posts);
 ---
 
 <AdminLayout title="仪表盘">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-3xl font-bold tracking-tight">仪表盘</h2>
+    <div class="flex items-center space-x-2">
+      <Button asChild>
+        <a href="/admin/posts/new">
+          <PlusCircle class="mr-2 h-4 w-4" />
+          发布文章
+        </a>
+      </Button>
+    </div>
+  </div>
+
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
     <div class="rounded-xl border bg-card text-card-foreground shadow">
       <div class="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
         <h3 class="tracking-tight text-sm font-medium">文章总数</h3>
       </div>
       <div class="p-6 pt-0">
-        <div class="text-2xl font-bold">0</div>
+        <div class="text-2xl font-bold">{totalPosts}</div>
       </div>
     </div>
   </div>

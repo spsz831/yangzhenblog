@@ -8,7 +8,6 @@ export const users = sqliteTable("users", {
     passwordHash: text("password_hash").notNull(),
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
 });
-
 export const posts = sqliteTable("posts", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull().unique(),

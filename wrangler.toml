@@ -6,3 +6,4 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "yangzhenblog-db"
 database_id = "cef57fed-27b4-4bb9-9022-d3ccdc609677" # This will be replaced with real ID for production
+migrations_dir = "drizzle"

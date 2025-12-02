@@ -9,6 +9,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
     const content = formData.get("content")?.toString();
 
     const status = formData.get("status")?.toString() || "draft";
+    const excerpt = formData.get("excerpt")?.toString();
+    const publishedAtStr = formData.get("publishedAt")?.toString();
+    const publishedAt = publishedAtStr ? new Date(publishedAtStr) : (status === 'published' ? new Date() : null);
 
     if (!title || !slug || !content) {
         return new Response("Missing required fields", { status: 400 });
@@ -21,7 +24,9 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
             title,
             slug,
             content,
-            status: status as "draft" | "published",
+            excerpt,
+            status: status as "draft" | "published" | "scheduled",
+            publishedAt,
         });
     } catch (e) {
         return new Response("Error creating post: " + (e as Error).message, { status: 500 });

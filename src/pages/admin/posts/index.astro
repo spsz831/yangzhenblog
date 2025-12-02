@@ -2,8 +2,10 @@
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PostFilterTabs } from "@/components/admin/PostFilterTabs";
 import {
   Table,
   TableBody,
@@ -17,8 +19,18 @@ import { Plus } from "lucide-react";
 
 export const prerender = false;
 
+const status = Astro.url.searchParams.get("status") || "all";
+
 const db = getDb(Astro.locals.runtime.env.DB);
-const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt)).all();
+
+let query = db.select().from(posts).orderBy(desc(posts.createdAt));
+
+if (status !== "all") {
+  // @ts-ignore
+  query = db.select().from(posts).where(eq(posts.status, status)).orderBy(desc(posts.createdAt));
+}
+
+const allPosts = await query.all();
 ---
 
 <AdminLayout title="文章列表">
@@ -30,6 +42,10 @@ const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt)).al
         新建文章
       </a>
     </Button>
+  </div>
+
+  <div class="mb-6">
+    <PostFilterTabs defaultValue={status} client:load />
   </div>
 
   <div class="rounded-md border">
@@ -46,9 +62,13 @@ const allPosts = await db.select().from(posts).orderBy(desc(posts.createdAt)).al
         {allPosts.map((post) => (
           <TableRow key={post.id}>
             <TableCell className="font-medium">{post.title}</TableCell>
-            <TableCell>{post.status}</TableCell>
             <TableCell>
-              {post.publishedAt ? format(post.publishedAt, "yyyy-MM-dd") : "-"}
+              <Badge variant={post.status === 'published' ? 'default' : (post.status === 'scheduled' ? 'secondary' : 'outline')}>
+                {post.status === 'published' ? '已发布' : (post.status === 'scheduled' ? '定时发布' : '草稿')}
+              </Badge>
+            </TableCell>
+            <TableCell>
+              {post.publishedAt ? format(post.publishedAt, "yyyy-MM-dd HH:mm") : "-"}
             </TableCell>
             <TableCell className="text-right">
               <Button variant="ghost" size="sm" asChild>

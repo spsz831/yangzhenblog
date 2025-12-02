@@ -11,14 +11,12 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
     const title = formData.get("title")?.toString();
     const slug = formData.get("slug")?.toString();
     const content = formData.get("content")?.toString();
-    let status = formData.get("status")?.toString() as "draft" | "published";
-    const action = formData.get("action")?.toString();
+    const excerpt = formData.get("excerpt")?.toString();
+    const publishedAtStr = formData.get("publishedAt")?.toString();
 
-    if (action === "publish") {
-        status = "published";
-    } else if (action === "draft") {
-        status = "draft";
-    }
+    // If publishedAt is provided in form, use it. 
+    // Otherwise, if switching to published and no date exists, set to now.
+    // If switching to scheduled, ensure we have a date (though frontend validation should catch this).
 
     if (!title || !slug || !content || !status) {
         return new Response("Missing required fields", { status: 400 });
@@ -30,7 +28,10 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
         const existingPost = await db.select().from(posts).where(eq(posts.id, Number(id))).get();
 
         let publishedAt = existingPost?.publishedAt;
-        if (status === 'published' && !publishedAt) {
+
+        if (publishedAtStr) {
+            publishedAt = new Date(publishedAtStr);
+        } else if (status === 'published' && !publishedAt) {
             publishedAt = new Date();
         }
 
@@ -39,7 +40,8 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
                 title,
                 slug,
                 content,
-                status,
+                excerpt,
+                status: status as "draft" | "published" | "scheduled",
                 updatedAt: new Date(),
                 publishedAt
             })

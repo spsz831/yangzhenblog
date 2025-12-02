@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, FileText, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Image, BarChart, UserCog, LogOut } from "lucide-react";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> { }
 
@@ -19,7 +19,7 @@ export function Sidebar({ className }: SidebarProps) {
                         </h2>
                     </div>
                     <div className="space-y-1">
-                        <Button variant="secondary" className="w-full justify-start" asChild>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
                             <a href="/admin">
                                 <LayoutDashboard className="mr-2 h-4 w-4" />
                                 仪表盘
@@ -32,9 +32,21 @@ export function Sidebar({ className }: SidebarProps) {
                             </a>
                         </Button>
                         <Button variant="ghost" className="w-full justify-start" asChild>
+                            <a href="/admin/images">
+                                <Image className="mr-2 h-4 w-4" />
+                                图片管理
+                            </a>
+                        </Button>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
+                            <a href="/admin/analytics">
+                                <BarChart className="mr-2 h-4 w-4" />
+                                数据分析
+                            </a>
+                        </Button>
+                        <Button variant="ghost" className="w-full justify-start" asChild>
                             <a href="/admin/settings">
-                                <Settings className="mr-2 h-4 w-4" />
-                                设置
+                                <UserCog className="mr-2 h-4 w-4" />
+                                账号设置
                             </a>
                         </Button>
                     </div>

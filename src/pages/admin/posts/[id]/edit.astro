@@ -40,11 +40,29 @@ if (!post) return Astro.redirect("/admin/posts");
             <Input id="slug" name="slug" required defaultValue={post.slug} />
           </div>
           <div class="space-y-2">
+            <Label htmlFor="excerpt">摘要</Label>
+            <textarea
+              id="excerpt"
+              name="excerpt"
+              class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >{post.excerpt}</textarea>
+          </div>
+          <div class="space-y-2">
             <Label htmlFor="status">状态</Label>
             <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 <option value="draft" selected={post.status === 'draft'}>草稿</option>
                 <option value="published" selected={post.status === 'published'}>发布</option>
+                <option value="scheduled" selected={post.status === 'scheduled'}>定时发布</option>
             </select>
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="publishedAt">发布时间</Label>
+            <Input 
+              type="datetime-local" 
+              id="publishedAt" 
+              name="publishedAt" 
+              defaultValue={post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : ''}
+            />
           </div>
           <div class="space-y-2">
             <Label htmlFor="content">内容 (Markdown)</Label>
@@ -55,25 +73,12 @@ if (!post) return Astro.redirect("/admin/posts");
               class="flex min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >{post.content}</textarea>
           </div>
-          <div class="space-y-2">
-            <Label htmlFor="scheduledTime">定时发布时间 (可选)</Label>
-            <Input 
-              type="datetime-local" 
-              id="scheduledTime" 
-              name="scheduledTime" 
-              min={new Date().toISOString().slice(0, 16)}
-              max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16)}
-            />
-            <p class="text-sm text-muted-foreground">若要定时发布，请选择未来30天内的时间。</p>
-          </div>
 
           <div class="flex justify-end gap-4">
             <Button variant="outline" asChild>
               <a href="/admin/posts">取消</a>
             </Button>
-            <Button type="submit" name="action" value="draft" variant="secondary">保存草稿</Button>
-            <Button type="submit" name="action" value="schedule" onclick="if(!document.getElementById('scheduledTime').value) { alert('请选择定时发布时间'); return false; }">定时发布</Button>
-            <Button type="submit" name="action" value="publish">立即发布</Button>
+            <Button type="submit">保存修改</Button>
           </div>
         </form>
       </CardContent>

@@ -23,11 +23,25 @@ export const prerender = false;
             <Input id="slug" name="slug" required placeholder="post-slug" />
           </div>
           <div class="space-y-2">
+            <Label htmlFor="excerpt">摘要</Label>
+            <textarea
+              id="excerpt"
+              name="excerpt"
+              class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="文章摘要..."
+            ></textarea>
+          </div>
+          <div class="space-y-2">
             <Label htmlFor="status">状态</Label>
             <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                 <option value="draft">草稿</option>
                 <option value="published">发布</option>
+                <option value="scheduled">定时发布</option>
             </select>
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="publishedAt">发布时间</Label>
+            <Input id="publishedAt" name="publishedAt" type="datetime-local" />
           </div>
           <div class="space-y-2">
             <Label htmlFor="content">内容 (Markdown)</Label>
