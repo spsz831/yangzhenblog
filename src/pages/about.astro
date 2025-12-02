@@ -19,7 +19,7 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
       <!-- Current Status -->
       <div class="space-y-3 animate-item" style="--delay: 1;">
         <h2 class="text-xl font-bold tracking-tight">目前</h2>
-        <ul class="list-disc list-inside text-base text-muted-foreground leading-normal space-y-1 ml-4">
+        <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
           <li>一边搬砖，一边做产品。</li>
           <li>做自媒体，持续创作分享。</li>
           <li>坐标上海，欢迎各位小伙伴面基~</li>
@@ -32,53 +32,69 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
         
         <div class="space-y-2">
           <h3 class="text-lg font-semibold mt-2">前端</h3>
-          <ul class="list-disc list-inside text-base text-muted-foreground leading-normal space-y-1 ml-4">
-            <li class="flex items-center flex-wrap gap-1">
-              Vue <span class="icon-[logos--vue] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
-              JavaScript <span class="icon-[logos--javascript] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                Vue <span class="icon-[logos--vue] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
+                JavaScript <span class="icon-[logos--javascript] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+              </span>
             </li>
-            <li class="flex items-center flex-wrap gap-1">
-              React <span class="icon-[logos--react] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
-              TypeScript <span class="icon-[logos--typescript-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                React <span class="icon-[logos--react] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
+                TypeScript <span class="icon-[logos--typescript-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+              </span>
             </li>
-            <li class="flex items-center flex-wrap gap-1">
-              HTML <span class="icon-[logos--html-5] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
-              CSS <span class="icon-[logos--css-3] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
-              Tailwind CSS <span class="icon-[logos--tailwindcss-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                HTML <span class="icon-[logos--html-5] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
+                CSS <span class="icon-[logos--css-3] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
+                Tailwind CSS <span class="icon-[logos--tailwindcss-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+              </span>
             </li>
-            <li class="flex items-center flex-wrap gap-1">
-              Next.js <span class="icon-[logos--nextjs-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> / 
-              Astro <span class="icon-[logos--astro-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                Next.js <span class="icon-[logos--nextjs-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> / 
+                Astro <span class="icon-[logos--astro-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，会一点
+              </span>
             </li>
           </ul>
         </div>
 
         <div class="space-y-2">
           <h3 class="text-lg font-semibold mt-2">后端</h3>
-          <ul class="list-disc list-inside text-base text-muted-foreground leading-normal space-y-1 ml-4">
-            <li class="flex items-center flex-wrap gap-1">
-              Node.js <span class="icon-[logos--nodejs-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，简单 CRUD 水平
+          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                Node.js <span class="icon-[logos--nodejs-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span>，简单 CRUD 水平
+              </span>
             </li>
-            <li class="flex items-center flex-wrap gap-1">
-              Drizzle ORM <span class="icon-[simple-icons--drizzle] w-3.5 h-3.5 mx-0.5 translate-y-0.5 text-[#C5F74F]"></span> / 
-              Prisma <span class="icon-[logos--prisma] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> 会一点
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                Drizzle ORM <span class="icon-[simple-icons--drizzle] w-3.5 h-3.5 mx-0.5 translate-y-0.5 text-[#C5F74F]"></span> / 
+                Prisma <span class="icon-[logos--prisma] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> 会一点
+              </span>
             </li>
           </ul>
         </div>
 
         <div class="space-y-2">
           <h3 class="text-lg font-semibold mt-2">其它</h3>
-          <ul class="list-disc list-inside text-base text-muted-foreground leading-normal space-y-1 ml-4">
+          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
             <li>新媒体运营、内容创作、短视频运营、短视频剪辑~</li>
-            <li class="flex items-center flex-wrap gap-1">
-              Google <span class="icon-[logos--google-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> Antigravity、Claude Code 敲代码用起来爽飞~
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                Google <span class="icon-[logos--google-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> Antigravity、Claude Code 敲代码用起来爽飞~
+              </span>
             </li>
             <li>Cherry Studio，用起来还不错</li>
-            <li class="flex items-center flex-wrap gap-1">
-              熟练使用 Google <span class="icon-[logos--google-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> /
-              GitHub <span class="icon-[logos--github-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5 dark:invert"></span> + 
-              Stack Overflow <span class="icon-[logos--stackoverflow-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
-              AI 解决遇到的各种问题，复制粘贴我最行 🙋
+            <li>
+              <span class="inline-flex items-center flex-wrap gap-1">
+                熟练使用 Google <span class="icon-[logos--google-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> /
+                GitHub <span class="icon-[logos--github-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5 dark:invert"></span> + 
+                Stack Overflow <span class="icon-[logos--stackoverflow-icon] w-3.5 h-3.5 mx-0.5 translate-y-0.5"></span> + 
+                AI 解决遇到的各种问题，复制粘贴我最行 🙋
+              </span>
             </li>
           </ul>
         </div>
