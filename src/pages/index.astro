@@ -5,6 +5,7 @@ import { posts } from "@/db/schema";
 import { desc, eq, lte, and } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import TypewriterEffect from "@/components/TypewriterEffect";
 
 // export const prerender = true;
 
@@ -31,15 +32,17 @@ const publishedPosts = await db.select().from(posts)
   
   <section class="container max-w-4xl py-20 lg:py-32">
     <div class="flex flex-col gap-6">
-      <h1 class="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl">
-        你好，我是 <br class="hidden md:block" />
-        <span class="text-blue-500">杨振 | spsz0831</span>
+      <h1 class="text-4xl font-bold leading-tight tracking-tighter md:text-6xl lg:text-7xl mb-2">
+        你好，我是
       </h1>
-      <div class="text-2xl md:text-4xl font-semibold text-muted-foreground">
-        A Web <span class="text-foreground">&lt;Developer /&gt;</span>
+      <div class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-cyan-500 mb-4">
+        杨振 <span class="text-blue-500">| spsz0831</span>
       </div>
-      <div class="text-xl md:text-3xl font-medium text-muted-foreground">
-        喜欢 <span class="text-green-500">Vue</span>、<span class="text-blue-400">React</span>、<span class="text-blue-600">TypeScript</span> \owo/ ~
+      <div class="text-3xl md:text-5xl font-semibold text-foreground mb-4 min-h-[1.5em]">
+        <TypewriterEffect client:load />
+      </div>
+      <div class="text-2xl md:text-4xl font-medium text-muted-foreground mb-4">
+        喜欢 <span class="text-[#42b883]">Vue</span>、<span class="text-[#61dafb]">React</span>、<span class="text-[#3178c6]">TypeScript</span> \owo/ ~
       </div>
       <p class="text-lg text-muted-foreground max-w-[700px]">
         在这里记录我的日常，做一个简单、更好的自己💪
