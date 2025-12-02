@@ -2,14 +2,19 @@
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, lte, and } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 // export const prerender = true;
 
 const db = getDb(Astro.locals.runtime.env.DB);
-const publishedPosts = await db.select().from(posts).where(eq(posts.status, 'published')).orderBy(desc(posts.publishedAt)).all();
+const publishedPosts = await db.select().from(posts)
+  .where(and(
+    eq(posts.status, 'published'),
+    lte(posts.publishedAt, new Date())
+  ))
+  .orderBy(desc(posts.publishedAt)).all();
 ---
 
 <PublicLayout title="首页">
@@ -24,7 +29,46 @@ const publishedPosts = await db.select().from(posts).where(eq(posts.status, 'pub
     </div>
   </section>
   
-  <section class="container max-w-4xl py-6 lg:py-10">
+  <section class="container max-w-4xl py-20 lg:py-32">
+    <div class="flex flex-col gap-6">
+      <h1 class="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl">
+        你好，我是 <br class="hidden md:block" />
+        <span class="text-blue-500">杨振 | spsz0831</span>
+      </h1>
+      <div class="text-2xl md:text-4xl font-semibold text-muted-foreground">
+        A Web <span class="text-foreground">&lt;Developer /&gt;</span>
+      </div>
+      <div class="text-xl md:text-3xl font-medium text-muted-foreground">
+        喜欢 <span class="text-green-500">Vue</span>、<span class="text-blue-400">React</span>、<span class="text-blue-600">TypeScript</span> \owo/ ~
+      </div>
+      <p class="text-lg text-muted-foreground max-w-[700px]">
+        在这里记录我的日常，做一个简单、更好的自己💪
+      </p>
+      
+      <div class="flex flex-wrap gap-4 mt-4">
+        <a href="/posts" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+          我的博客
+        </a>
+        <a href="/about" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+          关于我
+        </a>
+        <a href="https://www.buymeacoffee.com/" target="_blank" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-yellow-400 text-black hover:bg-yellow-500 h-10 px-4 py-2">
+          ☕ Buy me a coffee
+        </a>
+      </div>
+
+      <div class="flex gap-4 mt-4">
+        <a href="https://github.com/spsz831" target="_blank" class="text-muted-foreground hover:text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 6 2 6 5.5.269.269 0 0 1-.53 0L18 6a5 5 0 0 0-5 5v2a5 5 0 0 0 5 5v4"/><path d="M9 22v-4a4.8 4.8 0 0 0-1-3.5c-3 6-2 6-5.5.269.269 0 0 1 .53 0L6 6a5 5 0 0 0 5 5v2a5 5 0 0 0-5 5v4"/></svg>
+        </a>
+        <a href="mailto:your-email@example.com" class="text-muted-foreground hover:text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <section id="posts" class="container max-w-4xl py-6 lg:py-10">
     <div class="flex flex-col gap-8">
       {publishedPosts.map((post) => (
         <article class="flex flex-col gap-2 border-b pb-8 last:border-0">

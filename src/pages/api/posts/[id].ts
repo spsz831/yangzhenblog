@@ -11,7 +11,14 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
     const title = formData.get("title")?.toString();
     const slug = formData.get("slug")?.toString();
     const content = formData.get("content")?.toString();
-    const status = formData.get("status")?.toString() as "draft" | "published";
+    let status = formData.get("status")?.toString() as "draft" | "published";
+    const action = formData.get("action")?.toString();
+
+    if (action === "publish") {
+        status = "published";
+    } else if (action === "draft") {
+        status = "draft";
+    }
 
     if (!title || !slug || !content || !status) {
         return new Response("Missing required fields", { status: 400 });
@@ -20,6 +27,13 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
     const db = getDb(locals.runtime.env.DB);
 
     try {
+        const existingPost = await db.select().from(posts).where(eq(posts.id, Number(id))).get();
+
+        let publishedAt = existingPost?.publishedAt;
+        if (status === 'published' && !publishedAt) {
+            publishedAt = new Date();
+        }
+
         await db.update(posts)
             .set({
                 title,
@@ -27,7 +41,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
                 content,
                 status,
                 updatedAt: new Date(),
-                publishedAt: status === 'published' ? new Date() : null
+                publishedAt
             })
             .where(eq(posts.id, Number(id)));
     } catch (e) {

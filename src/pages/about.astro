@@ -1,0 +1,94 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+---
+
+<PublicLayout title="关于">
+  <section class="container max-w-3xl py-6 lg:py-10">
+    <div class="space-y-8 animate-stagger-container">
+      
+      <!-- Header -->
+      <div class="space-y-4 animate-item">
+        <h1 class="font-heading text-4xl font-bold tracking-tight lg:text-5xl">
+          关于
+        </h1>
+      </div>
+
+      <!-- Who am I -->
+      <div class="space-y-4 animate-item" style="--delay: 1;">
+        <h2 class="text-2xl font-bold tracking-tight">我是谁</h2>
+        <p class="text-lg text-muted-foreground leading-relaxed">
+          Hi~ 我是杨振 (spsz0831)，一名 Web 开发者、内容创作者。
+        </p>
+      </div>
+
+      <!-- Current Status -->
+      <div class="space-y-4 animate-item" style="--delay: 2;">
+        <h2 class="text-2xl font-bold tracking-tight">目前</h2>
+        <p class="text-lg text-muted-foreground leading-relaxed">
+          一边搬砖，一边做产品。
+        </p>
+        <p class="text-lg text-muted-foreground leading-relaxed">
+          做自媒体，持续创作分享。
+        </p>
+        <p class="text-lg text-muted-foreground leading-relaxed">
+          坐标中国，欢迎各位小伙伴面基~
+        </p>
+      </div>
+
+      <!-- Skills -->
+      <div class="space-y-4 animate-item" style="--delay: 3;">
+        <h2 class="text-2xl font-bold tracking-tight">我的技能</h2>
+        
+        <div class="space-y-2">
+          <h3 class="text-lg font-semibold">前端</h3>
+          <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+            <li>Vue + JavaScript，熟练使用</li>
+            <li>React + TypeScript，熟练使用</li>
+            <li>HTML + CSS + Tailwind CSS，熟练使用</li>
+            <li>Next.js / Astro，熟练使用</li>
+          </ul>
+        </div>
+
+        <div class="space-y-2 mt-4">
+          <h3 class="text-lg font-semibold">后端</h3>
+          <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+            <li>Node.js，简单 CRUD 水平</li>
+            <li>Drizzle ORM / Prisma 会一点</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Devices -->
+      <div class="space-y-4 animate-item" style="--delay: 4;">
+        <h2 class="text-2xl font-bold tracking-tight">我的设备</h2>
+        <ul class="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+            <li>电脑: MacBook Pro / Windows PC</li>
+            <li>显示器: 4K HDR</li>
+            <li>键盘: Keychron K2</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+</PublicLayout>
+
+<style>
+  /* Staggered Animation */
+  .animate-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: calc(var(--delay, 0) * 0.1s);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
