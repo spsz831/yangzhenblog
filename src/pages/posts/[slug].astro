@@ -1,10 +1,11 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, tags, postsToTags } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { marked } from "marked";
 import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
 
 // export const prerender = true;
 
@@ -16,6 +17,12 @@ const post = await db.select().from(posts).where(eq(posts.slug, slug)).get();
 
 if (!post) return Astro.redirect("/404");
 
+const postTags = await db.select({ name: tags.name })
+  .from(tags)
+  .innerJoin(postsToTags, eq(tags.id, postsToTags.tagId))
+  .where(eq(postsToTags.postId, post.id))
+  .all();
+
 const content = marked.parse(post.content);
 
 ---
@@ -23,11 +30,18 @@ const content = marked.parse(post.content);
 <PublicLayout title={post.title} description={post.excerpt || ""}>
   <article class="container max-w-3xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 border-b pb-10">
-        <div class="flex w-full items-center justify-between">
-            <div class="flex items-center space-x-2 text-sm text-muted-foreground">
-                <time datetime={post.publishedAt?.toISOString()}>
-                    {post.publishedAt ? format(post.publishedAt, "yyyy年MM月dd日") : ""}
-                </time>
+        <div class="flex w-full flex-col gap-2">
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <time datetime={post.publishedAt?.toISOString()}>
+                        {post.publishedAt ? format(post.publishedAt, "yyyy年MM月dd日") : ""}
+                    </time>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                {postTags.map(tag => (
+                    <Badge variant="secondary" className="font-normal text-xs">#{tag.name}</Badge>
+                ))}
             </div>
         </div>
         <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">

@@ -16,7 +16,7 @@ export const posts = sqliteTable("posts", {
     title: text("title").notNull(),
     content: text("content").notNull(),
     excerpt: text("excerpt"),
-    status: text("status", { enum: ["draft", "published"] }).default("draft").notNull(),
+    status: text("status", { enum: ["draft", "published", "scheduled"] }).default("draft").notNull(),
     publishedAt: integer("published_at", { mode: "timestamp" }),
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),

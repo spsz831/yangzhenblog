@@ -1,7 +1,7 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, tags, postsToTags } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,14 @@ const db = getDb(Astro.locals.runtime.env.DB);
 const post = await db.select().from(posts).where(eq(posts.id, Number(id))).get();
 
 if (!post) return Astro.redirect("/admin/posts");
+
+const postTags = await db.select({ name: tags.name })
+  .from(tags)
+  .innerJoin(postsToTags, eq(tags.id, postsToTags.tagId))
+  .where(eq(postsToTags.postId, post.id))
+  .all();
+
+const tagsString = postTags.map(t => t.name).join(", ");
 ---
 
 <AdminLayout title="Edit Post">
@@ -63,6 +71,10 @@ if (!post) return Astro.redirect("/admin/posts");
               name="publishedAt" 
               defaultValue={post.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 16) : ''}
             />
+          </div>
+          <div class="space-y-2">
+            <Label htmlFor="tags">标签 (用逗号分隔)</Label>
+            <Input id="tags" name="tags" defaultValue={tagsString} />
           </div>
           <div class="space-y-2">
             <Label htmlFor="content">内容 (Markdown)</Label>

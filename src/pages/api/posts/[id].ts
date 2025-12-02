@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, tags, postsToTags } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
@@ -14,6 +14,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
     const excerpt = formData.get("excerpt")?.toString();
     const publishedAtStr = formData.get("publishedAt")?.toString();
     const status = formData.get("status")?.toString();
+    const tagsInput = formData.get("tags")?.toString();
 
     // If publishedAt is provided in form, use it. 
     // Otherwise, if switching to published and no date exists, set to now.
@@ -47,6 +48,27 @@ export const POST: APIRoute = async ({ request, locals, params, redirect }) => {
                 publishedAt
             })
             .where(eq(posts.id, Number(id)));
+
+        if (tagsInput !== undefined) {
+            // Delete existing tags
+            await db.delete(postsToTags).where(eq(postsToTags.postId, Number(id)));
+
+            const tagNames = tagsInput.split(",").map(t => t.trim()).filter(t => t.length > 0);
+            for (const tagName of tagNames) {
+                // Check if tag exists
+                let tag = await db.select().from(tags).where(eq(tags.name, tagName)).get();
+                if (!tag) {
+                    const newTags = await db.insert(tags).values({ name: tagName, slug: tagName }).returning();
+                    tag = newTags[0];
+                }
+                // Link post to tag
+                await db.insert(postsToTags).values({
+                    postId: Number(id),
+                    tagId: tag.id
+                });
+            }
+        }
+
     } catch (e) {
         return new Response("Error updating post: " + (e as Error).message, { status: 500 });
     }

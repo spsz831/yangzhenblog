@@ -128,7 +128,7 @@ export function ImageManager() {
                     <p>暂无图片，点击上方按钮上传</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
                     {images.map((img) => (
                         <Card key={img.key} className="overflow-hidden group">
                             <div className="aspect-square relative bg-muted flex items-center justify-center overflow-hidden">
@@ -139,29 +139,30 @@ export function ImageManager() {
                                     loading="lazy"
                                 />
                             </div>
-                            <CardContent className="p-3">
-                                <p className="text-xs font-medium truncate" title={img.key}>
+                            <CardContent className="p-2">
+                                <p className="text-[10px] font-medium truncate" title={img.key}>
                                     {img.key}
                                 </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    {formatSize(img.size)} • {format(new Date(img.uploadedAt), "yyyy-MM-dd")}
+                                <p className="text-[10px] text-muted-foreground mt-0.5">
+                                    {formatSize(img.size)}
                                 </p>
                             </CardContent>
-                            <CardFooter className="p-3 pt-0 flex justify-between gap-2">
+                            <CardFooter className="p-2 pt-0 flex justify-between gap-1">
                                 <Button
                                     variant="outline"
-                                    size="sm"
-                                    className="flex-1 h-8 text-xs"
+                                    size="icon"
+                                    className="h-6 w-6"
                                     onClick={() => handleCopy(img.url)}
+                                    title="复制链接"
                                 >
-                                    <Copy className="mr-1 h-3 w-3" />
-                                    复制
+                                    <Copy className="h-3 w-3" />
                                 </Button>
                                 <Button
                                     variant="destructive"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
+                                    size="icon"
+                                    className="h-6 w-6"
                                     onClick={() => handleDelete(img.key)}
+                                    title="删除图片"
                                 >
                                     <Trash2 className="h-3 w-3" />
                                 </Button>

@@ -44,6 +44,10 @@ export const prerender = false;
             <Input id="publishedAt" name="publishedAt" type="datetime-local" />
           </div>
           <div class="space-y-2">
+            <Label htmlFor="tags">标签 (用逗号分隔)</Label>
+            <Input id="tags" name="tags" placeholder="AI, Git, Web" />
+          </div>
+          <div class="space-y-2">
             <Label htmlFor="content">内容 (Markdown)</Label>
             <textarea
               id="content"
