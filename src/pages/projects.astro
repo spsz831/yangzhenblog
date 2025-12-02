@@ -8,27 +8,31 @@ import { Github } from "lucide-react";
 const projects = [
   {
     title: "yangzhenblog",
+    org: "spsz831",
     description: "基于 Astro 5 + Cloudflare D1 + React 构建的现代化个人博客系统。",
     url: "https://github.com/spsz831/yangzhenblog",
     icon: "🚀"
   },
   {
-    title: "Project Placeholder 1",
-    description: "这是一个项目占位符。后续将替换为真实的 GitHub 项目信息。",
-    url: "https://github.com/spsz831",
-    icon: "📦"
+    title: "HTMLShare",
+    org: "spsz831",
+    description: "一个简单的 HTML 代码分享工具。",
+    url: "https://github.com/spsz831/HTMLShare",
+    icon: "🌐"
   },
   {
-    title: "Project Placeholder 2",
-    description: "这是一个项目占位符。后续将替换为真实的 GitHub 项目信息。",
-    url: "https://github.com/spsz831",
-    icon: "🛠️"
+    title: "cloudflare-r2-image-bed",
+    org: "spsz831",
+    description: "基于 Cloudflare R2 和 Workers 构建的轻量级图床。",
+    url: "https://github.com/spsz831/cloudflare-r2-image-bed",
+    icon: "☁️"
   },
   {
-    title: "Project Placeholder 3",
-    description: "这是一个项目占位符。后续将替换为真实的 GitHub 项目信息。",
-    url: "https://github.com/spsz831",
-    icon: "✨"
+    title: "PersonalProfile",
+    org: "spsz831",
+    description: "我的个人简介页面。",
+    url: "https://github.com/spsz831/PersonalProfile",
+    icon: "👤"
   }
 ];
 ---
@@ -49,29 +53,35 @@ const projects = [
     
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
       {projects.map((project) => (
-        <Card className="h-full flex flex-col overflow-hidden border-muted-foreground/20 hover:border-primary/50 transition-colors">
-          <CardHeader class="flex flex-row items-center gap-4 space-y-0">
-            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-2xl">
+        <Card className="h-full flex flex-col overflow-hidden border-muted-foreground/20 hover:border-primary/50 transition-colors p-6">
+          <div class="flex justify-between items-start mb-4">
+            <div class="space-y-1">
+              <CardTitle className="text-xl font-bold">
+                {project.title}
+              </CardTitle>
+              <p class="text-sm text-muted-foreground">
+                {project.org}
+              </p>
+            </div>
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-2xl shrink-0">
               {project.icon}
             </div>
-            <CardTitle className="text-xl">
-              {project.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1">
-            <p class="text-muted-foreground leading-relaxed">
+          </div>
+          
+          <CardContent className="flex-1 p-0 mb-6">
+            <p class="text-muted-foreground leading-relaxed text-sm">
               {project.description}
             </p>
           </CardContent>
-          <CardFooter className="flex gap-4">
-            <Button variant="outline" size="sm" asChild>
+          
+          <CardFooter className="flex gap-3 p-0">
+            <Button variant="outline" size="sm" className="h-9" asChild>
               <a href={project.url} target="_blank">
                 查看主页
               </a>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="outline" size="sm" className="h-9" asChild>
               <a href={project.url} target="_blank">
-                <Github className="mr-2 h-4 w-4" />
                 Github
               </a>
             </Button>
