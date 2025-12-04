@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => {
@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => 
     }
 
     const db = getDb(locals.runtime.env.DB);
-    const user = await db.select().from(users).where(eq(users.email, email)).get();
+    const user = await db.select().from(users).where(or(eq(users.email, email), eq(users.username, email))).get();
 
     if (user && bcrypt.compareSync(password, user.passwordHash)) {
         // Store userId in cookie (in a real app, use a signed token or session ID)

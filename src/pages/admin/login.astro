@@ -23,8 +23,8 @@ export const prerender = false;
       <form action="/api/auth/login" method="POST">
         <CardContent className="space-y-4">
           <div class="space-y-2">
-            <Label htmlFor="email">邮箱</Label>
-            <Input id="email" name="email" type="email" placeholder="admin@example.com" required />
+            <Label htmlFor="email">邮箱或用户名</Label>
+            <Input id="email" name="email" type="text" placeholder="admin@example.com 或 admin" required />
           </div>
           <div class="space-y-2">
             <Label htmlFor="password">密码</Label>

@@ -1,15 +1,35 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { PlusCircle, FileText, Tags, Image as ImageIcon, BarChart, Upload, PenTool, ExternalLink } from "lucide-react";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
-import { count } from "drizzle-orm";
+import { posts, tags } from "@/db/schema";
+import { count, eq, desc } from "drizzle-orm";
+import { format } from "date-fns";
 
 export const prerender = false;
 
 const db = getDb(Astro.locals.runtime.env.DB);
+const bucket = Astro.locals.runtime.env.BUCKET;
+
+// Fetch stats
 const [{ value: totalPosts }] = await db.select({ value: count() }).from(posts);
+const [{ value: publishedPosts }] = await db.select({ value: count() }).from(posts).where(eq(posts.status, 'published'));
+const [{ value: draftPosts }] = await db.select({ value: count() }).from(posts).where(eq(posts.status, 'draft'));
+const [{ value: totalTags }] = await db.select({ value: count() }).from(tags);
+
+// Fetch images count
+let totalImages = 0;
+try {
+  const list = await bucket.list();
+  totalImages = list.objects.length;
+} catch (e) {
+  console.error("Failed to list images", e);
+}
+
+// Fetch recent posts
+const recentPosts = await db.select().from(posts).orderBy(desc(posts.updatedAt)).limit(5);
 ---
 
 <AdminLayout title="仪表盘">
@@ -18,21 +38,131 @@ const [{ value: totalPosts }] = await db.select({ value: count() }).from(posts);
     <div class="flex items-center space-x-2">
       <Button asChild>
         <a href="/admin/posts/new">
+          <PlusCircle className="mr-2 h-4 w-4" />
           发布文章
         </a>
       </Button>
     </div>
   </div>
 
-  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <div class="rounded-xl border bg-card text-card-foreground shadow">
-      <div class="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-        <h3 class="tracking-tight text-sm font-medium">文章总数</h3>
-      </div>
-      <div class="p-6 pt-0">
+  <!-- Data Cards -->
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">文章总数</CardTitle>
+        <FileText className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
         <div class="text-2xl font-bold">{totalPosts}</div>
-      </div>
-    </div>
+        <p class="text-xs text-muted-foreground">
+          {publishedPosts} 已发布 · {draftPosts} 草稿
+        </p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">标签总数</CardTitle>
+        <Tags className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div class="text-2xl font-bold">{totalTags}</div>
+        <p class="text-xs text-muted-foreground">
+          用于分类和检索
+        </p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">图片总数</CardTitle>
+        <ImageIcon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div class="text-2xl font-bold">{totalImages}</div>
+        <p class="text-xs text-muted-foreground">
+          存储在 R2 Bucket
+        </p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">站点状态</CardTitle>
+        <BarChart className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div class="text-2xl font-bold">运行中</div>
+        <p class="text-xs text-muted-foreground">
+          Cloudflare Pages
+        </p>
+      </CardContent>
+    </Card>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+    <!-- Recent Activity -->
+    <Card className="col-span-4">
+      <CardHeader>
+        <CardTitle>最近动态</CardTitle>
+        <CardDescription>
+          最近编辑或发布的 5 篇文章
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-8">
+          {recentPosts.map((post) => (
+            <div class="flex items-center">
+              <div class="space-y-1">
+                <p class="text-sm font-medium leading-none">
+                  <a href={`/admin/posts/${post.id}/edit`} class="hover:underline">
+                    {post.title}
+                  </a>
+                </p>
+                <p class="text-xs text-muted-foreground">
+                  {post.status === 'published' ? '已发布' : '草稿'} · {post.updatedAt ? format(post.updatedAt, "yyyy-MM-dd HH:mm") : "无时间"}
+                </p>
+              </div>
+              <div class="ml-auto font-medium text-sm">
+                <a href={`/admin/posts/${post.id}/edit`} class="text-muted-foreground hover:text-primary">
+                  编辑
+                </a>
+              </div>
+            </div>
+          ))}
+          {recentPosts.length === 0 && (
+            <p class="text-sm text-muted-foreground">暂无文章动态</p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+
+    <!-- Quick Actions -->
+    <Card className="col-span-3">
+      <CardHeader>
+        <CardTitle>快捷操作</CardTitle>
+        <CardDescription>
+          常用功能快速入口
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <Button variant="outline" className="w-full justify-start" asChild>
+          <a href="/admin/images">
+            <Upload className="mr-2 h-4 w-4" />
+            上传图片
+          </a>
+        </Button>
+        <Button variant="outline" className="w-full justify-start" asChild>
+          <a href="/admin/posts/new">
+            <PenTool className="mr-2 h-4 w-4" />
+            写新文章
+          </a>
+        </Button>
+        <Button variant="outline" className="w-full justify-start" asChild>
+          <a href="/" target="_blank">
+            <ExternalLink className="mr-2 h-4 w-4" />
+            查看站点
+          </a>
+        </Button>
+      </CardContent>
+    </Card>
   </div>
 </AdminLayout>
 
