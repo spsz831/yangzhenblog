@@ -17,15 +17,21 @@ export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => 
     const db = getDb(locals.runtime.env.DB);
 
     if (action === "update_profile") {
+        const username = formData.get("username")?.toString();
         const nickname = formData.get("nickname")?.toString();
         const email = formData.get("email")?.toString();
         const avatar = formData.get("avatar")?.toString();
 
-        if (!email) return redirect("/admin/settings?error=missing_fields");
+        if (!email || !username) return redirect("/admin/settings?error=missing_fields");
 
-        await db.update(users)
-            .set({ nickname, email, avatar })
-            .where(eq(users.id, userId));
+        try {
+            await db.update(users)
+                .set({ username, nickname, email, avatar })
+                .where(eq(users.id, userId));
+        } catch (e) {
+            // Handle unique constraint violation (e.g. username already taken)
+            return redirect("/admin/settings?error=update_failed");
+        }
 
         return redirect("/admin/settings?success=profile_updated");
     }
