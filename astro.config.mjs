@@ -7,7 +7,8 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
-  site: 'https://yangzhenblog.pages.dev',
+  site: 'https://yangzhen.de5.net',
+  prefetch: true,
   integrations: [react(), tailwind({
     applyBaseStyles: false,
   })],
