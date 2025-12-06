@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { marked } from "marked";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { PostActions } from "@/components/PostActions";
 
 // export const prerender = true;
 
@@ -49,5 +50,13 @@ const content = marked.parse(post.content);
         </h1>
     </div>
     <div class="prose prose-stone dark:prose-invert max-w-none py-10" set:html={content} />
+    
+    <PostActions 
+      client:load 
+      postId={post.id} 
+      initialLikes={post.likes} 
+      postUrl={Astro.url.href} 
+      postTitle={post.title} 
+    />
   </article>
 </PublicLayout>
