@@ -28,6 +28,7 @@ export const POST: APIRoute = async ({ request, locals, redirect }) => {
             content,
             excerpt,
             status: status as "draft" | "published" | "scheduled",
+            likes: 0,
             publishedAt,
         }).returning({ id: posts.id });
 
