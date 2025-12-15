@@ -18,6 +18,7 @@ const { title, description = "杨振的个人博客" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} - 杨振博客</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RR2CR2641T"></script>

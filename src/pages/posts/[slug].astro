@@ -28,7 +28,24 @@ const content = marked.parse(post.content);
 
 ---
 
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.title,
+  "description": post.excerpt || "",
+  "datePublished": post.publishedAt?.toISOString(),
+  "dateModified": post.updatedAt?.toISOString() || post.publishedAt?.toISOString(),
+  "author": [{
+      "@type": "Person",
+      "name": "杨振",
+      "url": "https://yangzhen.de5.net"
+  }]
+};
+
+---
+
 <PublicLayout title={post.title} description={post.excerpt || ""}>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <article class="container max-w-3xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 border-b pb-10">
         <div class="flex w-full flex-col gap-2">
