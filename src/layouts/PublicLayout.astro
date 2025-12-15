@@ -18,6 +18,16 @@ const { title, description = "杨振的个人博客" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} - 杨振博客</title>
     <meta name="description" content={description} />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RR2CR2641T"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-RR2CR2641T');
+    </script>
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />

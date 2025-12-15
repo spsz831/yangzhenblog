@@ -13,10 +13,9 @@ interface PostActionsProps {
     postId: number;
     initialLikes: number;
     postUrl: string;
-    postTitle: string;
 }
 
-export function PostActions({ postId, initialLikes, postUrl, postTitle }: PostActionsProps) {
+export function PostActions({ postId, initialLikes, postUrl }: PostActionsProps) {
     const [likes, setLikes] = useState(initialLikes);
     const [isLiked, setIsLiked] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
