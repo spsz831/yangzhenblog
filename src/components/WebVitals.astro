@@ -1,0 +1,21 @@
+<script>
+  import { onCLS, onFCP, onLCP, onINP, onTTFB } from 'web-vitals';
+
+  function sendToGoogleAnalytics({ name, delta, value, id }) {
+    // Assuming global gtag is available from PublicLayout
+    if (typeof gtag === 'function') {
+      gtag('event', name, {
+        event_category: 'Web Vitals',
+        event_label: id,
+        value: Math.round(name === 'CLS' ? delta * 1000 : delta),
+        non_interaction: true,
+      });
+    }
+  }
+
+  onCLS(sendToGoogleAnalytics);
+  onFCP(sendToGoogleAnalytics);
+  onLCP(sendToGoogleAnalytics);
+  onINP(sendToGoogleAnalytics);
+  onTTFB(sendToGoogleAnalytics);
+</script>

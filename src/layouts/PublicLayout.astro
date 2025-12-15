@@ -3,6 +3,7 @@ import "@/styles/global.css";
 import { ModeToggle } from "@/components/ModeToggle";
 import { Rss } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import WebVitals from "@/components/WebVitals.astro";
 
 interface Props {
   title: string;
@@ -98,5 +99,6 @@ const { title, description = "杨振的个人博客" } = Astro.props;
         </p>
       </div>
     </footer>
+    <WebVitals />
   </body>
 </html>

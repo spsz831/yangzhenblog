@@ -12,3 +12,20 @@ migrations_dir = "drizzle"
 binding = "BUCKET"
 bucket_name = "yangzhenblog-assets"
 preview_bucket_name = "yangzhenblog-assets-preview"
+
+# Static Assets Caching
+[[headers]]
+  pattern = "/assets/*"
+  headers = { Cache-Control = "public, max-age=31536000, immutable" }
+
+[[headers]]
+  pattern = "/images/*"
+  headers = { Cache-Control = "public, max-age=31536000, immutable" }
+
+[[headers]]
+  pattern = "/*.js"
+  headers = { Cache-Control = "public, max-age=31536000, immutable" }
+
+[[headers]]
+  pattern = "/*.css"
+  headers = { Cache-Control = "public, max-age=31536000, immutable" }
