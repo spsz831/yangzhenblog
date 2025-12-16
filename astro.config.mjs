@@ -14,4 +14,7 @@ export default defineConfig({
   integrations: [react(), tailwind({
     applyBaseStyles: false,
   }), sitemap()],
+  image: {
+    domains: ['image-bed-worker.yangzhen0806.workers.dev', 'yangzhen.de5.net', 'github.com'],
+  },
 });
