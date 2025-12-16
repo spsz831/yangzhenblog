@@ -21,6 +21,37 @@ const { title, description = "杨振的个人技术博客，分享前端开发�
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta name="baidu-site-verification" content="codeva-moE8tYYGyr" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    
+    <!-- Mobile Optimization -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#020817" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="杨振博客" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Schema.org WebSite -->
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "杨振博客",
+        "url": "https://yangzhen.de5.net",
+        "author": {
+          "@type": "Person",
+          "name": "杨振",
+          "url": "https://yangzhen.de5.net/about"
+        },
+        "description": "杨振的个人技术博客，分享前端开发、生活感悟和独立开发故事"
+      }
+    </script>
 
     <!-- Favicons -->
     <link rel="icon" type="image/jpeg" href="/avatar.jpg" />
