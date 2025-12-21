@@ -2,6 +2,11 @@
 
 All notable changes to the "Yangzhen Blog" project will be documented in this file.
 
+## [Unreleased] - 2025-12-21
+
+### 🔧 Maintenance
+- **Domain Migration**: Updated all configuration, SEO, and content references from `yangzhen.de5.net` to `yangzhenai.top`.
+
 ## [Unreleased] - 2025-12-16
 
 ### 🚀 Features

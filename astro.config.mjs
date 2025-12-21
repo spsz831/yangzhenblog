@@ -9,7 +9,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
-  site: 'https://yangzhen.de5.net',
+  site: 'https://yangzhenai.top',
   prefetch: true,
   integrations: [react(), tailwind({
     applyBaseStyles: false,
