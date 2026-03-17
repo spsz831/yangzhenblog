@@ -31,8 +31,8 @@ const publishedPosts = await db.select().from(posts)
       <div class="text-3xl md:text-5xl font-semibold text-foreground mb-4 min-h-[1.5em] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
         <TypewriterEffect client:load />
       </div>
-      <div class="text-2xl md:text-4xl font-medium text-muted-foreground mb-4 animate-in fade-in slide-in-from-bottom-7 duration-700 delay-300">
-        电影爱好者 | 象棋玩家 | 摄影师 | 自驾达人 🎭
+      <div class="text-2xl md:text-4xl font-medium mb-4 animate-in fade-in slide-in-from-bottom-7 duration-700 delay-300">
+        <span class="text-red-500">电影爱好者</span> | <span class="text-amber-600">象棋玩家</span> | <span class="text-green-500">摄影师</span> | <span class="text-blue-500">自驾达人</span> <span class="text-purple-500">🎭</span>
       </div>
       <p class="text-lg text-muted-foreground max-w-[700px] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
         在这里记录我的日常、想法，故事和观点，做一个简单、更好的自己💪
