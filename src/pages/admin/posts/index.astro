@@ -1,8 +1,8 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { posts, postsToTags, tags } from "@/db/schema";
+import { desc, eq, inArray } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PostFilterTabs } from "@/components/admin/PostFilterTabs";
@@ -15,12 +15,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Plus } from "lucide-react";
 import FormAlert from "@/components/admin/FormAlert.astro";
 
 export const prerender = false;
 
 const status = Astro.url.searchParams.get("status") || "all";
+const search = Astro.url.searchParams.get("q")?.trim() ?? "";
 const success = Astro.url.searchParams.get("success");
 
 const db = getDb(Astro.locals.runtime.env.DB);
@@ -33,21 +33,75 @@ if (status !== "all") {
 }
 
 const allPosts = await query.all();
+const postIds = allPosts.map((post) => post.id);
+const tagRows = postIds.length > 0
+  ? await db
+      .select({
+        postId: postsToTags.postId,
+        tagName: tags.name,
+      })
+      .from(postsToTags)
+      .innerJoin(tags, eq(tags.id, postsToTags.tagId))
+      .where(inArray(postsToTags.postId, postIds))
+      .all()
+  : [];
+
+const tagsByPostId = new Map<number, string[]>();
+for (const row of tagRows) {
+  const current = tagsByPostId.get(row.postId) ?? [];
+  current.push(row.tagName);
+  tagsByPostId.set(row.postId, current);
+}
+
+const filteredPosts = allPosts.filter((post) => {
+  if (!search) return true;
+  const haystack = [
+    post.title,
+    post.slug,
+    ...(tagsByPostId.get(post.id) ?? []),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(search.toLowerCase());
+});
 ---
 
 <AdminLayout title="文章列表">
   <FormAlert success={success === "post_created" ? "文章已创建。" : success === "post_updated" ? "文章已更新。" : success === "post_deleted" ? "文章已删除。" : null} />
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold tracking-tight">文章列表</h2>
-    <Button asChild>
-      <a href="/admin/posts/new">
-        新建文章
-      </a>
-    </Button>
+  <div class="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+    <div class="space-y-1">
+      <h2 class="text-2xl font-bold tracking-tight">文章列表</h2>
+      <p class="text-sm text-muted-foreground">按状态、标题、slug 或标签搜索，并快速发现缺失的 SEO/封面项。</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <form action="/admin/posts" method="GET" class="flex flex-wrap items-center gap-3">
+        {status !== "all" && <input type="hidden" name="status" value={status} />}
+        <input
+          type="search"
+          name="q"
+          value={search}
+          placeholder="搜索标题、slug、标签"
+          class="h-10 min-w-[260px] rounded-md border border-input bg-background px-3 text-sm"
+        />
+        <Button type="submit" variant="outline">搜索</Button>
+      </form>
+      <Button asChild>
+        <a href="/admin/posts/new">
+          新建文章
+        </a>
+      </Button>
+    </div>
   </div>
 
   <div class="mb-6">
-    <PostFilterTabs defaultValue={status} client:load />
+    <PostFilterTabs defaultValue={status} search={search} client:load />
+  </div>
+
+  <div class="mb-4 flex flex-wrap gap-3 text-sm text-muted-foreground">
+    <span>当前共 {filteredPosts.length} 篇结果</span>
+    <span>缺少 SEO 标题 {filteredPosts.filter((post) => !post.metaTitle?.trim()).length} 篇</span>
+    <span>缺少 SEO 描述 {filteredPosts.filter((post) => !post.metaDescription?.trim()).length} 篇</span>
+    <span>缺少封面图 {filteredPosts.filter((post) => !post.coverImage?.trim()).length} 篇</span>
   </div>
 
   <div class="rounded-md border">
@@ -55,33 +109,72 @@ const allPosts = await query.all();
       <TableHeader>
         <TableRow>
           <TableHead>标题</TableHead>
+          <TableHead>Slug / 标签</TableHead>
           <TableHead>状态</TableHead>
+          <TableHead>完整度</TableHead>
           <TableHead>发布时间</TableHead>
           <TableHead className="text-right">操作</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {allPosts.map((post) => (
+        {filteredPosts.map((post) => {
+          const postTags = tagsByPostId.get(post.id) ?? [];
+          const missingItems = [
+            !post.metaTitle?.trim() ? "SEO 标题" : null,
+            !post.metaDescription?.trim() ? "SEO 描述" : null,
+            !post.coverImage?.trim() ? "封面图" : null,
+          ].filter(Boolean);
+
+          return (
           <TableRow key={post.id}>
-            <TableCell className="font-medium">{post.title}</TableCell>
+            <TableCell className="font-medium">
+              <div class="space-y-1">
+                <p>{post.title}</p>
+                <p class="text-xs text-muted-foreground">创建于 {post.createdAt ? format(post.createdAt, "yyyy-MM-dd HH:mm") : "-"}</p>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div class="space-y-2">
+                <p class="text-sm font-mono text-muted-foreground">{post.slug}</p>
+                <div class="flex flex-wrap gap-2">
+                  {postTags.length > 0 ? postTags.map((tag) => (
+                    <Badge variant="outline">{tag}</Badge>
+                  )) : <span class="text-xs text-muted-foreground">暂无标签</span>}
+                </div>
+              </div>
+            </TableCell>
             <TableCell>
               <Badge variant={post.status === 'published' ? 'default' : (post.status === 'scheduled' ? 'secondary' : 'outline')}>
                 {post.status === 'published' ? '已发布' : (post.status === 'scheduled' ? '定时发布' : '草稿')}
               </Badge>
             </TableCell>
             <TableCell>
+              <div class="flex flex-wrap gap-2">
+                {missingItems.length === 0 ? (
+                  <Badge variant="outline" className="border-emerald-500/30 text-emerald-700 dark:text-emerald-300">完整</Badge>
+                ) : missingItems.map((item) => (
+                  <Badge variant="outline" className="border-amber-500/30 text-amber-700 dark:text-amber-300">{item}</Badge>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
               {post.publishedAt ? format(post.publishedAt, "yyyy-MM-dd HH:mm") : "-"}
             </TableCell>
             <TableCell className="text-right">
-              <Button variant="ghost" size="sm" asChild>
-                <a href={`/admin/posts/${post.id}/edit`}>编辑</a>
-              </Button>
+              <div class="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" asChild>
+                  <a href={`/admin/posts/${post.id}/edit`}>编辑</a>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={`/posts/${post.slug}`} target="_blank" rel="noreferrer">预览</a>
+                </Button>
+              </div>
             </TableCell>
           </TableRow>
-        ))}
-        {allPosts.length === 0 && (
+        )})}
+        {filteredPosts.length === 0 && (
           <TableRow>
-            <TableCell colSpan={4} className="h-24 text-center">
+            <TableCell colSpan={6} className="h-24 text-center">
               暂无文章
             </TableCell>
           </TableRow>

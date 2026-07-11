@@ -94,6 +94,10 @@ const parsePublishedAt = (publishedAtStr: string | undefined, status: PostStatus
         throw new PostFormError("invalid_published_at", "发布时间格式无效。");
     }
 
+    if (status === "scheduled" && publishedAt.getTime() <= Date.now()) {
+        throw new PostFormError("scheduled_in_past", "定时发布时间必须晚于当前时间。");
+    }
+
     return publishedAt;
 };
 

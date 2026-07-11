@@ -1,5 +1,14 @@
 import type { APIRoute } from "astro";
 
+const normalizeFileName = (fileName: string) =>
+    fileName
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9._-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "")
+        .toLowerCase() || "image";
+
 export const GET: APIRoute = async ({ locals }) => {
     const bucket = locals.runtime.env.BUCKET;
     const list = await bucket.list();
@@ -30,7 +39,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response("File too large (max 10MB)", { status: 400 });
     }
 
-    const key = `${Date.now()}-${file.name}`;
+    const normalizedName = normalizeFileName(file.name);
+    const key = `${Date.now()}-${normalizedName}`;
     await bucket.put(key, file);
 
     return new Response(JSON.stringify({

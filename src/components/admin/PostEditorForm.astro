@@ -129,7 +129,10 @@ const slugPostId = values.id;
             data-editor-split-panel
             style="--editor-pane-width: 58%; --preview-pane-width: 42%;"
           >
-            <div class="space-y-2">
+            <div
+              class="space-y-2 rounded-[28px] border border-dashed border-transparent transition"
+              data-editor-drop-zone
+            >
               <textarea
                 id="content"
                 name="content"
@@ -138,6 +141,7 @@ const slugPostId = values.id;
                 placeholder="# Hello World"
                 data-markdown-input
               >{content}</textarea>
+              <p class="px-2 text-xs text-muted-foreground">支持把图片直接拖进编辑区上传到 R2，上传成功后会自动插入 Markdown。</p>
             </div>
             <button
               type="button"
@@ -195,7 +199,7 @@ const slugPostId = values.id;
             <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
               <div class="space-y-2">
                 <Label htmlFor="status">状态</Label>
-                <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" data-status-select>
                   <option value="draft" selected={status === "draft"}>草稿</option>
                   <option value="published" selected={status === "published"}>发布</option>
                   <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
@@ -204,8 +208,11 @@ const slugPostId = values.id;
 
               <div class="space-y-2">
                 <Label htmlFor="publishedAt">发布时间</Label>
-                <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
+                <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} data-published-at-input />
               </div>
+            </div>
+            <div class="rounded-2xl border border-border/70 bg-muted/10 px-4 py-3 text-xs text-muted-foreground" data-publish-status-hint>
+              草稿不会对外发布；正式发布时若未填写发布时间，会默认使用当前时间。
             </div>
 
             <div class="space-y-2">
@@ -216,7 +223,19 @@ const slugPostId = values.id;
             <div class="space-y-2">
               <Label htmlFor="coverImage">封面图 URL</Label>
               <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} data-cover-image-input />
-              <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent"
+                  data-cover-library-open
+                >从媒体库选择</button>
+                <button
+                  type="button"
+                  class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                  data-cover-image-clear
+                >清空封面</button>
+              </div>
+              <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，也可以直接从媒体库选择，作为文章头图和分享卡片。</p>
               <div class="hidden overflow-hidden rounded-2xl border border-border/70 bg-muted/30 shadow-sm" data-cover-preview-wrapper>
                 <img
                   src={coverImage || ""}
@@ -275,8 +294,8 @@ const slugPostId = values.id;
     <div class="w-full max-w-xl rounded-[28px] border border-border/70 bg-background p-6 shadow-[0_32px_80px_-28px_rgba(15,23,42,0.45)]">
       <div class="mb-5 flex items-start justify-between gap-4">
         <div class="space-y-1">
-          <h3 class="text-lg font-semibold tracking-tight">插入图片</h3>
-          <p class="text-sm text-muted-foreground">上传到 R2，或直接插入已有图片地址。</p>
+          <h3 class="text-lg font-semibold tracking-tight" data-image-modal-title>插入图片</h3>
+          <p class="text-sm text-muted-foreground" data-image-modal-description>上传到 R2，或直接插入已有图片地址。</p>
         </div>
         <button
           type="button"
@@ -289,7 +308,7 @@ const slugPostId = values.id;
         <div class="space-y-3 rounded-2xl border border-border/70 bg-muted/10 p-4">
           <div class="space-y-1">
             <p class="text-sm font-medium">上传图片</p>
-            <p class="text-xs text-muted-foreground">选择本地图片后自动上传并插入 Markdown。</p>
+            <p class="text-xs text-muted-foreground">选择本地图片后上传到 R2，可插入正文或直接设为封面图。</p>
           </div>
           <input
             type="file"
@@ -297,6 +316,9 @@ const slugPostId = values.id;
             class="block w-full rounded-xl border border-border/70 bg-background px-3 py-2 text-sm"
             data-image-file-input
           />
+          <div class="hidden overflow-hidden rounded-full bg-muted/60" data-image-upload-progress-wrapper>
+            <div class="h-2 rounded-full bg-primary transition-all" style="width: 0%;" data-image-upload-progress-bar></div>
+          </div>
           <Button type="button" className="w-full" data-image-upload-confirm>上传并插入</Button>
         </div>
 
@@ -359,9 +381,20 @@ const slugPostId = values.id;
     const markdownInput = form.querySelector("[data-markdown-input]");
     const markdownPreview = form.querySelector("[data-markdown-preview]");
     const markdownToolbar = form.querySelector("[data-markdown-toolbar]");
+    const editorDropZone = form.querySelector("[data-editor-drop-zone]");
     const coverInput = form.querySelector("[data-cover-image-input]");
+    const coverLibraryOpenButton = form.querySelector("[data-cover-library-open]");
+    const coverClearButton = form.querySelector("[data-cover-image-clear]");
     const coverPreviewWrapper = form.querySelector("[data-cover-preview-wrapper]");
     const coverPreviewImage = form.querySelector("[data-cover-preview-image]");
+    const statusSelect = form.querySelector("[data-status-select]");
+    const publishedAtInput = form.querySelector("[data-published-at-input]");
+    const publishStatusHint = form.querySelector("[data-publish-status-hint]");
+    const titleInput = form.querySelector('input[name="title"]');
+    const slugInput = form.querySelector('input[name="slug"]');
+    const excerptInput = form.querySelector('textarea[name="excerpt"]');
+    const metaTitleInput = form.querySelector('input[name="metaTitle"]');
+    const metaDescriptionInput = form.querySelector('textarea[name="metaDescription"]');
     const uploadStatusEl = form.querySelector("[data-image-upload-status]");
     const clearDraftButton = form.querySelector("[data-clear-draft-button]");
     const splitPanel = form.querySelector("[data-editor-split-panel]");
@@ -370,8 +403,12 @@ const slugPostId = values.id;
     const focusModeButtons = Array.from(form.querySelectorAll("[data-focus-mode-toggle]"));
     const imageModal = form.querySelector("[data-image-modal]");
     const imageModalCloseButton = form.querySelector("[data-image-modal-close]");
+    const imageModalTitle = form.querySelector("[data-image-modal-title]");
+    const imageModalDescription = form.querySelector("[data-image-modal-description]");
     const imageFileInput = form.querySelector("[data-image-file-input]");
     const imageUploadConfirmButton = form.querySelector("[data-image-upload-confirm]");
+    const imageUploadProgressWrapper = form.querySelector("[data-image-upload-progress-wrapper]");
+    const imageUploadProgressBar = form.querySelector("[data-image-upload-progress-bar]");
     const imageUrlInput = form.querySelector("[data-image-url-input]");
     const imageAltInput = form.querySelector("[data-image-alt-input]");
     const imageUrlConfirmButton = form.querySelector("[data-image-url-confirm]");
@@ -387,6 +424,7 @@ const slugPostId = values.id;
     const splitLayoutStorageKey = `${autosaveKey}:editor-split`;
     const focusModeStorageKey = `${autosaveKey}:focus-mode`;
     let cachedImageLibrary = [];
+    let imageModalTarget = "content";
 
     const setStatus = (message) => {
       if (statusEl instanceof HTMLElement) {
@@ -434,6 +472,67 @@ const slugPostId = values.id;
       if (imageLibraryStatus instanceof HTMLElement) {
         imageLibraryStatus.textContent = message;
       }
+    };
+
+    const setUploadProgress = (value) => {
+      if (!(imageUploadProgressWrapper instanceof HTMLElement) || !(imageUploadProgressBar instanceof HTMLElement)) return;
+      const nextValue = Math.max(0, Math.min(100, value));
+      imageUploadProgressWrapper.classList.toggle("hidden", nextValue <= 0 || nextValue >= 100);
+      imageUploadProgressBar.style.width = `${nextValue}%`;
+    };
+
+    const updateImageModalCopy = () => {
+      const isCoverTarget = imageModalTarget === "cover";
+      if (imageModalTitle instanceof HTMLElement) {
+        imageModalTitle.textContent = isCoverTarget ? "选择封面图" : "插入图片";
+      }
+      if (imageModalDescription instanceof HTMLElement) {
+        imageModalDescription.textContent = isCoverTarget
+          ? "上传到 R2，或从已有图片中直接设为文章封面。"
+          : "上传到 R2，或直接插入已有图片地址。";
+      }
+      if (imageUploadConfirmButton instanceof HTMLButtonElement) {
+        imageUploadConfirmButton.textContent = isCoverTarget ? "上传并设为封面" : "上传并插入";
+      }
+      if (imageUrlConfirmButton instanceof HTMLButtonElement) {
+        imageUrlConfirmButton.textContent = isCoverTarget ? "设为封面图" : "插入图片地址";
+      }
+    };
+
+    const renderPublishHint = () => {
+      if (!(publishStatusHint instanceof HTMLElement) || !(statusSelect instanceof HTMLSelectElement)) return;
+      const nextStatus = statusSelect.value;
+      const nextPublishedAt = publishedAtInput instanceof HTMLInputElement ? publishedAtInput.value.trim() : "";
+
+      if (nextStatus === "draft") {
+        publishStatusHint.textContent = "草稿不会对外发布；正式发布时若未填写发布时间，会默认使用当前时间。";
+        publishStatusHint.className = "rounded-2xl border border-border/70 bg-muted/10 px-4 py-3 text-xs text-muted-foreground";
+        return;
+      }
+
+      if (nextStatus === "published") {
+        publishStatusHint.textContent = nextPublishedAt
+          ? "将按你填写的发布时间保存为已发布文章。"
+          : "未填写发布时间时，提交后会自动使用当前时间立即发布。";
+        publishStatusHint.className = "rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-xs text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300";
+        return;
+      }
+
+      if (!nextPublishedAt) {
+        publishStatusHint.textContent = "定时发布必须填写未来时间，否则无法提交。";
+        publishStatusHint.className = "rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-3 text-xs text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300";
+        return;
+      }
+
+      const scheduledAt = new Date(nextPublishedAt);
+      if (Number.isNaN(scheduledAt.getTime()) || scheduledAt.getTime() <= Date.now()) {
+        publishStatusHint.textContent = "当前定时时间无效，必须晚于现在。";
+        publishStatusHint.className = "rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs text-destructive";
+        return;
+      }
+
+      publishStatusHint.textContent = `文章会在 ${scheduledAt.toLocaleString("zh-CN")} 自动发布。`;
+      publishStatusHint.className = "rounded-2xl border border-sky-200 bg-sky-50/80 px-4 py-3 text-xs text-sky-700 dark:border-sky-900/60 dark:bg-sky-950/30 dark:text-sky-300";
     };
 
     const clampSplit = (value) => Math.min(72, Math.max(38, value));
@@ -502,13 +601,19 @@ const slugPostId = values.id;
       }
     };
 
-    const openImageModal = () => {
+    const openImageModal = (target = "content") => {
       if (!(imageModal instanceof HTMLElement)) return;
+      imageModalTarget = target === "cover" ? "cover" : "content";
+      updateImageModalCopy();
+      setUploadProgress(0);
       imageModal.classList.remove("hidden");
       imageModal.classList.add("flex");
       setImageModalStatus("上传限制 10MB，建议使用清晰的横图或插图资源。");
       if (imageUrlInput instanceof HTMLInputElement) {
         imageUrlInput.focus();
+      }
+      if (cachedImageLibrary.length > 0) {
+        window.requestAnimationFrame(() => renderRecentImages(cachedImageLibrary));
       }
     };
 
@@ -516,11 +621,29 @@ const slugPostId = values.id;
       if (!(imageModal instanceof HTMLElement)) return;
       imageModal.classList.add("hidden");
       imageModal.classList.remove("flex");
+      setUploadProgress(0);
     };
 
     const insertImageMarkdown = (url, altText = "图片描述") => {
       const insertText = `\n![${altText}](${url})\n`;
       insertBlock(insertText, insertText.length);
+    };
+
+    const applySelectedImage = (url, altText = "图片描述") => {
+      if (imageModalTarget === "cover") {
+        if (coverInput instanceof HTMLInputElement) {
+          coverInput.value = url;
+          coverInput.dispatchEvent(new Event("input", { bubbles: true }));
+          coverInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        setImageModalStatus("封面图已更新。");
+        setUploadStatus("封面图已更新");
+        return;
+      }
+
+      insertImageMarkdown(url, altText);
+      setImageModalStatus("图片已插入正文。");
+      setUploadStatus("图片已上传并插入正文");
     };
 
     const updateTextarea = (nextValue, selectionStart, selectionEnd = selectionStart) => {
@@ -684,26 +807,60 @@ const slugPostId = values.id;
       }
     };
 
-    const uploadImage = async (file) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch("/api/admin/images", {
-        method: "POST",
-        body: formData,
+    const uploadImage = (file, options = {}) =>
+      new Promise((resolve, reject) => {
+        const attemptUpload = (attempt) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          const request = new XMLHttpRequest();
+          request.open("POST", "/api/admin/images");
+          request.responseType = "json";
+
+          request.upload.addEventListener("progress", (event) => {
+            if (!event.lengthComputable) return;
+            const progress = Math.round((event.loaded / event.total) * 100);
+            if (typeof options.onProgress === "function") {
+              options.onProgress(progress);
+            }
+          });
+
+          request.addEventListener("load", () => {
+            if (request.status < 200 || request.status >= 300) {
+              if (attempt < (options.retries ?? 1)) {
+                attemptUpload(attempt + 1);
+                return;
+              }
+              reject(new Error("upload_failed"));
+              return;
+            }
+
+            const result = request.response;
+            const relativeUrl = result?.image?.url;
+            if (typeof relativeUrl !== "string") {
+              reject(new Error("invalid_upload_response"));
+              return;
+            }
+
+            if (typeof options.onProgress === "function") {
+              options.onProgress(100);
+            }
+            resolve(`${window.location.origin}${relativeUrl}`);
+          });
+
+          request.addEventListener("error", () => {
+            if (attempt < (options.retries ?? 1)) {
+              attemptUpload(attempt + 1);
+              return;
+            }
+            reject(new Error("upload_failed"));
+          });
+
+          request.send(formData);
+        };
+
+        attemptUpload(0);
       });
-
-      if (!response.ok) {
-        throw new Error("upload_failed");
-      }
-
-      const result = await response.json();
-      const relativeUrl = result?.image?.url;
-      if (typeof relativeUrl !== "string") {
-        throw new Error("invalid_upload_response");
-      }
-
-      return `${window.location.origin}${relativeUrl}`;
-    };
 
     const handlePasteUpload = async (event) => {
       if (!(markdownInput instanceof HTMLTextAreaElement)) return;
@@ -715,15 +872,101 @@ const slugPostId = values.id;
 
       event.preventDefault();
       setUploadStatus("正在上传粘贴图片…");
+      setUploadProgress(0);
 
       try {
-        const imageUrl = await uploadImage(file);
-        const insertText = `\n![${file.name || "pasted-image"}](${imageUrl})\n`;
-        insertBlock(insertText, insertText.length);
-        setUploadStatus("图片已上传并插入正文");
+        const imageUrl = await uploadImage(file, {
+          retries: 1,
+          onProgress: (progress) => setUploadProgress(progress),
+        });
+        applySelectedImage(imageUrl, file.name || "pasted-image");
       } catch {
         setUploadStatus("图片上传失败，请重试");
+      } finally {
+        window.setTimeout(() => setUploadProgress(0), 400);
       }
+    };
+
+    const handleDroppedImageUpload = async (event) => {
+      if (!(editorDropZone instanceof HTMLElement)) return;
+      const file = Array.from(event.dataTransfer?.files ?? []).find((item) => item.type.startsWith("image/"));
+      if (!file) return;
+
+      event.preventDefault();
+      editorDropZone.classList.remove("border-primary/50", "bg-primary/5");
+      setUploadStatus("正在上传拖拽图片…");
+      setUploadProgress(0);
+
+      try {
+        const imageUrl = await uploadImage(file, {
+          retries: 1,
+          onProgress: (progress) => setUploadProgress(progress),
+        });
+        imageModalTarget = "content";
+        applySelectedImage(imageUrl, file.name || "dropped-image");
+      } catch {
+        setUploadStatus("拖拽图片上传失败，请重试");
+      } finally {
+        window.setTimeout(() => setUploadProgress(0), 400);
+      }
+    };
+
+    const validateBeforeSubmit = () => {
+      const issues = [];
+      const warnings = [];
+
+      const currentTitle = titleInput instanceof HTMLInputElement ? titleInput.value.trim() : "";
+      const currentSlug = slugInput instanceof HTMLInputElement ? slugInput.value.trim() : "";
+      const currentContent = markdownInput instanceof HTMLTextAreaElement ? markdownInput.value.trim() : "";
+      const currentStatus = statusSelect instanceof HTMLSelectElement ? statusSelect.value : "draft";
+      const currentPublishedAt = publishedAtInput instanceof HTMLInputElement ? publishedAtInput.value.trim() : "";
+      const currentCover = coverInput instanceof HTMLInputElement ? coverInput.value.trim() : "";
+      const currentExcerpt = excerptInput instanceof HTMLTextAreaElement ? excerptInput.value.trim() : "";
+      const currentMetaTitle = metaTitleInput instanceof HTMLInputElement ? metaTitleInput.value.trim() : "";
+      const currentMetaDescription = metaDescriptionInput instanceof HTMLTextAreaElement ? metaDescriptionInput.value.trim() : "";
+
+      if (!currentTitle || !currentSlug || !currentContent) {
+        issues.push("标题、Slug 和正文不能为空。");
+      }
+
+      if (currentStatus === "scheduled") {
+        if (!currentPublishedAt) {
+          issues.push("定时发布必须填写发布时间。");
+        } else {
+          const scheduledAt = new Date(currentPublishedAt);
+          if (Number.isNaN(scheduledAt.getTime()) || scheduledAt.getTime() <= Date.now()) {
+            issues.push("定时发布时间必须晚于当前时间。");
+          }
+        }
+      }
+
+      if ((currentStatus === "published" || currentStatus === "scheduled") && !currentCover) {
+        warnings.push("封面图为空");
+      }
+
+      if ((currentStatus === "published" || currentStatus === "scheduled") && !currentExcerpt) {
+        warnings.push("摘要将由正文自动生成");
+      }
+
+      if ((currentStatus === "published" || currentStatus === "scheduled") && !currentMetaTitle) {
+        warnings.push("SEO 标题将默认使用文章标题");
+      }
+
+      if ((currentStatus === "published" || currentStatus === "scheduled") && !currentMetaDescription) {
+        warnings.push("SEO 描述将默认使用摘要");
+      }
+
+      if (issues.length > 0) {
+        window.alert(issues.join("\n"));
+        return false;
+      }
+
+      if (warnings.length > 0) {
+        const shouldContinue = window.confirm(`当前提交仍有以下提醒：\n- ${warnings.join("\n- ")}\n\n是否继续提交？`);
+        if (!shouldContinue) return false;
+      }
+
+      return true;
     };
 
     const readValue = (field) => {
@@ -789,13 +1032,16 @@ const slugPostId = values.id;
     }
 
     applyFocusMode(savedFocusMode ?? "split");
+    updateImageModalCopy();
 
     renderMarkdown();
     renderCoverPreview();
+    renderPublishHint();
 
     const renderRecentImages = (images) => {
       if (!(imageLibraryList instanceof HTMLElement)) return;
       imageLibraryList.innerHTML = "";
+      const primaryActionLabel = imageModalTarget === "cover" ? "设为封面" : "插入";
 
       const query = imageLibrarySearchInput instanceof HTMLInputElement
         ? imageLibrarySearchInput.value.trim().toLowerCase()
@@ -841,7 +1087,7 @@ const slugPostId = values.id;
             <p class="line-clamp-1 text-sm font-medium">${image.key}</p>
             <p class="text-[11px] text-muted-foreground">${uploadedAt}</p>
             <div class="flex flex-wrap gap-2">
-              <button type="button" class="rounded-lg border border-border/70 bg-background px-2.5 py-1 text-[11px] transition hover:bg-accent" data-image-action="insert">插入</button>
+              <button type="button" class="rounded-lg border border-border/70 bg-background px-2.5 py-1 text-[11px] transition hover:bg-accent" data-image-action="insert">${primaryActionLabel}</button>
               <button type="button" class="rounded-lg border border-border/70 bg-background px-2.5 py-1 text-[11px] transition hover:bg-accent" data-image-action="copy">复制链接</button>
               <button type="button" class="rounded-lg border border-destructive/30 bg-background px-2.5 py-1 text-[11px] text-destructive transition hover:bg-destructive/10" data-image-action="delete" data-image-key="${safeKey}">删除</button>
             </div>
@@ -858,8 +1104,7 @@ const slugPostId = values.id;
             : image.key;
 
           if (action === "insert") {
-            insertImageMarkdown(absoluteUrl, altText);
-            setImageModalStatus("已插入最近上传图片。");
+            applySelectedImage(absoluteUrl, altText);
             closeImageModal();
             return;
           }
@@ -940,9 +1185,46 @@ const slugPostId = values.id;
       markdownInput.addEventListener("paste", handlePasteUpload);
     }
 
+    if (editorDropZone instanceof HTMLElement) {
+      editorDropZone.addEventListener("dragover", (event) => {
+        if (!Array.from(event.dataTransfer?.types ?? []).includes("Files")) return;
+        event.preventDefault();
+        editorDropZone.classList.add("border-primary/50", "bg-primary/5");
+      });
+
+      editorDropZone.addEventListener("dragleave", () => {
+        editorDropZone.classList.remove("border-primary/50", "bg-primary/5");
+      });
+
+      editorDropZone.addEventListener("drop", handleDroppedImageUpload);
+    }
+
     if (coverInput instanceof HTMLInputElement) {
       coverInput.addEventListener("input", renderCoverPreview);
       coverInput.addEventListener("change", renderCoverPreview);
+    }
+
+    if (coverLibraryOpenButton instanceof HTMLButtonElement) {
+      coverLibraryOpenButton.addEventListener("click", () => openImageModal("cover"));
+    }
+
+    if (coverClearButton instanceof HTMLButtonElement) {
+      coverClearButton.addEventListener("click", () => {
+        if (!(coverInput instanceof HTMLInputElement)) return;
+        coverInput.value = "";
+        coverInput.dispatchEvent(new Event("input", { bubbles: true }));
+        coverInput.dispatchEvent(new Event("change", { bubbles: true }));
+        setUploadStatus("封面图已清空");
+      });
+    }
+
+    if (statusSelect instanceof HTMLSelectElement) {
+      statusSelect.addEventListener("change", renderPublishHint);
+    }
+
+    if (publishedAtInput instanceof HTMLInputElement) {
+      publishedAtInput.addEventListener("input", renderPublishHint);
+      publishedAtInput.addEventListener("change", renderPublishHint);
     }
 
     if (markdownToolbar instanceof HTMLElement) {
@@ -992,14 +1274,17 @@ const slugPostId = values.id;
         }
 
         setImageModalStatus("正在上传图片…");
+        setUploadProgress(0);
         try {
-          const imageUrl = await uploadImage(file);
+          const imageUrl = await uploadImage(file, {
+            retries: 1,
+            onProgress: (progress) => setUploadProgress(progress),
+          });
           const altText = imageAltInput instanceof HTMLInputElement && imageAltInput.value.trim()
             ? imageAltInput.value.trim()
             : file.name || "image";
-          insertImageMarkdown(imageUrl, altText);
-          setUploadStatus("图片已上传并插入正文");
-          setImageModalStatus("图片上传成功，已插入正文。");
+          applySelectedImage(imageUrl, altText);
+          setImageModalStatus(imageModalTarget === "cover" ? "图片上传成功，已设为封面图。" : "图片上传成功，已插入正文。");
           if (imageFileInput instanceof HTMLInputElement) {
             imageFileInput.value = "";
           }
@@ -1007,6 +1292,8 @@ const slugPostId = values.id;
           closeImageModal();
         } catch {
           setImageModalStatus("图片上传失败，请稍后重试。");
+        } finally {
+          window.setTimeout(() => setUploadProgress(0), 400);
         }
       });
     }
@@ -1022,8 +1309,7 @@ const slugPostId = values.id;
         const altText = imageAltInput instanceof HTMLInputElement && imageAltInput.value.trim()
           ? imageAltInput.value.trim()
           : "图片描述";
-        insertImageMarkdown(url, altText);
-        setImageModalStatus("图片地址已插入正文。");
+        applySelectedImage(url, altText);
         closeImageModal();
       });
     }
@@ -1158,7 +1444,11 @@ const slugPostId = values.id;
       loadRecentImages();
     }
 
-    form.addEventListener("submit", () => {
+    form.addEventListener("submit", (event) => {
+      if (!validateBeforeSubmit()) {
+        event.preventDefault();
+        return;
+      }
       try {
         localStorage.removeItem(autosaveKey);
       } catch {
