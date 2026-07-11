@@ -16,106 +16,137 @@ const error = Astro.url.searchParams.get("error");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>管理员登录 - 杨振博客</title>
   </head>
-  <body class="min-h-screen bg-[radial-gradient(circle_at_top,_hsl(var(--primary)/0.12),_transparent_32%),linear-gradient(135deg,_hsl(var(--background)),_hsl(var(--muted)/0.55),_hsl(var(--background)))] px-4 py-10 text-foreground">
-    <main class="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-5xl items-center justify-center">
-      <div class="grid w-full items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-        <section class="hidden pr-6 lg:block">
-          <div class="inline-flex items-center gap-3 rounded-full border border-border/60 bg-background/80 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+  <body class="min-h-screen overflow-x-hidden bg-[#f6f4ef] px-4 py-8 text-zinc-900 antialiased">
+    <div class="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(rgba(24,24,27,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(24,24,27,0.035)_1px,transparent_1px)] [background-size:32px_32px]"></div>
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.9),transparent_68%)]"></div>
+
+    <main class="relative mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center justify-center">
+      <div class="grid w-full items-center gap-14 lg:grid-cols-[1.08fr_0.92fr]">
+        <section class="hidden lg:block">
+          <div class="inline-flex items-center gap-3 rounded-full border border-black/10 bg-white/70 px-4 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)] backdrop-blur">
+            <span class="flex h-10 w-10 items-center justify-center rounded-2xl border border-black/10 bg-white text-zinc-900 shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
               <span class="i-lucide-feather text-lg"></span>
             </span>
-            <span class="font-medium text-foreground">杨振博客管理后台</span>
+            <div class="leading-none">
+              <p class="font-['Georgia','Times_New_Roman',serif] text-[15px] tracking-[0.02em] text-zinc-950">杨振博客</p>
+              <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Editorial Console</p>
+            </div>
           </div>
 
-          <div class="mt-8 max-w-xl space-y-5">
-            <h1 class="text-4xl font-semibold tracking-tight text-balance">
-              欢迎回来，继续管理你的内容资产
+          <div class="mt-12 max-w-2xl">
+            <p class="text-xs uppercase tracking-[0.28em] text-zinc-500">Private Workspace</p>
+            <h1 class="mt-5 font-['Georgia','Times_New_Roman',serif] text-5xl font-medium leading-[1.08] tracking-[-0.03em] text-zinc-950">
+              以更安静的方式，
+              <br />
+              进入你的写作后台。
             </h1>
-            <p class="max-w-lg text-base leading-7 text-muted-foreground">
-              在这里发布文章、维护资料、管理图片与后台设置。登录后将使用新的安全会话机制保护你的后台操作。
+            <p class="mt-6 max-w-xl text-[17px] leading-8 text-zinc-600">
+              这里不是通用后台，而是你的内容工作台。登录后继续管理文章、资料、图片与发布节奏，保持写作系统稳定而克制。
             </p>
           </div>
 
-          <div class="mt-10 grid gap-4">
-            <div class="rounded-2xl border border-border/60 bg-background/75 p-5 shadow-sm backdrop-blur">
-              <p class="text-sm font-medium text-foreground">内容发布</p>
-              <p class="mt-2 text-sm leading-6 text-muted-foreground">
-                支持文章创建、编辑、标签管理与发布时间校验，重复 slug 会在提交前直接提示。
+          <div class="mt-12 grid max-w-2xl gap-4 md:grid-cols-2">
+            <div class="rounded-[28px] border border-black/8 bg-white/78 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.05)] backdrop-blur">
+              <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Publishing</p>
+              <p class="mt-4 font-['Georgia','Times_New_Roman',serif] text-2xl leading-tight text-zinc-950">发布与修订</p>
+              <p class="mt-3 text-sm leading-7 text-zinc-600">
+                新建文章时会自动建议下一个编号，并在提交前检查 slug 是否冲突，减少发文时的试错成本。
               </p>
             </div>
-            <div class="rounded-2xl border border-border/60 bg-background/75 p-5 shadow-sm backdrop-blur">
-              <p class="text-sm font-medium text-foreground">后台安全</p>
-              <p class="mt-2 text-sm leading-6 text-muted-foreground">
-                当前后台已切换到数据库会话模型，登录、退出和改密会同步清理登录态。
+
+            <div class="rounded-[28px] border border-black/8 bg-white/78 p-6 shadow-[0_18px_60px_rgba(15,23,42,0.05)] backdrop-blur">
+              <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Security</p>
+              <p class="mt-4 font-['Georgia','Times_New_Roman',serif] text-2xl leading-tight text-zinc-950">登录会话</p>
+              <p class="mt-3 text-sm leading-7 text-zinc-600">
+                后台已切换为数据库 session 模型，登录、退出与改密都会同步校验并清理会话，行为更接近正式生产环境。
               </p>
             </div>
           </div>
         </section>
 
-        <Card className="w-full border-border/60 bg-background/95 shadow-2xl shadow-primary/10 backdrop-blur">
-          <CardHeader className="space-y-5 pb-3">
-            <div class="flex items-center gap-3 lg:hidden">
-              <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                <span class="i-lucide-feather text-lg"></span>
-              </span>
-              <div>
-                <p class="text-sm font-medium text-muted-foreground">杨振博客</p>
-                <p class="text-base font-semibold text-foreground">管理后台</p>
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-0 rounded-[34px] bg-white/70 shadow-[0_35px_120px_rgba(15,23,42,0.12)] blur-2xl"></div>
+          <Card className="relative w-full rounded-[34px] border border-black/8 bg-white/88 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl">
+            <CardHeader className="space-y-6 px-8 pb-4 pt-8 sm:px-10">
+              <div class="flex items-center gap-3 lg:hidden">
+                <span class="flex h-11 w-11 items-center justify-center rounded-2xl border border-black/10 bg-white text-zinc-900 shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+                  <span class="i-lucide-feather text-lg"></span>
+                </span>
+                <div class="leading-none">
+                  <p class="font-['Georgia','Times_New_Roman',serif] text-base text-zinc-950">杨振博客</p>
+                  <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Editorial Console</p>
+                </div>
               </div>
-            </div>
 
-            <div class="space-y-2">
-              <CardTitle className="text-2xl tracking-tight">管理员登录</CardTitle>
-              <CardDescription className="text-sm leading-6">
-                使用你当前的用户名或邮箱登录后台，继续管理博客内容与账号设置。
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <form action="/api/auth/login" method="POST">
-            <CardContent className="space-y-5">
-              {error === "invalid_credentials" && (
-                <div class="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  用户名、邮箱或密码不正确，请确认你使用的是当前有效的登录标识。
-                </div>
-              )}
-              {error === "missing_fields" && (
-                <div class="rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  请填写完整的登录信息后再提交。
-                </div>
-              )}
-              <div class="space-y-2">
-                <Label htmlFor="email">邮箱或用户名</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="text"
-                  placeholder="请输入当前邮箱或用户名"
-                  autocomplete="username"
-                  required
-                />
+              <div class="space-y-3">
+                <CardTitle className="font-['Georgia','Times_New_Roman',serif] text-3xl font-medium tracking-[-0.03em] text-zinc-950">
+                  欢迎回来
+                </CardTitle>
+                <CardDescription className="max-w-md text-[15px] leading-7 text-zinc-600">
+                  使用你当前的用户名或邮箱进入后台，继续管理博客内容与账号设置。
+                </CardDescription>
               </div>
-              <div class="space-y-2">
-                <Label htmlFor="password">密码</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="请输入密码"
-                  autocomplete="current-password"
-                  required
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex-col items-stretch gap-4 pt-2">
-              <Button type="submit" className="h-11 w-full text-sm font-medium">
-                登录后台
-              </Button>
-              <p class="text-center text-xs leading-5 text-muted-foreground">
-                登录后可管理文章、资料、图片与后台设置
-              </p>
-            </CardFooter>
-          </form>
-        </Card>
+            </CardHeader>
+
+            <form action="/api/auth/login" method="POST">
+              <CardContent className="space-y-6 px-8 pb-4 sm:px-10">
+                {error === "invalid_credentials" && (
+                  <div class="rounded-[20px] border border-red-200 bg-red-50/90 px-4 py-3 text-sm leading-6 text-red-600">
+                    当前登录标识或密码不正确，请确认你使用的是最新的用户名、邮箱和密码。
+                  </div>
+                )}
+                {error === "missing_fields" && (
+                  <div class="rounded-[20px] border border-red-200 bg-red-50/90 px-4 py-3 text-sm leading-6 text-red-600">
+                    请填写完整的登录信息后再提交。
+                  </div>
+                )}
+
+                <div class="space-y-3">
+                  <Label htmlFor="email" className="text-[13px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                    邮箱或用户名
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="text"
+                    placeholder="请输入当前邮箱或用户名"
+                    autocomplete="username"
+                    required
+                    className="h-12 rounded-2xl border-black/10 bg-[#fcfbf8] px-4 text-[15px] shadow-none transition focus-visible:border-zinc-900/30 focus-visible:ring-zinc-900/10"
+                  />
+                </div>
+
+                <div class="space-y-3">
+                  <Label htmlFor="password" className="text-[13px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                    密码
+                  </Label>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="请输入密码"
+                    autocomplete="current-password"
+                    required
+                    className="h-12 rounded-2xl border-black/10 bg-[#fcfbf8] px-4 text-[15px] shadow-none transition focus-visible:border-zinc-900/30 focus-visible:ring-zinc-900/10"
+                  />
+                </div>
+              </CardContent>
+
+              <CardFooter className="flex-col items-stretch gap-5 px-8 pb-8 pt-3 sm:px-10">
+                <Button
+                  type="submit"
+                  className="h-12 rounded-2xl bg-zinc-950 text-sm font-medium tracking-[0.02em] text-white shadow-[0_18px_40px_rgba(24,24,27,0.18)] transition hover:bg-zinc-800"
+                >
+                  登录后台
+                </Button>
+                <div class="flex items-center justify-between gap-4 text-xs text-zinc-500">
+                  <span>受保护的内容工作台入口</span>
+                  <span>Session secured</span>
+                </div>
+              </CardFooter>
+            </form>
+          </Card>
+        </div>
       </div>
     </main>
   </body>
