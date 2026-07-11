@@ -67,129 +67,141 @@ const slugPostId = values.id;
     </div>
   </div>
 
-  <Card>
-    <CardContent className="pt-6">
-      <div class="grid gap-5 lg:grid-cols-2">
-        <div class="space-y-2 lg:col-span-2">
-          <Label htmlFor="title">标题</Label>
-          <Input id="title" name="title" required placeholder="文章标题" defaultValue={title} />
-        </div>
-
-        <div class="space-y-2 lg:col-span-2">
-          <Label htmlFor="slug">Slug (URL 路径)</Label>
-          <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={slug} />
-          <SlugFieldHint postId={slugPostId} />
-        </div>
-
-        <div class="space-y-2">
-          <Label htmlFor="status">状态</Label>
-          <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-            <option value="draft" selected={status === "draft"}>草稿</option>
-            <option value="published" selected={status === "published"}>发布</option>
-            <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
-          </select>
-        </div>
-
-        <div class="space-y-2">
-          <Label htmlFor="publishedAt">发布时间</Label>
-          <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
-        </div>
-
-        <div class="space-y-2 lg:col-span-2">
-          <Label htmlFor="tags">标签 (用逗号分隔)</Label>
-          <Input id="tags" name="tags" placeholder="AI, Git, Web" defaultValue={tags} />
-        </div>
-
-        <div class="space-y-2 lg:col-span-2">
-          <Label htmlFor="coverImage">封面图 URL</Label>
-          <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} data-cover-image-input />
-          <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
-          <div class="hidden overflow-hidden rounded-xl border bg-muted/30" data-cover-preview-wrapper>
-            <img
-              src={coverImage || ""}
-              alt="封面图预览"
-              class="aspect-[16/9] w-full object-cover"
-              data-cover-preview-image
-            />
+  <div class="grid gap-6 2xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,0.9fr)]">
+    <div class="space-y-6">
+      <Card className="shadow-sm">
+        <CardContent className="space-y-4 pt-6">
+          <div class="flex items-center justify-between gap-4">
+            <Label htmlFor="content" className="text-base font-medium">内容 (Markdown)</Label>
+            <span class="text-xs text-muted-foreground" data-image-upload-status>支持粘贴图片自动上传到 R2</span>
           </div>
-        </div>
 
-        <div class="space-y-2 lg:col-span-2">
-          <Label htmlFor="excerpt">摘要</Label>
-          <textarea
-            id="excerpt"
-            name="excerpt"
-            class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            placeholder="留空时会自动从正文生成摘要"
-          >{excerpt}</textarea>
-          <p class="text-xs text-muted-foreground">建议 80 到 140 字。留空时会自动从 Markdown 正文提取摘要。</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardContent className="pt-6">
-      <div class="space-y-4">
-        <div class="flex items-center justify-between gap-4">
-          <Label htmlFor="content" className="text-base font-medium">内容 (Markdown)</Label>
-          <span class="text-xs text-muted-foreground">左侧编辑，右侧实时预览</span>
-        </div>
-        <div class="grid gap-4 xl:grid-cols-2">
-          <div class="space-y-2">
-            <textarea
-              id="content"
-              name="content"
-              required
-              class="flex min-h-[520px] w-full rounded-md border border-input bg-background px-4 py-3 font-mono text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              placeholder="# Hello World"
-              data-markdown-input
-            >{content}</textarea>
+          <div class="flex flex-wrap gap-2 rounded-lg border bg-muted/20 p-2" data-markdown-toolbar>
+            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="heading">标题</button>
+            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="bold">加粗</button>
+            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="code">代码块</button>
+            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="link">链接</button>
           </div>
-          <div class="space-y-2">
-            <div class="rounded-md border bg-muted/20 p-4">
-              <div class="mb-3 flex items-center justify-between gap-4 border-b pb-3">
-                <p class="text-sm font-medium">实时预览</p>
-                <span class="text-xs text-muted-foreground">仅本地渲染，不会自动发布</span>
+
+          <div class="grid gap-4 xl:grid-cols-2">
+            <div class="space-y-2">
+              <textarea
+                id="content"
+                name="content"
+                required
+                class="flex min-h-[68vh] w-full rounded-xl border border-input bg-background px-4 py-3 font-mono text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder="# Hello World"
+                data-markdown-input
+              >{content}</textarea>
+            </div>
+            <div class="space-y-2">
+              <div class="rounded-xl border bg-muted/20 p-4">
+                <div class="mb-3 flex items-center justify-between gap-4 border-b pb-3">
+                  <p class="text-sm font-medium">实时预览</p>
+                  <span class="text-xs text-muted-foreground">仅本地渲染，不会自动发布</span>
+                </div>
+                <div
+                  class="prose prose-stone min-h-[calc(68vh-4.5rem)] max-w-none dark:prose-invert"
+                  data-markdown-preview
+                ></div>
               </div>
-              <div
-                class="prose prose-stone max-w-none dark:prose-invert min-h-[468px]"
-                data-markdown-preview
-              ></div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div class="space-y-6 2xl:sticky 2xl:top-6 2xl:self-start">
+      <Card className="shadow-sm">
+        <CardContent className="pt-6">
+          <div class="grid gap-5 lg:grid-cols-2 2xl:grid-cols-1">
+            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+              <Label htmlFor="title">标题</Label>
+              <Input id="title" name="title" required placeholder="文章标题" defaultValue={title} />
+            </div>
+
+            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+              <Label htmlFor="slug">Slug (URL 路径)</Label>
+              <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={slug} />
+              <SlugFieldHint postId={slugPostId} />
+            </div>
+
+            <div class="space-y-2">
+              <Label htmlFor="status">状态</Label>
+              <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <option value="draft" selected={status === "draft"}>草稿</option>
+                <option value="published" selected={status === "published"}>发布</option>
+                <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
+              </select>
+            </div>
+
+            <div class="space-y-2">
+              <Label htmlFor="publishedAt">发布时间</Label>
+              <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
+            </div>
+
+            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+              <Label htmlFor="tags">标签 (用逗号分隔)</Label>
+              <Input id="tags" name="tags" placeholder="AI, Git, Web" defaultValue={tags} />
+            </div>
+
+            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+              <Label htmlFor="coverImage">封面图 URL</Label>
+              <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} data-cover-image-input />
+              <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
+              <div class="hidden overflow-hidden rounded-xl border bg-muted/30" data-cover-preview-wrapper>
+                <img
+                  src={coverImage || ""}
+                  alt="封面图预览"
+                  class="aspect-[16/9] w-full object-cover"
+                  data-cover-preview-image
+                />
+              </div>
+            </div>
+
+            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+              <Label htmlFor="excerpt">摘要</Label>
+              <textarea
+                id="excerpt"
+                name="excerpt"
+                class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder="留空时会自动从正文生成摘要"
+              >{excerpt}</textarea>
+              <p class="text-xs text-muted-foreground">建议 80 到 140 字。留空时会自动从 Markdown 正文提取摘要。</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <details class="rounded-xl border bg-background shadow-sm" data-seo-panel>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-sm font-medium">
+          <span>SEO 设置</span>
+          <span class="text-xs text-muted-foreground">展开后可填写分享标题、描述</span>
+        </summary>
+        <div class="border-t px-6 py-5">
+          <div class="space-y-5">
+            <div class="space-y-2">
+              <Label htmlFor="metaTitle">SEO 标题</Label>
+              <Input id="metaTitle" name="metaTitle" placeholder="留空时默认使用文章标题" defaultValue={metaTitle} maxLength={70} />
+              <p class="text-xs text-muted-foreground">建议不超过 70 个字符。留空时默认使用文章标题。</p>
+            </div>
+
+            <div class="space-y-2">
+              <Label htmlFor="metaDescription">SEO 描述</Label>
+              <textarea
+                id="metaDescription"
+                name="metaDescription"
+                class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder="留空时默认使用摘要"
+                maxLength={180}
+              >{metaDescription}</textarea>
+              <p class="text-xs text-muted-foreground">建议 120 到 180 个字符。留空时默认使用摘要内容。</p>
             </div>
           </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
-
-  <details class="rounded-xl border bg-background shadow-sm" data-seo-panel>
-    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-sm font-medium">
-      <span>SEO 设置</span>
-      <span class="text-xs text-muted-foreground">展开后可填写分享标题、描述</span>
-    </summary>
-    <div class="border-t px-6 py-5">
-      <div class="space-y-5">
-        <div class="space-y-2">
-          <Label htmlFor="metaTitle">SEO 标题</Label>
-          <Input id="metaTitle" name="metaTitle" placeholder="留空时默认使用文章标题" defaultValue={metaTitle} maxLength={70} />
-          <p class="text-xs text-muted-foreground">建议不超过 70 个字符。留空时默认使用文章标题。</p>
-        </div>
-
-        <div class="space-y-2">
-          <Label htmlFor="metaDescription">SEO 描述</Label>
-          <textarea
-            id="metaDescription"
-            name="metaDescription"
-            class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            placeholder="留空时默认使用摘要"
-            maxLength={180}
-          >{metaDescription}</textarea>
-          <p class="text-xs text-muted-foreground">建议 120 到 180 个字符。留空时默认使用摘要内容。</p>
-        </div>
-      </div>
+      </details>
     </div>
-  </details>
+  </div>
 </form>
 
 <script>
@@ -206,9 +218,11 @@ const slugPostId = values.id;
     const seoPanel = form.querySelector("[data-seo-panel]");
     const markdownInput = form.querySelector("[data-markdown-input]");
     const markdownPreview = form.querySelector("[data-markdown-preview]");
+    const markdownToolbar = form.querySelector("[data-markdown-toolbar]");
     const coverInput = form.querySelector("[data-cover-image-input]");
     const coverPreviewWrapper = form.querySelector("[data-cover-preview-wrapper]");
     const coverPreviewImage = form.querySelector("[data-cover-preview-image]");
+    const uploadStatusEl = form.querySelector("[data-image-upload-status]");
     const fields = Array.from(
       form.querySelectorAll("input[name], textarea[name], select[name]")
     ).filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement);
@@ -241,6 +255,100 @@ const slugPostId = values.id;
 
       coverPreviewImage.src = src;
       coverPreviewWrapper.classList.remove("hidden");
+    };
+
+    const setUploadStatus = (message) => {
+      if (uploadStatusEl instanceof HTMLElement) {
+        uploadStatusEl.textContent = message;
+      }
+    };
+
+    const updateTextarea = (nextValue, selectionStart, selectionEnd = selectionStart) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      markdownInput.value = nextValue;
+      markdownInput.focus();
+      markdownInput.setSelectionRange(selectionStart, selectionEnd);
+      markdownInput.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+
+    const insertAroundSelection = (prefix, suffix = prefix, placeholder = "") => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      const start = markdownInput.selectionStart;
+      const end = markdownInput.selectionEnd;
+      const selected = markdownInput.value.slice(start, end) || placeholder;
+      const nextValue = `${markdownInput.value.slice(0, start)}${prefix}${selected}${suffix}${markdownInput.value.slice(end)}`;
+      const caretStart = start + prefix.length;
+      const caretEnd = caretStart + selected.length;
+      updateTextarea(nextValue, caretStart, caretEnd);
+    };
+
+    const insertBlock = (value, cursorOffset = value.length) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      const start = markdownInput.selectionStart;
+      const end = markdownInput.selectionEnd;
+      const nextValue = `${markdownInput.value.slice(0, start)}${value}${markdownInput.value.slice(end)}`;
+      updateTextarea(nextValue, start + cursorOffset);
+    };
+
+    const handleToolbarAction = (action) => {
+      switch (action) {
+        case "heading":
+          insertBlock("## 标题\n", 4);
+          break;
+        case "bold":
+          insertAroundSelection("**", "**", "加粗文本");
+          break;
+        case "code":
+          insertAroundSelection("```md\n", "\n```", "在这里输入代码");
+          break;
+        case "link":
+          insertAroundSelection("[", "](https://example.com)", "链接文本");
+          break;
+        default:
+          break;
+      }
+    };
+
+    const uploadImage = async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("/api/admin/images", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("upload_failed");
+      }
+
+      const result = await response.json();
+      const relativeUrl = result?.image?.url;
+      if (typeof relativeUrl !== "string") {
+        throw new Error("invalid_upload_response");
+      }
+
+      return `${window.location.origin}${relativeUrl}`;
+    };
+
+    const handlePasteUpload = async (event) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      const file = Array.from(event.clipboardData?.items ?? [])
+        .find((item) => item.type.startsWith("image/"))
+        ?.getAsFile();
+
+      if (!file) return;
+
+      event.preventDefault();
+      setUploadStatus("正在上传粘贴图片…");
+
+      try {
+        const imageUrl = await uploadImage(file);
+        const insertText = `\n![${file.name || "pasted-image"}](${imageUrl})\n`;
+        insertBlock(insertText, insertText.length);
+        setUploadStatus("图片已上传并插入正文");
+      } catch {
+        setUploadStatus("图片上传失败，请重试");
+      }
     };
 
     const readValue = (field) => {
@@ -313,11 +421,22 @@ const slugPostId = values.id;
 
     if (markdownInput instanceof HTMLTextAreaElement) {
       markdownInput.addEventListener("input", renderMarkdown);
+      markdownInput.addEventListener("paste", handlePasteUpload);
     }
 
     if (coverInput instanceof HTMLInputElement) {
       coverInput.addEventListener("input", renderCoverPreview);
       coverInput.addEventListener("change", renderCoverPreview);
+    }
+
+    if (markdownToolbar instanceof HTMLElement) {
+      markdownToolbar.addEventListener("click", (event) => {
+        const button = event.target instanceof HTMLElement
+          ? event.target.closest("[data-md-action]")
+          : null;
+        if (!(button instanceof HTMLButtonElement)) return;
+        handleToolbarAction(button.dataset.mdAction);
+      });
     }
 
     form.addEventListener("submit", () => {
