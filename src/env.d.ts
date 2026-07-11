@@ -1,4 +1,13 @@
 /// <reference path="../.astro/types.d.ts" />
+import type { users } from "@/db/schema";
+
+type CurrentUser = typeof users.$inferSelect;
+
+declare namespace App {
+  interface Locals {
+    currentUser?: CurrentUser;
+  }
+}
 /// <reference types="@cloudflare/workers-types" />
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="@cloudflare/workers-types" />

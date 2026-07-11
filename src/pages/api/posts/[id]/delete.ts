@@ -8,7 +8,7 @@ export const POST: APIRoute = async ({ locals, params, redirect, cookies }) => {
     const { id } = params;
     if (!id) return new Response("Missing ID", { status: 400 });
 
-    const authRedirect = requireAdminSession({ cookies, redirect });
+    const authRedirect = await requireAdminSession({ cookies, locals, redirect });
     if (authRedirect) {
         return authRedirect;
     }

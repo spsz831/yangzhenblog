@@ -1,9 +1,9 @@
 import type { APIContext } from "astro";
-import type { AstroCookies } from "astro";
 import { and, eq, ne } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { posts, tags, postsToTags } from "@/db/schema";
+import { requireAuthenticatedUser } from "@/lib/auth";
 
 type PostStatus = "draft" | "published" | "scheduled";
 
@@ -26,15 +26,11 @@ export class PostFormError extends Error {
 
 type RuntimeLocals = Pick<APIContext["locals"], "runtime">;
 type PostContext = Pick<APIContext, "request"> & { locals: RuntimeLocals };
-type AuthContext = { cookies: AstroCookies; redirect: APIContext["redirect"] };
+type AuthContext = Pick<APIContext, "cookies" | "locals" | "redirect">;
 
-export const requireAdminSession = ({ cookies, redirect }: AuthContext) => {
-    const session = cookies.get("admin_session");
-    if (!session?.value) {
-        return redirect("/admin/login");
-    }
-
-    return null;
+export const requireAdminSession = async (context: AuthContext) => {
+    const auth = await requireAuthenticatedUser(context);
+    return auth.response;
 };
 
 const normalizeWhitespace = (value: string) => value.trim().replace(/\s+/g, " ");

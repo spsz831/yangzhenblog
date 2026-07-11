@@ -10,6 +10,15 @@ export const users = sqliteTable("users", {
     avatar: text("avatar"),
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
 });
+
+export const userSessions = sqliteTable("user_sessions", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull().unique(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
+    lastUsedAt: integer("last_used_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
+});
 export const posts = sqliteTable("posts", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull().unique(),

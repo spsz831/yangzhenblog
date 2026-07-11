@@ -4,7 +4,7 @@ import { posts } from "@/db/schema";
 import { parsePostForm, PostFormError, requireAdminSession, syncPostTags } from "@/lib/admin-posts";
 
 export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => {
-    const authRedirect = requireAdminSession({ cookies, redirect });
+    const authRedirect = await requireAdminSession({ cookies, locals, redirect });
     if (authRedirect) {
         return authRedirect;
     }

@@ -3,13 +3,14 @@ import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { deleteAllUserSessions, requireAuthenticatedUser, createUserSession } from "@/lib/auth";
 
 export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => {
-    const session = cookies.get("admin_session");
-    if (!session || !session.value) {
-        return redirect("/admin/login");
+    const auth = await requireAuthenticatedUser({ cookies, locals, redirect });
+    if (auth.response || !auth.user) {
+        return auth.response!;
     }
-    const userId = parseInt(session.value);
+    const userId = auth.user.id;
 
     const formData = await request.formData();
     const action = formData.get("action");
@@ -49,6 +50,10 @@ export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => 
             return redirect("/admin/settings?error=password_mismatch");
         }
 
+        if (newPassword.length < 8) {
+            return redirect("/admin/settings?error=password_too_short");
+        }
+
         const user = await db.select().from(users).where(eq(users.id, userId)).get();
         if (!user || !bcrypt.compareSync(currentPassword, user.passwordHash)) {
             return redirect("/admin/settings?error=wrong_password");
@@ -60,6 +65,9 @@ export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => 
         await db.update(users)
             .set({ passwordHash })
             .where(eq(users.id, userId));
+
+        await deleteAllUserSessions({ locals }, userId);
+        await createUserSession({ cookies, locals }, userId);
 
         return redirect("/admin/settings?success=password_updated");
     }

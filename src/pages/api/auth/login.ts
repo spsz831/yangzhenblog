@@ -3,6 +3,7 @@ import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { eq, or } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { createUserSession } from "@/lib/auth";
 
 export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => {
     const formData = await request.formData();
@@ -17,13 +18,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect, locals }) => 
     const user = await db.select().from(users).where(or(eq(users.email, email), eq(users.username, email))).get();
 
     if (user && bcrypt.compareSync(password, user.passwordHash)) {
-        // Store userId in cookie (in a real app, use a signed token or session ID)
-        cookies.set("admin_session", user.id.toString(), {
-            path: "/",
-            httpOnly: true,
-            secure: import.meta.env.PROD,
-            maxAge: 60 * 60 * 24, // 1 day
-        });
+        await createUserSession({ cookies, locals }, user.id);
         return redirect("/admin");
     }
 
