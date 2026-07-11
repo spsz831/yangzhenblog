@@ -67,7 +67,7 @@ const slugPostId = values.id;
     </div>
   </div>
 
-  <div class="grid gap-6 2xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,0.9fr)]">
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1.75fr)_minmax(360px,460px)] 2xl:gap-8">
     <div class="space-y-6">
       <Card className="shadow-sm">
         <CardContent className="space-y-4 pt-6">
@@ -83,13 +83,13 @@ const slugPostId = values.id;
             <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="link">链接</button>
           </div>
 
-          <div class="grid gap-4 xl:grid-cols-2">
+          <div class="grid gap-4 2xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
             <div class="space-y-2">
               <textarea
                 id="content"
                 name="content"
                 required
-                class="flex min-h-[68vh] w-full rounded-xl border border-input bg-background px-4 py-3 font-mono text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                class="flex min-h-[70vh] w-full rounded-xl border border-input bg-background px-4 py-3 font-mono text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 placeholder="# Hello World"
                 data-markdown-input
               >{content}</textarea>
@@ -101,7 +101,7 @@ const slugPostId = values.id;
                   <span class="text-xs text-muted-foreground">仅本地渲染，不会自动发布</span>
                 </div>
                 <div
-                  class="prose prose-stone min-h-[calc(68vh-4.5rem)] max-w-none dark:prose-invert"
+                  class="prose prose-stone min-h-[calc(70vh-4.5rem)] max-w-none dark:prose-invert"
                   data-markdown-preview
                 ></div>
               </div>
@@ -111,16 +111,16 @@ const slugPostId = values.id;
       </Card>
     </div>
 
-    <div class="space-y-6 2xl:sticky 2xl:top-6 2xl:self-start">
+    <div class="space-y-6 xl:sticky xl:top-6 xl:self-start">
       <Card className="shadow-sm">
         <CardContent className="pt-6">
-          <div class="grid gap-5 lg:grid-cols-2 2xl:grid-cols-1">
-            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+          <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
+            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="title">标题</Label>
               <Input id="title" name="title" required placeholder="文章标题" defaultValue={title} />
             </div>
 
-            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="slug">Slug (URL 路径)</Label>
               <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={slug} />
               <SlugFieldHint postId={slugPostId} />
@@ -140,12 +140,12 @@ const slugPostId = values.id;
               <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
             </div>
 
-            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="tags">标签 (用逗号分隔)</Label>
               <Input id="tags" name="tags" placeholder="AI, Git, Web" defaultValue={tags} />
             </div>
 
-            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="coverImage">封面图 URL</Label>
               <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} data-cover-image-input />
               <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
@@ -159,7 +159,7 @@ const slugPostId = values.id;
               </div>
             </div>
 
-            <div class="space-y-2 lg:col-span-2 2xl:col-span-1">
+            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="excerpt">摘要</Label>
               <textarea
                 id="excerpt"

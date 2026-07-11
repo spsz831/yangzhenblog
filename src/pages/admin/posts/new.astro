@@ -11,7 +11,7 @@ const suggestedSlug = await findNextNumericSlug({ locals: Astro.locals });
 ---
 
 <AdminLayout title="New Post">
-  <div class="max-w-2xl mx-auto">
+  <div class="mx-auto w-full max-w-[1700px]">
     <h2 class="text-2xl font-bold tracking-tight mb-6">新建文章</h2>
     <FormAlert error={error} />
     <PostEditorForm

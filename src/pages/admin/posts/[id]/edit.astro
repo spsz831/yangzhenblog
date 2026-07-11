@@ -28,7 +28,7 @@ const tagsString = postTags.map(t => t.name).join(", ");
 ---
 
 <AdminLayout title="Edit Post">
-  <div class="max-w-2xl mx-auto">
+  <div class="mx-auto w-full max-w-[1700px]">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold tracking-tight">编辑文章</h2>
       <form action={`/api/posts/${post.id}/delete`} method="POST" onsubmit="return confirm('确定要删除这篇文章吗？');">
