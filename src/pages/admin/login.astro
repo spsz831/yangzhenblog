@@ -22,25 +22,28 @@ const error = Astro.url.searchParams.get("error");
 
     <main class="relative flex min-h-screen items-center justify-center px-6 py-10 sm:px-10 lg:px-16">
       <div class="w-full max-w-6xl">
-        <div class="mx-auto mb-10 flex w-fit items-center gap-3 rounded-full border border-black/8 bg-white/80 px-4 py-2 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-sm">
-          <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-950 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-            <span class="i-lucide-feather text-lg"></span>
-          </span>
-          <div class="leading-none">
-            <p class="text-[15px] font-semibold tracking-[-0.02em] text-zinc-950">杨振博客</p>
-            <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Admin Console</p>
-          </div>
-        </div>
+        <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(420px,520px)] lg:gap-20">
+          <section class="mx-auto flex max-w-[34rem] flex-col text-center lg:mx-0 lg:text-left">
+            <div class="mx-auto flex w-fit items-center gap-3 rounded-full border border-black/8 bg-white/82 px-4 py-2 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-sm lg:mx-0">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-950 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
+                <span class="i-lucide-feather text-lg"></span>
+              </span>
+              <div class="leading-none">
+                <p class="text-[15px] font-semibold tracking-[-0.02em] text-zinc-950">杨振博客</p>
+                <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Admin Console</p>
+              </div>
+            </div>
 
-        <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,520px)] lg:gap-16">
-          <section class="mx-auto max-w-3xl text-center lg:mx-0 lg:text-left">
-            <p class="text-[12px] uppercase tracking-[0.3em] text-zinc-500">Yangzhen Blog Admin</p>
-            <h1 class="mt-6 text-[44px] font-semibold leading-[0.94] tracking-[-0.065em] text-zinc-950 sm:text-[60px] lg:text-[76px] xl:text-[88px]">
-              进入后台，
-              <br />
-              保持清晰与安静。
-            </h1>
-            <p class="mx-auto mt-6 max-w-2xl text-[18px] leading-8 tracking-[-0.02em] text-zinc-600 lg:mx-0 lg:text-[19px]">
+            <div class="mt-12 lg:mt-16">
+              <p class="text-[12px] uppercase tracking-[0.3em] text-zinc-500">Yangzhen Blog Admin</p>
+              <h1 class="mt-5 text-[42px] font-semibold leading-[1.02] tracking-[-0.055em] text-zinc-950 sm:text-[54px] lg:text-[64px] xl:text-[72px]">
+                进入后台，
+                <br />
+                保持清晰与安静。
+              </h1>
+            </div>
+
+            <p class="mx-auto mt-8 max-w-xl text-[17px] leading-8 tracking-[-0.01em] text-zinc-600 lg:mx-0 lg:text-[18px]">
               使用当前用户名或邮箱登录，进入文章、媒体资源与账号设置。
             </p>
 
