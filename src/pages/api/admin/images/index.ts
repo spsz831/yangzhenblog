@@ -45,3 +45,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
         headers: { "Content-Type": "application/json" },
     });
 };
+
+export const DELETE: APIRoute = async ({ request, locals }) => {
+    const bucket = locals.runtime.env.BUCKET;
+    const { key } = await request.json().catch(() => ({ key: null }));
+
+    if (typeof key !== "string" || key.trim() === "") {
+        return new Response(JSON.stringify({ error: "Missing image key" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+
+    await bucket.delete(key);
+
+    return new Response(JSON.stringify({ success: true, key }), {
+        headers: { "Content-Type": "application/json" },
+    });
+};

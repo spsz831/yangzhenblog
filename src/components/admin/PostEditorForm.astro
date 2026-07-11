@@ -53,13 +53,16 @@ const slugPostId = values.id;
 ---
 
 <form action={action} method="POST" class="space-y-6" data-post-editor-form data-autosave-key={autosaveKey}>
-  <div class="flex flex-col gap-4 rounded-xl border bg-background/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+  <div class="flex flex-col gap-4 rounded-3xl border border-border/70 bg-background/95 px-5 py-4 shadow-[0_12px_32px_-24px_rgba(15,23,42,0.28)] sm:flex-row sm:items-center sm:justify-between">
     <div class="space-y-1">
       <p class="text-sm font-medium">编辑状态</p>
-      <p class="text-sm text-muted-foreground">摘要、SEO 字段和正文会按本地草稿自动保存。</p>
+      <p class="text-sm text-muted-foreground">正文、摘要和 SEO 内容会按本地草稿自动保存。</p>
     </div>
     <div class="flex items-center gap-3">
       <span class="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground" data-autosave-status>未开始自动保存</span>
+      <Button type="button" variant="ghost" className="text-muted-foreground" data-clear-draft-button>
+        撤销草稿
+      </Button>
       <Button variant="outline" asChild>
         <a href={cancelHref}>取消</a>
       </Button>
@@ -67,41 +70,99 @@ const slugPostId = values.id;
     </div>
   </div>
 
-  <div class="grid gap-6 xl:grid-cols-[minmax(0,1.75fr)_minmax(360px,460px)] 2xl:gap-8">
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(330px,390px)] 2xl:gap-8">
     <div class="space-y-6">
-      <Card className="shadow-sm">
+      <Card className="rounded-3xl border border-border/70 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.22)]">
         <CardContent className="space-y-4 pt-6">
           <div class="flex items-center justify-between gap-4">
-            <Label htmlFor="content" className="text-base font-medium">内容 (Markdown)</Label>
+            <div class="space-y-1">
+              <Label htmlFor="content" className="text-base font-medium">内容 (Markdown)</Label>
+              <p class="text-xs text-muted-foreground">左侧编辑，右侧查看阅读效果。</p>
+            </div>
             <span class="text-xs text-muted-foreground" data-image-upload-status>支持粘贴图片自动上传到 R2</span>
           </div>
 
-          <div class="flex flex-wrap gap-2 rounded-lg border bg-muted/20 p-2" data-markdown-toolbar>
-            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="heading">标题</button>
-            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="bold">加粗</button>
-            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="code">代码块</button>
-            <button type="button" class="rounded-md border bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="link">链接</button>
+          <div class="flex flex-wrap items-center gap-2 rounded-2xl border border-border/70 bg-muted/10 p-2.5" data-markdown-toolbar>
+            <span class="px-2 text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">快捷工具</span>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="heading">标题</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="bold">加粗</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="quote">引用</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="bullet-list">列表</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="numbered-list">编号</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="code">代码块</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="inline-code">行内代码</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="divider">分隔线</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="table-2">表格 2 列</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="table-3">表格 3 列</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="table-align">表格对齐</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="image">图片</button>
+            <button type="button" class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent" data-md-action="link">链接</button>
+            <div class="ml-auto flex items-center gap-2">
+              <span class="hidden text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground md:inline">视图</span>
+              <button
+                type="button"
+                class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent"
+                data-focus-mode-toggle
+                data-focus-mode="split"
+              >双栏</button>
+              <button
+                type="button"
+                class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent"
+                data-focus-mode-toggle
+                data-focus-mode="editor"
+              >仅编辑</button>
+              <button
+                type="button"
+                class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm transition hover:bg-accent"
+                data-focus-mode-toggle
+                data-focus-mode="preview"
+              >仅预览</button>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-border/70 bg-background/70 px-4 py-3 text-xs text-muted-foreground">
+            <p>快捷键：`Ctrl/Cmd + B` 加粗，`Ctrl/Cmd + E` 行内代码，`Ctrl/Cmd + K` 链接，`Ctrl/Cmd + Alt + 1` 标题，`Ctrl/Cmd + Shift + 8/7/9` 列表与引用。</p>
+            <span>支持粘贴图片上传到 R2，或通过“图片”按钮插入。</span>
           </div>
 
-          <div class="grid gap-4 2xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+          <div
+            class="grid gap-4 xl:grid-cols-[minmax(0,var(--editor-pane-width,58%))_18px_minmax(0,var(--preview-pane-width,42%))] xl:items-stretch"
+            data-editor-split-panel
+            style="--editor-pane-width: 58%; --preview-pane-width: 42%;"
+          >
             <div class="space-y-2">
               <textarea
                 id="content"
                 name="content"
                 required
-                class="flex min-h-[70vh] w-full rounded-xl border border-input bg-background px-4 py-3 font-mono text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                class="flex min-h-[520px] w-full resize-y rounded-3xl border border-input/80 bg-background px-5 py-4 font-mono text-[15px] leading-8 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 xl:min-h-[640px]"
                 placeholder="# Hello World"
                 data-markdown-input
               >{content}</textarea>
             </div>
-            <div class="space-y-2">
-              <div class="rounded-xl border bg-muted/20 p-4">
-                <div class="mb-3 flex items-center justify-between gap-4 border-b pb-3">
-                  <p class="text-sm font-medium">实时预览</p>
+            <button
+              type="button"
+              class="hidden h-full min-h-[520px] cursor-col-resize items-center justify-center rounded-full border border-border/60 bg-muted/10 text-muted-foreground transition hover:bg-muted/20 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 xl:flex xl:min-h-[640px]"
+              aria-label="调整编辑区和预览区宽度"
+              title="拖拽调整分栏比例"
+              data-editor-splitter
+            >
+              <span class="flex h-14 w-2.5 flex-col items-center justify-center gap-1 rounded-full bg-background/90 shadow-sm">
+                <span class="h-1 w-1 rounded-full bg-current"></span>
+                <span class="h-1 w-1 rounded-full bg-current"></span>
+                <span class="h-1 w-1 rounded-full bg-current"></span>
+              </span>
+            </button>
+            <div class="space-y-2" data-preview-pane>
+              <div class="rounded-3xl border border-border/70 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(255,255,255,0.98))] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_18px_30px_-26px_rgba(15,23,42,0.3)] dark:bg-[linear-gradient(180deg,rgba(24,24,27,0.96),rgba(9,9,11,0.98))]">
+                <div class="mb-4 flex items-center justify-between gap-4 border-b border-border/70 pb-3">
+                  <div class="space-y-1">
+                    <p class="text-sm font-medium">实时预览</p>
+                    <p class="text-xs text-muted-foreground">接近正文阅读状态的本地渲染效果。</p>
+                  </div>
                   <span class="text-xs text-muted-foreground">仅本地渲染，不会自动发布</span>
                 </div>
                 <div
-                  class="prose prose-stone min-h-[calc(70vh-4.5rem)] max-w-none dark:prose-invert"
+                  class="prose prose-stone min-h-[460px] max-w-none text-[15px] leading-7 dark:prose-invert xl:min-h-[580px] prose-headings:mb-4 prose-headings:tracking-tight prose-p:my-4 prose-li:my-1 prose-pre:rounded-2xl prose-pre:border prose-pre:border-border/70 prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:pl-4"
                   data-markdown-preview
                 ></div>
               </div>
@@ -112,44 +173,51 @@ const slugPostId = values.id;
     </div>
 
     <div class="space-y-6 xl:sticky xl:top-6 xl:self-start">
-      <Card className="shadow-sm">
+      <Card className="rounded-3xl border border-border/70 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.22)]">
         <CardContent className="pt-6">
-          <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-1">
-            <div class="space-y-2 md:col-span-2 xl:col-span-1">
+          <div class="mb-5 space-y-1 border-b border-border/70 pb-4">
+            <p class="text-sm font-medium">文章信息</p>
+            <p class="text-xs text-muted-foreground">标题、slug、发布时间与封面图都集中在这里。</p>
+          </div>
+
+          <div class="grid gap-5">
+            <div class="space-y-2">
               <Label htmlFor="title">标题</Label>
               <Input id="title" name="title" required placeholder="文章标题" defaultValue={title} />
             </div>
 
-            <div class="space-y-2 md:col-span-2 xl:col-span-1">
+            <div class="space-y-2">
               <Label htmlFor="slug">Slug (URL 路径)</Label>
               <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={slug} />
               <SlugFieldHint postId={slugPostId} />
             </div>
 
-            <div class="space-y-2">
-              <Label htmlFor="status">状态</Label>
-              <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <option value="draft" selected={status === "draft"}>草稿</option>
-                <option value="published" selected={status === "published"}>发布</option>
-                <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
-              </select>
+            <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
+              <div class="space-y-2">
+                <Label htmlFor="status">状态</Label>
+                <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                  <option value="draft" selected={status === "draft"}>草稿</option>
+                  <option value="published" selected={status === "published"}>发布</option>
+                  <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
+                </select>
+              </div>
+
+              <div class="space-y-2">
+                <Label htmlFor="publishedAt">发布时间</Label>
+                <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
+              </div>
             </div>
 
             <div class="space-y-2">
-              <Label htmlFor="publishedAt">发布时间</Label>
-              <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
-            </div>
-
-            <div class="space-y-2 md:col-span-2 xl:col-span-1">
               <Label htmlFor="tags">标签 (用逗号分隔)</Label>
               <Input id="tags" name="tags" placeholder="AI, Git, Web" defaultValue={tags} />
             </div>
 
-            <div class="space-y-2 md:col-span-2 xl:col-span-1">
+            <div class="space-y-2">
               <Label htmlFor="coverImage">封面图 URL</Label>
               <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} data-cover-image-input />
               <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
-              <div class="hidden overflow-hidden rounded-xl border bg-muted/30" data-cover-preview-wrapper>
+              <div class="hidden overflow-hidden rounded-2xl border border-border/70 bg-muted/30 shadow-sm" data-cover-preview-wrapper>
                 <img
                   src={coverImage || ""}
                   alt="封面图预览"
@@ -159,12 +227,12 @@ const slugPostId = values.id;
               </div>
             </div>
 
-            <div class="space-y-2 md:col-span-2 xl:col-span-1">
+            <div class="space-y-2">
               <Label htmlFor="excerpt">摘要</Label>
               <textarea
                 id="excerpt"
                 name="excerpt"
-                class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                class="flex min-h-[120px] w-full rounded-xl border border-input bg-background px-3 py-3 text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 placeholder="留空时会自动从正文生成摘要"
               >{excerpt}</textarea>
               <p class="text-xs text-muted-foreground">建议 80 到 140 字。留空时会自动从 Markdown 正文提取摘要。</p>
@@ -173,12 +241,12 @@ const slugPostId = values.id;
         </CardContent>
       </Card>
 
-      <details class="rounded-xl border bg-background shadow-sm" data-seo-panel>
+      <details class="rounded-3xl border border-border/70 bg-background shadow-[0_18px_40px_-30px_rgba(15,23,42,0.18)]" data-seo-panel>
         <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-sm font-medium">
           <span>SEO 设置</span>
-          <span class="text-xs text-muted-foreground">展开后可填写分享标题、描述</span>
+          <span class="text-xs text-muted-foreground">按需展开填写分享标题与描述</span>
         </summary>
-        <div class="border-t px-6 py-5">
+        <div class="border-t border-border/70 px-6 py-5">
           <div class="space-y-5">
             <div class="space-y-2">
               <Label htmlFor="metaTitle">SEO 标题</Label>
@@ -191,7 +259,7 @@ const slugPostId = values.id;
               <textarea
                 id="metaDescription"
                 name="metaDescription"
-                class="flex min-h-[112px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                class="flex min-h-[112px] w-full rounded-xl border border-input bg-background px-3 py-3 text-sm leading-7 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 placeholder="留空时默认使用摘要"
                 maxLength={180}
               >{metaDescription}</textarea>
@@ -200,6 +268,78 @@ const slugPostId = values.id;
           </div>
         </div>
       </details>
+    </div>
+  </div>
+
+  <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/45 px-4 py-8 backdrop-blur-sm" data-image-modal>
+    <div class="w-full max-w-xl rounded-[28px] border border-border/70 bg-background p-6 shadow-[0_32px_80px_-28px_rgba(15,23,42,0.45)]">
+      <div class="mb-5 flex items-start justify-between gap-4">
+        <div class="space-y-1">
+          <h3 class="text-lg font-semibold tracking-tight">插入图片</h3>
+          <p class="text-sm text-muted-foreground">上传到 R2，或直接插入已有图片地址。</p>
+        </div>
+        <button
+          type="button"
+          class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-accent hover:text-foreground"
+          data-image-modal-close
+        >关闭</button>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2">
+        <div class="space-y-3 rounded-2xl border border-border/70 bg-muted/10 p-4">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">上传图片</p>
+            <p class="text-xs text-muted-foreground">选择本地图片后自动上传并插入 Markdown。</p>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            class="block w-full rounded-xl border border-border/70 bg-background px-3 py-2 text-sm"
+            data-image-file-input
+          />
+          <Button type="button" className="w-full" data-image-upload-confirm>上传并插入</Button>
+        </div>
+
+        <div class="space-y-3 rounded-2xl border border-border/70 bg-muted/10 p-4">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">图片地址</p>
+            <p class="text-xs text-muted-foreground">填入外部 URL 或已上传图片地址，直接插入正文。</p>
+          </div>
+          <Input type="url" placeholder="https://example.com/image.jpg" data-image-url-input />
+          <Input type="text" placeholder="图片描述，可选" data-image-alt-input />
+          <Button type="button" variant="outline" className="w-full" data-image-url-confirm>插入图片地址</Button>
+        </div>
+      </div>
+
+      <div class="mt-5 space-y-3 rounded-2xl border border-border/70 bg-muted/10 p-4">
+        <div class="flex items-center justify-between gap-3">
+          <div class="space-y-1">
+            <p class="text-sm font-medium">最近上传</p>
+            <p class="text-xs text-muted-foreground">直接插入最近上传到 R2 的图片地址。</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select
+              class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm text-muted-foreground"
+              data-image-library-sort
+            >
+              <option value="newest">最新优先</option>
+              <option value="oldest">最早优先</option>
+              <option value="name">名称排序</option>
+            </select>
+            <button
+              type="button"
+              class="rounded-xl border border-border/70 bg-background px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-accent hover:text-foreground"
+              data-image-library-refresh
+            >刷新</button>
+          </div>
+        </div>
+        <Input type="search" placeholder="搜索文件名..." data-image-library-search />
+        <div class="grid gap-3 sm:grid-cols-2" data-image-library-list>
+          <p class="text-xs text-muted-foreground" data-image-library-status>正在读取最近上传图片…</p>
+        </div>
+      </div>
+
+      <p class="mt-4 text-xs text-muted-foreground" data-image-modal-status>上传限制 10MB，建议使用清晰的横图或插图资源。</p>
     </div>
   </div>
 </form>
@@ -223,9 +363,30 @@ const slugPostId = values.id;
     const coverPreviewWrapper = form.querySelector("[data-cover-preview-wrapper]");
     const coverPreviewImage = form.querySelector("[data-cover-preview-image]");
     const uploadStatusEl = form.querySelector("[data-image-upload-status]");
+    const clearDraftButton = form.querySelector("[data-clear-draft-button]");
+    const splitPanel = form.querySelector("[data-editor-split-panel]");
+    const splitter = form.querySelector("[data-editor-splitter]");
+    const previewPane = form.querySelector("[data-preview-pane]");
+    const focusModeButtons = Array.from(form.querySelectorAll("[data-focus-mode-toggle]"));
+    const imageModal = form.querySelector("[data-image-modal]");
+    const imageModalCloseButton = form.querySelector("[data-image-modal-close]");
+    const imageFileInput = form.querySelector("[data-image-file-input]");
+    const imageUploadConfirmButton = form.querySelector("[data-image-upload-confirm]");
+    const imageUrlInput = form.querySelector("[data-image-url-input]");
+    const imageAltInput = form.querySelector("[data-image-alt-input]");
+    const imageUrlConfirmButton = form.querySelector("[data-image-url-confirm]");
+    const imageModalStatus = form.querySelector("[data-image-modal-status]");
+    const imageLibraryList = form.querySelector("[data-image-library-list]");
+    const imageLibraryStatus = form.querySelector("[data-image-library-status]");
+    const imageLibraryRefreshButton = form.querySelector("[data-image-library-refresh]");
+    const imageLibrarySearchInput = form.querySelector("[data-image-library-search]");
+    const imageLibrarySortSelect = form.querySelector("[data-image-library-sort]");
     const fields = Array.from(
       form.querySelectorAll("input[name], textarea[name], select[name]")
     ).filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement);
+    const splitLayoutStorageKey = `${autosaveKey}:editor-split`;
+    const focusModeStorageKey = `${autosaveKey}:focus-mode`;
+    let cachedImageLibrary = [];
 
     const setStatus = (message) => {
       if (statusEl instanceof HTMLElement) {
@@ -263,6 +424,105 @@ const slugPostId = values.id;
       }
     };
 
+    const setImageModalStatus = (message) => {
+      if (imageModalStatus instanceof HTMLElement) {
+        imageModalStatus.textContent = message;
+      }
+    };
+
+    const setImageLibraryStatus = (message) => {
+      if (imageLibraryStatus instanceof HTMLElement) {
+        imageLibraryStatus.textContent = message;
+      }
+    };
+
+    const clampSplit = (value) => Math.min(72, Math.max(38, value));
+
+    const applySplitRatio = (value) => {
+      if (!(splitPanel instanceof HTMLElement)) return;
+      const nextValue = clampSplit(value);
+      splitPanel.style.setProperty("--editor-pane-width", `${nextValue}%`);
+      splitPanel.style.setProperty("--preview-pane-width", `${100 - nextValue}%`);
+      splitPanel.dataset.editorSplit = String(nextValue);
+    };
+
+    const saveSplitRatio = (value) => {
+      try {
+        localStorage.setItem(splitLayoutStorageKey, String(clampSplit(value)));
+      } catch {
+        // ignore localStorage failures
+      }
+    };
+
+    const applyFocusMode = (mode) => {
+      if (!(splitPanel instanceof HTMLElement) || !(markdownInput instanceof HTMLTextAreaElement) || !(previewPane instanceof HTMLElement) || !(splitter instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const nextMode = mode === "editor" || mode === "preview" ? mode : "split";
+      splitPanel.dataset.focusMode = nextMode;
+
+      const isWideLayout = window.innerWidth >= 1280;
+      if (!isWideLayout) {
+        markdownInput.parentElement?.classList.remove("hidden");
+        previewPane.classList.remove("hidden");
+        splitter.classList.add("hidden");
+      } else if (nextMode === "editor") {
+        markdownInput.parentElement?.classList.remove("hidden");
+        previewPane.classList.add("hidden");
+        splitter.classList.add("hidden");
+        splitPanel.style.gridTemplateColumns = "minmax(0,1fr)";
+      } else if (nextMode === "preview") {
+        markdownInput.parentElement?.classList.add("hidden");
+        previewPane.classList.remove("hidden");
+        splitter.classList.add("hidden");
+        splitPanel.style.gridTemplateColumns = "minmax(0,1fr)";
+      } else {
+        markdownInput.parentElement?.classList.remove("hidden");
+        previewPane.classList.remove("hidden");
+        splitter.classList.remove("hidden");
+        splitPanel.style.gridTemplateColumns = "minmax(0,var(--editor-pane-width,58%)) 18px minmax(0,var(--preview-pane-width,42%))";
+      }
+
+      for (const button of focusModeButtons) {
+        if (!(button instanceof HTMLButtonElement)) continue;
+        const active = button.dataset.focusMode === nextMode;
+        button.dataset.active = active ? "true" : "false";
+        button.classList.toggle("bg-foreground", active);
+        button.classList.toggle("text-background", active);
+        button.classList.toggle("border-foreground", active);
+      }
+    };
+
+    const saveFocusMode = (mode) => {
+      try {
+        localStorage.setItem(focusModeStorageKey, mode);
+      } catch {
+        // ignore localStorage failures
+      }
+    };
+
+    const openImageModal = () => {
+      if (!(imageModal instanceof HTMLElement)) return;
+      imageModal.classList.remove("hidden");
+      imageModal.classList.add("flex");
+      setImageModalStatus("上传限制 10MB，建议使用清晰的横图或插图资源。");
+      if (imageUrlInput instanceof HTMLInputElement) {
+        imageUrlInput.focus();
+      }
+    };
+
+    const closeImageModal = () => {
+      if (!(imageModal instanceof HTMLElement)) return;
+      imageModal.classList.add("hidden");
+      imageModal.classList.remove("flex");
+    };
+
+    const insertImageMarkdown = (url, altText = "图片描述") => {
+      const insertText = `\n![${altText}](${url})\n`;
+      insertBlock(insertText, insertText.length);
+    };
+
     const updateTextarea = (nextValue, selectionStart, selectionEnd = selectionStart) => {
       if (!(markdownInput instanceof HTMLTextAreaElement)) return;
       markdownInput.value = nextValue;
@@ -290,6 +550,94 @@ const slugPostId = values.id;
       updateTextarea(nextValue, start + cursorOffset);
     };
 
+    const insertList = (marker) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      const start = markdownInput.selectionStart;
+      const end = markdownInput.selectionEnd;
+      const selected = markdownInput.value.slice(start, end);
+      const lines = (selected || "列表项").split("\n");
+      const formatted = lines
+        .map((line, index) => {
+          const content = line.trim() || "列表项";
+          if (marker === "ordered") {
+            return `${index + 1}. ${content}`;
+          }
+          return `- ${content}`;
+        })
+        .join("\n");
+      const nextValue = `${markdownInput.value.slice(0, start)}${formatted}${markdownInput.value.slice(end)}`;
+      updateTextarea(nextValue, start, start + formatted.length);
+    };
+
+    const insertSelectedTextAsTable = (columnCount = 3, align = false) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return false;
+      const start = markdownInput.selectionStart;
+      const end = markdownInput.selectionEnd;
+      const selected = markdownInput.value.slice(start, end).trim();
+      if (!selected) return false;
+
+      const rows = selected
+        .split("\n")
+        .map((row) => row.trim())
+        .filter(Boolean)
+        .map((row) => row.split(/\t|\s{2,}|,|，|\|/).map((cell) => cell.trim()).filter(Boolean));
+
+      if (!rows.length) return false;
+
+      const normalizedRows = rows.map((row) => {
+        const nextRow = row.slice(0, columnCount);
+        while (nextRow.length < columnCount) {
+          nextRow.push(`内容 ${nextRow.length + 1}`);
+        }
+        return nextRow;
+      });
+
+      const header = normalizedRows[0];
+      const body = normalizedRows.slice(1);
+      const divider = align
+        ? Array.from({ length: columnCount }, (_, index) => (index === 0 ? ":---" : index === columnCount - 1 ? "---:" : ":---:"))
+        : Array.from({ length: columnCount }, () => "---");
+
+      const tableLines = [
+        `| ${header.join(" | ")} |`,
+        `| ${divider.join(" | ")} |`,
+        ...(body.length
+          ? body.map((row) => `| ${row.join(" | ")} |`)
+          : [`| ${Array.from({ length: columnCount }, (_, index) => `内容 ${index + 1}`).join(" | ")} |`]),
+      ];
+
+      const table = `\n${tableLines.join("\n")}\n`;
+      const nextValue = `${markdownInput.value.slice(0, start)}${table}${markdownInput.value.slice(end)}`;
+      updateTextarea(nextValue, start + 1, start + table.length - 1);
+      return true;
+    };
+
+    const insertTable = (variant = "3col") => {
+      if (variant === "2col") {
+        if (insertSelectedTextAsTable(2, false)) return;
+        insertBlock(
+          "\n| 字段 | 内容 |\n| --- | --- |\n| 示例项 | 示例内容 |\n",
+          4
+        );
+        return;
+      }
+
+      if (variant === "align") {
+        if (insertSelectedTextAsTable(3, true)) return;
+        insertBlock(
+          "\n| 左对齐 | 居中 | 右对齐 |\n| :--- | :---: | ---: |\n| 内容 1 | 内容 2 | 内容 3 |\n",
+          4
+        );
+        return;
+      }
+
+      if (insertSelectedTextAsTable(3, false)) return;
+      insertBlock(
+        "\n| 列 1 | 列 2 | 列 3 |\n| --- | --- | --- |\n| 内容 1 | 内容 2 | 内容 3 |\n",
+        4
+      );
+    };
+
     const handleToolbarAction = (action) => {
       switch (action) {
         case "heading":
@@ -298,8 +646,35 @@ const slugPostId = values.id;
         case "bold":
           insertAroundSelection("**", "**", "加粗文本");
           break;
+        case "quote":
+          insertBlock("> 引用内容\n", 2);
+          break;
+        case "bullet-list":
+          insertList("unordered");
+          break;
+        case "numbered-list":
+          insertList("ordered");
+          break;
         case "code":
           insertAroundSelection("```md\n", "\n```", "在这里输入代码");
+          break;
+        case "inline-code":
+          insertAroundSelection("`", "`", "code");
+          break;
+        case "divider":
+          insertBlock("\n---\n", 5);
+          break;
+        case "table-2":
+          insertTable("2col");
+          break;
+        case "table-3":
+          insertTable("3col");
+          break;
+        case "table-align":
+          insertTable("align");
+          break;
+        case "image":
+          openImageModal();
           break;
         case "link":
           insertAroundSelection("[", "](https://example.com)", "链接文本");
@@ -380,6 +755,8 @@ const slugPostId = values.id;
     };
 
     const savedDraft = localStorage.getItem(autosaveKey);
+    const savedSplitRatio = localStorage.getItem(splitLayoutStorageKey);
+    const savedFocusMode = localStorage.getItem(focusModeStorageKey);
     if (savedDraft) {
       try {
         const parsed = JSON.parse(savedDraft);
@@ -404,8 +781,147 @@ const slugPostId = values.id;
       }
     }
 
+    if (savedSplitRatio) {
+      const parsedRatio = Number(savedSplitRatio);
+      if (!Number.isNaN(parsedRatio)) {
+        applySplitRatio(parsedRatio);
+      }
+    }
+
+    applyFocusMode(savedFocusMode ?? "split");
+
     renderMarkdown();
     renderCoverPreview();
+
+    const renderRecentImages = (images) => {
+      if (!(imageLibraryList instanceof HTMLElement)) return;
+      imageLibraryList.innerHTML = "";
+
+      const query = imageLibrarySearchInput instanceof HTMLInputElement
+        ? imageLibrarySearchInput.value.trim().toLowerCase()
+        : "";
+      const sortMode = imageLibrarySortSelect instanceof HTMLSelectElement
+        ? imageLibrarySortSelect.value
+        : "newest";
+
+      const filteredImages = [...images]
+        .filter((image) => {
+          if (!query) return true;
+          return typeof image.key === "string" && image.key.toLowerCase().includes(query);
+        })
+        .sort((a, b) => {
+          if (sortMode === "name") {
+            return String(a.key).localeCompare(String(b.key), "zh-CN");
+          }
+
+          const left = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
+          const right = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
+          return sortMode === "oldest" ? left - right : right - left;
+        })
+        .slice(0, 12);
+
+      if (filteredImages.length === 0) {
+        imageLibraryList.innerHTML = query
+          ? '<p class="text-xs text-muted-foreground">没有匹配当前搜索条件的图片。</p>'
+          : '<p class="text-xs text-muted-foreground">还没有可用的上传图片。</p>';
+        return;
+      }
+
+      for (const image of filteredImages) {
+        const card = document.createElement("div");
+        card.className = "overflow-hidden rounded-2xl border border-border/70 bg-background text-left transition hover:border-foreground/20 hover:bg-accent/40";
+        const absoluteUrl = `${window.location.origin}${image.url}`;
+        const uploadedAt = image.uploadedAt ? new Date(image.uploadedAt).toLocaleString("zh-CN") : "未知时间";
+        const safeKey = typeof image.key === "string" ? image.key.replace(/"/g, "&quot;") : "";
+        card.innerHTML = `
+          <div class="aspect-[4/3] overflow-hidden bg-muted/20">
+            <img src="${absoluteUrl}" alt="${image.key}" class="h-full w-full object-cover" loading="lazy" />
+          </div>
+          <div class="space-y-2 p-3">
+            <p class="line-clamp-1 text-sm font-medium">${image.key}</p>
+            <p class="text-[11px] text-muted-foreground">${uploadedAt}</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="rounded-lg border border-border/70 bg-background px-2.5 py-1 text-[11px] transition hover:bg-accent" data-image-action="insert">插入</button>
+              <button type="button" class="rounded-lg border border-border/70 bg-background px-2.5 py-1 text-[11px] transition hover:bg-accent" data-image-action="copy">复制链接</button>
+              <button type="button" class="rounded-lg border border-destructive/30 bg-background px-2.5 py-1 text-[11px] text-destructive transition hover:bg-destructive/10" data-image-action="delete" data-image-key="${safeKey}">删除</button>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", async (event) => {
+          const target = event.target instanceof HTMLElement ? event.target.closest("[data-image-action]") : null;
+          if (!(target instanceof HTMLButtonElement)) return;
+
+          const action = target.dataset.imageAction;
+          const altText = imageAltInput instanceof HTMLInputElement && imageAltInput.value.trim()
+            ? imageAltInput.value.trim()
+            : image.key;
+
+          if (action === "insert") {
+            insertImageMarkdown(absoluteUrl, altText);
+            setImageModalStatus("已插入最近上传图片。");
+            closeImageModal();
+            return;
+          }
+
+          if (action === "copy") {
+            try {
+              await navigator.clipboard.writeText(absoluteUrl);
+              setImageModalStatus("图片链接已复制。");
+            } catch {
+              setImageModalStatus("复制失败，请手动复制图片链接。");
+            }
+            return;
+          }
+
+          if (action === "delete") {
+            const imageKey = target.dataset.imageKey ?? image.key;
+            const confirmed = window.confirm(`确定删除图片 ${image.key} 吗？`);
+            if (!confirmed) return;
+
+            try {
+              const response = await fetch("/api/admin/images", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: imageKey }),
+              });
+              if (!response.ok) {
+                throw new Error("delete_failed");
+              }
+              cachedImageLibrary = cachedImageLibrary.filter((item) => item.key !== imageKey);
+              setImageModalStatus("图片已删除。");
+              renderRecentImages(cachedImageLibrary);
+            } catch {
+              setImageModalStatus("删除失败，请稍后重试。");
+            }
+          }
+        });
+        imageLibraryList.appendChild(card);
+      }
+    };
+
+    const loadRecentImages = async () => {
+      if (!(imageLibraryList instanceof HTMLElement)) return;
+      imageLibraryList.innerHTML = "";
+      setImageLibraryStatus("正在读取最近上传图片…");
+
+      try {
+        const response = await fetch("/api/admin/images");
+        if (!response.ok) {
+          throw new Error("load_images_failed");
+        }
+
+        const result = await response.json();
+        cachedImageLibrary = Array.isArray(result?.images) ? result.images : [];
+        if (!cachedImageLibrary.length) {
+          imageLibraryList.innerHTML = '<p class="text-xs text-muted-foreground">还没有可用的上传图片。</p>';
+          return;
+        }
+        renderRecentImages(cachedImageLibrary);
+      } catch {
+        imageLibraryList.innerHTML = '<p class="text-xs text-destructive">读取最近上传图片失败，请稍后刷新重试。</p>';
+      }
+    };
 
     let timer = 0;
     const scheduleSave = () => {
@@ -437,6 +953,209 @@ const slugPostId = values.id;
         if (!(button instanceof HTMLButtonElement)) return;
         handleToolbarAction(button.dataset.mdAction);
       });
+    }
+
+    if (imageModalCloseButton instanceof HTMLButtonElement) {
+      imageModalCloseButton.addEventListener("click", closeImageModal);
+    }
+
+    if (imageLibraryRefreshButton instanceof HTMLButtonElement) {
+      imageLibraryRefreshButton.addEventListener("click", loadRecentImages);
+    }
+
+    if (imageLibrarySearchInput instanceof HTMLInputElement) {
+      imageLibrarySearchInput.addEventListener("input", () => {
+        renderRecentImages(cachedImageLibrary);
+      });
+    }
+
+    if (imageLibrarySortSelect instanceof HTMLSelectElement) {
+      imageLibrarySortSelect.addEventListener("change", () => {
+        renderRecentImages(cachedImageLibrary);
+      });
+    }
+
+    if (imageModal instanceof HTMLElement) {
+      imageModal.addEventListener("click", (event) => {
+        if (event.target === imageModal) {
+          closeImageModal();
+        }
+      });
+    }
+
+    if (imageUploadConfirmButton instanceof HTMLButtonElement) {
+      imageUploadConfirmButton.addEventListener("click", async () => {
+        const file = imageFileInput instanceof HTMLInputElement ? imageFileInput.files?.[0] : null;
+        if (!file) {
+          setImageModalStatus("请先选择一张图片。");
+          return;
+        }
+
+        setImageModalStatus("正在上传图片…");
+        try {
+          const imageUrl = await uploadImage(file);
+          const altText = imageAltInput instanceof HTMLInputElement && imageAltInput.value.trim()
+            ? imageAltInput.value.trim()
+            : file.name || "image";
+          insertImageMarkdown(imageUrl, altText);
+          setUploadStatus("图片已上传并插入正文");
+          setImageModalStatus("图片上传成功，已插入正文。");
+          if (imageFileInput instanceof HTMLInputElement) {
+            imageFileInput.value = "";
+          }
+          await loadRecentImages();
+          closeImageModal();
+        } catch {
+          setImageModalStatus("图片上传失败，请稍后重试。");
+        }
+      });
+    }
+
+    if (imageUrlConfirmButton instanceof HTMLButtonElement) {
+      imageUrlConfirmButton.addEventListener("click", () => {
+        const url = imageUrlInput instanceof HTMLInputElement ? imageUrlInput.value.trim() : "";
+        if (!url) {
+          setImageModalStatus("请输入图片地址。");
+          return;
+        }
+
+        const altText = imageAltInput instanceof HTMLInputElement && imageAltInput.value.trim()
+          ? imageAltInput.value.trim()
+          : "图片描述";
+        insertImageMarkdown(url, altText);
+        setImageModalStatus("图片地址已插入正文。");
+        closeImageModal();
+      });
+    }
+
+    if (clearDraftButton instanceof HTMLButtonElement) {
+      clearDraftButton.addEventListener("click", () => {
+        const confirmed = window.confirm("这会清除当前文章的本地草稿与视图设置，并刷新页面。确定继续吗？");
+        if (!confirmed) return;
+        try {
+          localStorage.removeItem(autosaveKey);
+          localStorage.removeItem(splitLayoutStorageKey);
+          localStorage.removeItem(focusModeStorageKey);
+        } catch {
+          // ignore localStorage failures
+        }
+        window.location.reload();
+      });
+    }
+
+    for (const button of focusModeButtons) {
+      if (!(button instanceof HTMLButtonElement)) continue;
+      button.addEventListener("click", () => {
+        const mode = button.dataset.focusMode ?? "split";
+        applyFocusMode(mode);
+        saveFocusMode(mode);
+      });
+    }
+
+    if (splitPanel instanceof HTMLElement && splitter instanceof HTMLButtonElement) {
+      let activePointerId = null;
+
+      const updateSplitFromPointer = (clientX) => {
+        if (window.innerWidth < 1280) return;
+        const rect = splitPanel.getBoundingClientRect();
+        const nextRatio = ((clientX - rect.left) / rect.width) * 100;
+        applySplitRatio(nextRatio);
+      };
+
+      splitter.addEventListener("pointerdown", (event) => {
+        if (window.innerWidth < 1280) return;
+        activePointerId = event.pointerId;
+        splitter.setPointerCapture(event.pointerId);
+        splitter.classList.add("bg-muted/25", "text-foreground");
+        updateSplitFromPointer(event.clientX);
+      });
+
+      splitter.addEventListener("pointermove", (event) => {
+        if (activePointerId !== event.pointerId) return;
+        updateSplitFromPointer(event.clientX);
+      });
+
+      const finishResize = (event) => {
+        if (activePointerId !== event.pointerId) return;
+        splitter.releasePointerCapture(event.pointerId);
+        splitter.classList.remove("bg-muted/25", "text-foreground");
+        activePointerId = null;
+        const ratio = Number(splitPanel.dataset.editorSplit ?? "58");
+        saveSplitRatio(ratio);
+      };
+
+      splitter.addEventListener("pointerup", finishResize);
+      splitter.addEventListener("pointercancel", finishResize);
+
+      splitter.addEventListener("keydown", (event) => {
+        if (window.innerWidth < 1280) return;
+        const currentRatio = Number(splitPanel.dataset.editorSplit ?? "58");
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          const nextRatio = currentRatio - 4;
+          applySplitRatio(nextRatio);
+          saveSplitRatio(nextRatio);
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          const nextRatio = currentRatio + 4;
+          applySplitRatio(nextRatio);
+          saveSplitRatio(nextRatio);
+        }
+      });
+    }
+
+    window.addEventListener("resize", () => {
+      const currentMode = localStorage.getItem(focusModeStorageKey) ?? splitPanel?.dataset.focusMode ?? "split";
+      applyFocusMode(currentMode);
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (!(markdownInput instanceof HTMLTextAreaElement)) return;
+      const isEditorFocused = document.activeElement === markdownInput;
+      if (!isEditorFocused) return;
+
+      const modifier = event.metaKey || event.ctrlKey;
+      if (!modifier) return;
+
+      if (event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        handleToolbarAction("bold");
+      }
+
+      if (event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        handleToolbarAction("link");
+      }
+
+      if (event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        handleToolbarAction("inline-code");
+      }
+
+      if (event.altKey && event.key === "1") {
+        event.preventDefault();
+        handleToolbarAction("heading");
+      }
+
+      if (event.shiftKey && event.key === "8") {
+        event.preventDefault();
+        handleToolbarAction("bullet-list");
+      }
+
+      if (event.shiftKey && event.key === "7") {
+        event.preventDefault();
+        handleToolbarAction("numbered-list");
+      }
+
+      if (event.shiftKey && event.key === "9") {
+        event.preventDefault();
+        handleToolbarAction("quote");
+      }
+    });
+
+    if (imageModal instanceof HTMLElement) {
+      loadRecentImages();
     }
 
     form.addEventListener("submit", () => {
