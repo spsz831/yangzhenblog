@@ -1,0 +1,97 @@
+---
+interface Props {
+  postId?: number;
+}
+
+const { postId } = Astro.props;
+---
+
+<p
+  id="slug-status"
+  class="text-xs text-muted-foreground"
+  data-slug-status
+  data-post-id={postId ?? ""}
+>
+  数字 slug 建议按顺序递增，例如 `0034`。
+</p>
+
+<script>
+  (() => {
+    const statusEl = document.querySelector("[data-slug-status]");
+    const slugInput = document.querySelector("#slug");
+    if (!(statusEl instanceof HTMLElement) || !(slugInput instanceof HTMLInputElement)) return;
+
+    const postId = statusEl.dataset.postId;
+    let currentAbortController = null;
+
+    const setNeutral = (message) => {
+      statusEl.textContent = message;
+      statusEl.className = "text-xs text-muted-foreground";
+      slugInput.setCustomValidity("");
+    };
+
+    const setError = (message) => {
+      statusEl.textContent = message;
+      statusEl.className = "text-xs text-destructive";
+      slugInput.setCustomValidity(message);
+    };
+
+    const setSuccess = (message) => {
+      statusEl.textContent = message;
+      statusEl.className = "text-xs text-emerald-700 dark:text-emerald-300";
+      slugInput.setCustomValidity("");
+    };
+
+    const checkSlug = async () => {
+      const slug = slugInput.value.trim();
+      if (!slug) {
+        setNeutral("数字 slug 建议按顺序递增，例如 `0034`。");
+        return;
+      }
+
+      currentAbortController?.abort();
+      currentAbortController = new AbortController();
+
+      const params = new URLSearchParams({ slug });
+      if (postId) params.set("excludeId", postId);
+
+      try {
+        const response = await fetch(`/api/posts/slug-status?${params.toString()}`, {
+          signal: currentAbortController.signal,
+        });
+
+        if (!response.ok) {
+          setNeutral("暂时无法检查 slug 是否占用。");
+          return;
+        }
+
+        const result = await response.json();
+        if (result.exists) {
+          const suggestionText = result.suggestion ? `，建议改为 ${result.suggestion}` : "";
+          setError(`Slug 已存在${suggestionText}。`);
+          return;
+        }
+
+        if (result.suggestion && /^\d+$/.test(slug)) {
+          setSuccess(`当前 slug 可用。下一个建议编号是 ${result.suggestion}。`);
+          return;
+        }
+
+        setSuccess("当前 slug 可用。");
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setNeutral("暂时无法检查 slug 是否占用。");
+      }
+    };
+
+    slugInput.addEventListener("blur", checkSlug);
+    slugInput.addEventListener("input", () => {
+      slugInput.setCustomValidity("");
+      setNeutral("正在编辑 slug，失焦后会自动检查是否已占用。");
+    });
+
+    if (slugInput.value.trim()) {
+      checkSlug();
+    }
+  })();
+</script>

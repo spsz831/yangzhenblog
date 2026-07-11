@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Plus } from "lucide-react";
+import FormAlert from "@/components/admin/FormAlert.astro";
 
 export const prerender = false;
 
 const status = Astro.url.searchParams.get("status") || "all";
+const success = Astro.url.searchParams.get("success");
 
 const db = getDb(Astro.locals.runtime.env.DB);
 
@@ -34,6 +36,7 @@ const allPosts = await query.all();
 ---
 
 <AdminLayout title="文章列表">
+  <FormAlert success={success === "post_created" ? "文章已创建。" : success === "post_updated" ? "文章已更新。" : success === "post_deleted" ? "文章已删除。" : null} />
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-bold tracking-tight">文章列表</h2>
     <Button asChild>

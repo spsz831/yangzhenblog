@@ -4,13 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import FormAlert from "@/components/admin/FormAlert.astro";
+import SlugFieldHint from "@/components/admin/SlugFieldHint.astro";
+import { findNextNumericSlug } from "@/lib/admin-posts";
 
 export const prerender = false;
+
+const error = Astro.url.searchParams.get("error");
+const suggestedSlug = await findNextNumericSlug({ locals: Astro.locals });
 ---
 
 <AdminLayout title="New Post">
   <div class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold tracking-tight mb-6">新建文章</h2>
+    <FormAlert error={error} />
     <Card>
       <CardContent className="pt-6">
         <form action="/api/posts" method="POST" class="space-y-4">
@@ -20,7 +27,8 @@ export const prerender = false;
           </div>
           <div class="space-y-2">
             <Label htmlFor="slug">Slug (URL 路径)</Label>
-            <Input id="slug" name="slug" required placeholder="post-slug" />
+            <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={suggestedSlug} />
+            <SlugFieldHint />
           </div>
           <div class="space-y-2">
             <Label htmlFor="excerpt">摘要</Label>

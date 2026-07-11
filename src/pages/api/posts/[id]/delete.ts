@@ -2,18 +2,24 @@ import type { APIRoute } from "astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { requireAdminSession } from "@/lib/admin-posts";
 
-export const POST: APIRoute = async ({ locals, params, redirect }) => {
+export const POST: APIRoute = async ({ locals, params, redirect, cookies }) => {
     const { id } = params;
     if (!id) return new Response("Missing ID", { status: 400 });
+
+    const authRedirect = requireAdminSession({ cookies, redirect });
+    if (authRedirect) {
+        return authRedirect;
+    }
 
     const db = getDb(locals.runtime.env.DB);
 
     try {
         await db.delete(posts).where(eq(posts.id, Number(id)));
     } catch (e) {
-        return new Response("Error deleting post: " + (e as Error).message, { status: 500 });
+        return redirect(`/admin/posts/${id}/edit?error=${encodeURIComponent("删除文章失败。")}`);
     }
 
-    return redirect("/admin/posts");
+    return redirect("/admin/posts?success=post_deleted");
 };

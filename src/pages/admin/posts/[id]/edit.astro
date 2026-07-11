@@ -7,11 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import FormAlert from "@/components/admin/FormAlert.astro";
+import SlugFieldHint from "@/components/admin/SlugFieldHint.astro";
 
 export const prerender = false;
 
 const { id } = Astro.params;
 if (!id) return Astro.redirect("/admin/posts");
+const error = Astro.url.searchParams.get("error");
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const post = await db.select().from(posts).where(eq(posts.id, Number(id))).get();
@@ -35,6 +38,7 @@ const tagsString = postTags.map(t => t.name).join(", ");
         <Button variant="destructive" type="submit">删除文章</Button>
       </form>
     </div>
+    <FormAlert error={error} />
     
     <Card>
       <CardContent className="pt-6">
@@ -46,6 +50,7 @@ const tagsString = postTags.map(t => t.name).join(", ");
           <div class="space-y-2">
             <Label htmlFor="slug">Slug (URL 路径)</Label>
             <Input id="slug" name="slug" required defaultValue={post.slug} />
+            <SlugFieldHint postId={post.id} />
           </div>
           <div class="space-y-2">
             <Label htmlFor="excerpt">摘要</Label>
