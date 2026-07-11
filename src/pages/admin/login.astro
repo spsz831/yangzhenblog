@@ -17,64 +17,43 @@ const error = Astro.url.searchParams.get("error");
     <title>管理员登录 - 杨振博客</title>
   </head>
   <body class="min-h-screen overflow-x-hidden bg-[#f5f5f7] text-zinc-900 antialiased">
-    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.72),transparent_34%)]"></div>
-    <div class="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(29,29,31,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(29,29,31,0.05)_1px,transparent_1px)] [background-size:56px_56px]"></div>
-    <div class="pointer-events-none absolute inset-y-0 right-0 hidden w-[42vw] bg-[linear-gradient(180deg,rgba(255,255,255,0.4),rgba(255,255,255,0.82))] lg:block"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.98),transparent_38%),radial-gradient(circle_at_bottom,rgba(255,255,255,0.72),transparent_42%)]"></div>
+    <div class="pointer-events-none absolute inset-0 opacity-[0.14] [background-image:linear-gradient(rgba(29,29,31,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(29,29,31,0.05)_1px,transparent_1px)] [background-size:56px_56px]"></div>
 
-    <main class="relative grid min-h-screen grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
-      <section class="flex min-h-[48vh] flex-col justify-between px-6 py-8 sm:px-10 sm:py-10 lg:min-h-screen lg:px-14 lg:py-12 xl:px-20">
-        <div class="flex items-center justify-between">
-          <div class="inline-flex items-center gap-3 rounded-full border border-black/8 bg-white/80 px-4 py-2 backdrop-blur-sm">
-            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-950 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
-              <span class="i-lucide-feather text-lg"></span>
-            </span>
-            <div class="leading-none">
-              <p class="text-[15px] font-semibold tracking-[-0.02em] text-zinc-950">杨振博客</p>
-              <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Admin Console</p>
-            </div>
-          </div>
-          <p class="hidden text-[12px] text-zinc-400 sm:block">Private access</p>
-        </div>
-
-        <div class="max-w-4xl py-12 sm:py-16 lg:py-0">
-          <p class="text-[12px] uppercase tracking-[0.3em] text-zinc-500">Yangzhen Blog Admin</p>
-          <h1 class="mt-6 max-w-4xl text-[46px] font-semibold leading-[0.94] tracking-[-0.065em] text-zinc-950 sm:text-[62px] lg:text-[78px] xl:text-[96px]">
-            后台入口，
-            <br />
-            也该有产品级呈现。
-          </h1>
-          <p class="mt-6 max-w-2xl text-[18px] leading-8 tracking-[-0.02em] text-zinc-600 sm:text-[19px]">
-            用更完整的界面承载管理后台，而不是只放一张漂浮的小卡片。
-            登录后进入文章、媒体资源与账号设置。
-          </p>
-
-          <div class="mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
-            <div class="rounded-[28px] bg-white/84 px-5 py-5 shadow-[0_14px_34px_rgba(15,23,42,0.05)] backdrop-blur-sm">
-              <p class="text-[11px] uppercase tracking-[0.24em] text-zinc-500">Articles</p>
-              <p class="mt-3 text-[22px] font-semibold tracking-[-0.04em] text-zinc-950">文章</p>
-            </div>
-            <div class="rounded-[28px] bg-white/84 px-5 py-5 shadow-[0_14px_34px_rgba(15,23,42,0.05)] backdrop-blur-sm">
-              <p class="text-[11px] uppercase tracking-[0.24em] text-zinc-500">Media</p>
-              <p class="mt-3 text-[22px] font-semibold tracking-[-0.04em] text-zinc-950">媒体</p>
-            </div>
-            <div class="rounded-[28px] bg-white/84 px-5 py-5 shadow-[0_14px_34px_rgba(15,23,42,0.05)] backdrop-blur-sm">
-              <p class="text-[11px] uppercase tracking-[0.24em] text-zinc-500">Account</p>
-              <p class="mt-3 text-[22px] font-semibold tracking-[-0.04em] text-zinc-950">账号</p>
-            </div>
+    <main class="relative flex min-h-screen items-center justify-center px-6 py-10 sm:px-10 lg:px-16">
+      <div class="w-full max-w-6xl">
+        <div class="mx-auto mb-10 flex w-fit items-center gap-3 rounded-full border border-black/8 bg-white/80 px-4 py-2 shadow-[0_8px_24px_rgba(15,23,42,0.04)] backdrop-blur-sm">
+          <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-zinc-950 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
+            <span class="i-lucide-feather text-lg"></span>
+          </span>
+          <div class="leading-none">
+            <p class="text-[15px] font-semibold tracking-[-0.02em] text-zinc-950">杨振博客</p>
+            <p class="mt-1 text-[11px] uppercase tracking-[0.24em] text-zinc-500">Admin Console</p>
           </div>
         </div>
 
-        <div class="flex items-center justify-between gap-6 border-t border-black/6 pt-6 text-[12px] text-zinc-400">
-          <span>Yangzhen Blog</span>
-          <span>Admin access only</span>
-        </div>
-      </section>
+        <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,520px)] lg:gap-16">
+          <section class="mx-auto max-w-3xl text-center lg:mx-0 lg:text-left">
+            <p class="text-[12px] uppercase tracking-[0.3em] text-zinc-500">Yangzhen Blog Admin</p>
+            <h1 class="mt-6 text-[44px] font-semibold leading-[0.94] tracking-[-0.065em] text-zinc-950 sm:text-[60px] lg:text-[76px] xl:text-[88px]">
+              进入后台，
+              <br />
+              保持清晰与安静。
+            </h1>
+            <p class="mx-auto mt-6 max-w-2xl text-[18px] leading-8 tracking-[-0.02em] text-zinc-600 lg:mx-0 lg:text-[19px]">
+              使用当前用户名或邮箱登录，进入文章、媒体资源与账号设置。
+            </p>
 
-      <section class="relative flex items-center px-6 pb-8 pt-0 sm:px-10 sm:pb-10 lg:min-h-screen lg:px-14 lg:py-12 xl:px-20">
-        <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0.76))] lg:bg-[linear-gradient(90deg,rgba(255,255,255,0.16),rgba(255,255,255,0.86))]"></div>
-        <div class="relative w-full">
-          <div class="pointer-events-none absolute left-1/2 top-1/2 h-[88%] w-full max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-[44px] bg-white/80 blur-3xl"></div>
-          <Card className="mx-auto w-full max-w-[540px] rounded-[44px] border border-white/80 bg-white/82 shadow-[0_36px_100px_rgba(15,23,42,0.12)] backdrop-blur-2xl">
+            <div class="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start">
+              <span class="rounded-full bg-white px-4 py-2 text-[13px] text-zinc-600 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">文章管理</span>
+              <span class="rounded-full bg-white px-4 py-2 text-[13px] text-zinc-600 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">媒体资源</span>
+              <span class="rounded-full bg-white px-4 py-2 text-[13px] text-zinc-600 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">账号设置</span>
+            </div>
+          </section>
+
+          <section class="relative">
+            <div class="pointer-events-none absolute left-1/2 top-1/2 h-[88%] w-full max-w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-[44px] bg-white/80 blur-3xl"></div>
+            <Card className="relative mx-auto w-full max-w-[520px] rounded-[44px] border border-white/80 bg-white/84 shadow-[0_36px_100px_rgba(15,23,42,0.12)] backdrop-blur-2xl">
             <CardHeader className="space-y-6 px-8 pb-4 pt-8 sm:px-10">
               <div class="flex items-center gap-3">
                 <span class="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-950 text-white shadow-[0_8px_24px_rgba(15,23,42,0.16)]">
@@ -153,9 +132,10 @@ const error = Astro.url.searchParams.get("error");
                 </div>
               </CardFooter>
             </form>
-          </Card>
+            </Card>
+          </section>
         </div>
-      </section>
+      </div>
     </main>
   </body>
 </html>
