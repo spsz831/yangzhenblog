@@ -1,11 +1,7 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import FormAlert from "@/components/admin/FormAlert.astro";
-import SlugFieldHint from "@/components/admin/SlugFieldHint.astro";
+import PostEditorForm from "@/components/admin/PostEditorForm.astro";
 import { findNextNumericSlug } from "@/lib/admin-posts";
 
 export const prerender = false;
@@ -18,61 +14,12 @@ const suggestedSlug = await findNextNumericSlug({ locals: Astro.locals });
   <div class="max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold tracking-tight mb-6">新建文章</h2>
     <FormAlert error={error} />
-    <Card>
-      <CardContent className="pt-6">
-        <form action="/api/posts" method="POST" class="space-y-4">
-          <div class="space-y-2">
-            <Label htmlFor="title">标题</Label>
-            <Input id="title" name="title" required placeholder="文章标题" />
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="slug">Slug (URL 路径)</Label>
-            <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={suggestedSlug} />
-            <SlugFieldHint />
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="excerpt">摘要</Label>
-            <textarea
-              id="excerpt"
-              name="excerpt"
-              class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="文章摘要..."
-            ></textarea>
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="status">状态</Label>
-            <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                <option value="draft">草稿</option>
-                <option value="published">发布</option>
-                <option value="scheduled">定时发布</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="publishedAt">发布时间</Label>
-            <Input id="publishedAt" name="publishedAt" type="datetime-local" />
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="tags">标签 (用逗号分隔)</Label>
-            <Input id="tags" name="tags" placeholder="AI, Git, Web" />
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="content">内容 (Markdown)</Label>
-            <textarea
-              id="content"
-              name="content"
-              required
-              class="flex min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="# Hello World"
-            ></textarea>
-          </div>
-          <div class="flex justify-end gap-4">
-            <Button variant="outline" asChild>
-              <a href="/admin/posts">取消</a>
-            </Button>
-            <Button type="submit">创建文章</Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <PostEditorForm
+      action="/api/posts"
+      cancelHref="/admin/posts"
+      submitLabel="创建文章"
+      autosaveKey="admin-post-new-draft"
+      suggestedSlug={suggestedSlug}
+    />
   </div>
 </AdminLayout>

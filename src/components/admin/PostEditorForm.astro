@@ -1,0 +1,236 @@
+---
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import SlugFieldHint from "@/components/admin/SlugFieldHint.astro";
+
+type PostEditorValues = {
+  id?: number;
+  title?: string | null;
+  slug?: string | null;
+  excerpt?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  coverImage?: string | null;
+  status?: "draft" | "published" | "scheduled" | null;
+  publishedAt?: Date | null;
+  content?: string | null;
+};
+
+interface Props {
+  action: string;
+  cancelHref: string;
+  submitLabel: string;
+  autosaveKey: string;
+  tags?: string;
+  suggestedSlug?: string;
+  values?: PostEditorValues;
+}
+
+const {
+  action,
+  cancelHref,
+  submitLabel,
+  autosaveKey,
+  tags = "",
+  suggestedSlug = "",
+  values = {},
+} = Astro.props;
+
+const title = values.title ?? "";
+const slug = values.slug ?? suggestedSlug;
+const excerpt = values.excerpt ?? "";
+const metaTitle = values.metaTitle ?? "";
+const metaDescription = values.metaDescription ?? "";
+const coverImage = values.coverImage ?? "";
+const status = values.status ?? "draft";
+const publishedAt = values.publishedAt
+  ? new Date(values.publishedAt).toISOString().slice(0, 16)
+  : "";
+const content = values.content ?? "";
+const slugPostId = values.id;
+---
+
+<Card>
+  <CardContent className="pt-6">
+    <form action={action} method="POST" class="space-y-5" data-post-editor-form data-autosave-key={autosaveKey}>
+      <div class="grid gap-5 lg:grid-cols-2">
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="title">标题</Label>
+          <Input id="title" name="title" required placeholder="文章标题" defaultValue={title} />
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="slug">Slug (URL 路径)</Label>
+          <Input id="slug" name="slug" required placeholder="post-slug" defaultValue={slug} />
+          <SlugFieldHint postId={slugPostId} />
+        </div>
+
+        <div class="space-y-2">
+          <Label htmlFor="status">状态</Label>
+          <select id="status" name="status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <option value="draft" selected={status === "draft"}>草稿</option>
+            <option value="published" selected={status === "published"}>发布</option>
+            <option value="scheduled" selected={status === "scheduled"}>定时发布</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <Label htmlFor="publishedAt">发布时间</Label>
+          <Input id="publishedAt" name="publishedAt" type="datetime-local" defaultValue={publishedAt} />
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="coverImage">封面图 URL</Label>
+          <Input id="coverImage" name="coverImage" placeholder="https://example.com/cover.jpg" defaultValue={coverImage} />
+          <p class="text-xs text-muted-foreground">可填写 R2 或外部图片地址，用于文章头图和分享卡片。</p>
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="excerpt">摘要</Label>
+          <textarea
+            id="excerpt"
+            name="excerpt"
+            class="flex min-h-[96px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            placeholder="留空时会自动从正文生成摘要"
+          >{excerpt}</textarea>
+          <p class="text-xs text-muted-foreground">建议 80 到 140 字。留空时会自动从 Markdown 正文提取摘要。</p>
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="metaTitle">SEO 标题</Label>
+          <Input id="metaTitle" name="metaTitle" placeholder="留空时默认使用文章标题" defaultValue={metaTitle} maxLength={70} />
+          <p class="text-xs text-muted-foreground">建议不超过 70 个字符。留空时默认使用文章标题。</p>
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="metaDescription">SEO 描述</Label>
+          <textarea
+            id="metaDescription"
+            name="metaDescription"
+            class="flex min-h-[96px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            placeholder="留空时默认使用摘要"
+            maxLength={180}
+          >{metaDescription}</textarea>
+          <p class="text-xs text-muted-foreground">建议 120 到 180 个字符。留空时默认使用摘要内容。</p>
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <Label htmlFor="tags">标签 (用逗号分隔)</Label>
+          <Input id="tags" name="tags" placeholder="AI, Git, Web" defaultValue={tags} />
+        </div>
+
+        <div class="space-y-2 lg:col-span-2">
+          <div class="flex items-center justify-between gap-4">
+            <Label htmlFor="content">内容 (Markdown)</Label>
+            <span class="text-xs text-muted-foreground" data-autosave-status>未开始自动保存</span>
+          </div>
+          <textarea
+            id="content"
+            name="content"
+            required
+            class="flex min-h-[360px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            placeholder="# Hello World"
+          >{content}</textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-4">
+        <Button variant="outline" asChild>
+          <a href={cancelHref}>取消</a>
+        </Button>
+        <Button type="submit">{submitLabel}</Button>
+      </div>
+    </form>
+  </CardContent>
+</Card>
+
+<script is:inline>
+  (() => {
+    const form = document.querySelector("[data-post-editor-form]");
+    if (!(form instanceof HTMLFormElement)) return;
+
+    const autosaveKey = form.dataset.autosaveKey;
+    if (!autosaveKey) return;
+
+    const statusEl = form.querySelector("[data-autosave-status]");
+    const fields = Array.from(
+      form.querySelectorAll("input[name], textarea[name], select[name]")
+    ).filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement);
+
+    const setStatus = (message) => {
+      if (statusEl instanceof HTMLElement) {
+        statusEl.textContent = message;
+      }
+    };
+
+    const readValue = (field) => {
+      if (field instanceof HTMLInputElement && field.type === "checkbox") {
+        return field.checked;
+      }
+      return field.value;
+    };
+
+    const writeValue = (field, value) => {
+      if (typeof value !== "string") return;
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+        field.value = value;
+      }
+    };
+
+    const saveDraft = () => {
+      const payload = {
+        savedAt: new Date().toISOString(),
+        fields: Object.fromEntries(fields.map((field) => [field.name, readValue(field)])),
+      };
+
+      try {
+        localStorage.setItem(autosaveKey, JSON.stringify(payload));
+        setStatus(`已自动保存 ${new Date(payload.savedAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}`);
+      } catch {
+        setStatus("自动保存失败");
+      }
+    };
+
+    const savedDraft = localStorage.getItem(autosaveKey);
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed?.fields && typeof parsed.fields === "object") {
+          for (const field of fields) {
+            const value = parsed.fields[field.name];
+            if (typeof value === "string" && value.trim() !== "") {
+              writeValue(field, value);
+            }
+          }
+          if (parsed.savedAt) {
+            setStatus(`已恢复草稿 ${new Date(parsed.savedAt).toLocaleString("zh-CN")}`);
+          }
+        }
+      } catch {
+        localStorage.removeItem(autosaveKey);
+      }
+    }
+
+    let timer = 0;
+    const scheduleSave = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(saveDraft, 700);
+      setStatus("正在记录修改…");
+    };
+
+    for (const field of fields) {
+      field.addEventListener("input", scheduleSave);
+      field.addEventListener("change", scheduleSave);
+    }
+
+    form.addEventListener("submit", () => {
+      try {
+        localStorage.removeItem(autosaveKey);
+      } catch {
+        // ignore localStorage failures
+      }
+    });
+  })();
+</script>

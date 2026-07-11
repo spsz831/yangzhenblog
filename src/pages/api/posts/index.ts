@@ -10,7 +10,7 @@ export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => 
     }
 
     try {
-        const { title, slug, content, excerpt, status, publishedAt, tags } = await parsePostForm(
+        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, tags } = await parsePostForm(
             { request, locals }
         );
         const db = getDb(locals.runtime.env.DB);
@@ -19,6 +19,9 @@ export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => 
             slug,
             content,
             excerpt,
+            metaTitle,
+            metaDescription,
+            coverImage,
             status: status as "draft" | "published" | "scheduled",
             likes: 0,
             publishedAt,

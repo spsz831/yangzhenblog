@@ -31,10 +31,11 @@ const content = marked.parse(post.content);
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": post.title,
-  "description": post.excerpt || "",
+  "headline": post.metaTitle || post.title,
+  "description": post.metaDescription || post.excerpt || "",
   "datePublished": post.publishedAt?.toISOString(),
   "dateModified": post.updatedAt?.toISOString() || post.publishedAt?.toISOString(),
+  "image": post.coverImage ? [post.coverImage] : undefined,
   "author": [{
       "@type": "Person",
       "name": "杨振",
@@ -44,7 +45,11 @@ const schema = {
 
 ---
 
-<PublicLayout title={post.title} description={post.excerpt || ""}>
+<PublicLayout
+  title={post.metaTitle || post.title}
+  description={post.metaDescription || post.excerpt || ""}
+  image={post.coverImage || undefined}
+>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <article class="container max-w-3xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 border-b pb-10">
@@ -65,6 +70,13 @@ const schema = {
         <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">
             {post.title}
         </h1>
+        {post.coverImage && (
+          <img
+            src={post.coverImage}
+            alt={post.title}
+            class="mt-4 w-full rounded-2xl border object-cover shadow-sm"
+          />
+        )}
     </div>
     <div class="prose prose-stone dark:prose-invert max-w-none py-10" set:html={content} />
     

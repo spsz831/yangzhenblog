@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect, cookie
     }
 
     try {
-        const { title, slug, content, excerpt, status, publishedAt, tags } = await parsePostForm(
+        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, tags } = await parsePostForm(
             { request, locals },
             { postId: Number(id) }
         );
@@ -26,6 +26,9 @@ export const POST: APIRoute = async ({ request, locals, params, redirect, cookie
                 slug,
                 content,
                 excerpt,
+                metaTitle,
+                metaDescription,
+                coverImage,
                 status: status as "draft" | "published" | "scheduled",
                 updatedAt: new Date(),
                 publishedAt
