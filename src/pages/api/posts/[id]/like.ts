@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
+import { createPublicPostVisibilityFilter } from "@/lib/publishing";
 
 export const POST: APIRoute = async ({ params, locals, request }) => {
     const { id } = params;
@@ -22,7 +23,7 @@ export const POST: APIRoute = async ({ params, locals, request }) => {
             .set({
                 likes: sql`${posts.likes} + 1`
             })
-            .where(eq(posts.id, postId))
+            .where(and(eq(posts.id, postId), createPublicPostVisibilityFilter()))
             .returning({ likes: posts.likes })
             .get();
 

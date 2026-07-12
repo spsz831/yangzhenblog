@@ -2,19 +2,17 @@
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { desc, eq, lte, and } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import TypewriterEffect from "@/components/TypewriterEffect";
+import { createPublicPostVisibilityFilter } from "@/lib/publishing";
 
 // export const prerender = true;
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const publishedPosts = await db.select().from(posts)
-  .where(and(
-    eq(posts.status, 'published'),
-    lte(posts.publishedAt, new Date())
-  ))
+  .where(createPublicPostVisibilityFilter())
   .orderBy(desc(posts.publishedAt)).all();
 ---
 

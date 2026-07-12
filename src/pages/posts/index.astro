@@ -2,7 +2,7 @@
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { desc, eq, lte, and, like, or } from "drizzle-orm";
+import { desc, and, like, or } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,12 +10,13 @@ import { CalendarIcon, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tags, postsToTags } from "@/db/schema";
+import { createPublicPostVisibilityFilter } from "@/lib/publishing";
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const q = Astro.url.searchParams.get("q") || "";
 
 const whereClause = and(
-  eq(posts.status, 'published'),
+  createPublicPostVisibilityFilter(),
   q ? or(like(posts.title, `%${q}%`), like(posts.content, `%${q}%`)) : undefined
 );
 
