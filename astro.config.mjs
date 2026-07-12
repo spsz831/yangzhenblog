@@ -8,7 +8,11 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    workerEntryPoint: {
+      path: 'src/worker.ts',
+    },
+  }),
   site: 'https://yangzhenai.top',
   prefetch: true,
   integrations: [react(), tailwind({

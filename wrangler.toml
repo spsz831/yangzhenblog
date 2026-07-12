@@ -1,6 +1,14 @@
 name = "yangzhenblog-2025"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+main = "./dist/_worker.js/index.js"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+binding = "ASSETS"
+directory = "./dist"
+
+[triggers]
+crons = ["* * * * *"]
 
 [[d1_databases]]
 binding = "DB"
