@@ -35,6 +35,15 @@ export const posts = sqliteTable("posts", {
     updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
 });
 
+export const publishRuns = sqliteTable("publish_runs", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    triggerType: text("trigger_type", { enum: ["cron", "manual", "request"] }).notNull(),
+    triggerLabel: text("trigger_label"),
+    publishedCount: integer("published_count").default(0).notNull(),
+    publishedSlugs: text("published_slugs"),
+    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
+});
+
 export const categories = sqliteTable("categories", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),

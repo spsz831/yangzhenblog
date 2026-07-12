@@ -4,19 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { PlusCircle, FileText, Tags, Image as ImageIcon, BarChart, Upload, PenTool, ExternalLink } from "lucide-react";
 import { getDb } from "@/db";
-import { posts, tags } from "@/db/schema";
-import { count, eq, desc } from "drizzle-orm";
+import { posts, publishRuns, tags } from "@/db/schema";
+import { count, desc, eq } from "drizzle-orm";
 import { format } from "date-fns";
+import FormAlert from "@/components/admin/FormAlert.astro";
 
 export const prerender = false;
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const bucket = Astro.locals.runtime.env.BUCKET;
+const success = Astro.url.searchParams.get("success");
+const countParam = Astro.url.searchParams.get("count");
+const manualRunCount = countParam ? Number.parseInt(countParam, 10) : null;
+const publishingSuccess =
+  success === "publishing_run"
+    ? `发布检查已执行，本次共发布 ${Number.isNaN(manualRunCount ?? NaN) ? 0 : manualRunCount} 篇文章。`
+    : null;
 
 // Fetch stats
 const [{ value: totalPosts }] = await db.select({ value: count() }).from(posts);
 const [{ value: publishedPosts }] = await db.select({ value: count() }).from(posts).where(eq(posts.status, 'published'));
 const [{ value: draftPosts }] = await db.select({ value: count() }).from(posts).where(eq(posts.status, 'draft'));
+const [{ value: scheduledPosts }] = await db.select({ value: count() }).from(posts).where(eq(posts.status, 'scheduled'));
 const [{ value: totalTags }] = await db.select({ value: count() }).from(tags);
 
 // Fetch images count
@@ -30,9 +39,17 @@ try {
 
 // Fetch recent posts
 const recentPosts = await db.select().from(posts).orderBy(desc(posts.updatedAt)).limit(5);
+const recentPublishRuns = await db.select().from(publishRuns).orderBy(desc(publishRuns.createdAt)).limit(8);
+
+const formatTriggerType = (triggerType: string) => {
+  if (triggerType === "cron") return "定时任务";
+  if (triggerType === "manual") return "手动执行";
+  return "请求兜底";
+};
 ---
 
 <AdminLayout title="仪表盘">
+  <FormAlert success={publishingSuccess} />
   <div class="flex items-center justify-between mb-8">
     <h2 class="text-3xl font-bold tracking-tight">仪表盘</h2>
     <div class="flex items-center space-x-2">
@@ -55,7 +72,7 @@ const recentPosts = await db.select().from(posts).orderBy(desc(posts.updatedAt))
       <CardContent>
         <div class="text-2xl font-bold">{totalPosts}</div>
         <p class="text-xs text-muted-foreground">
-          {publishedPosts} 已发布 · {draftPosts} 草稿
+          {publishedPosts} 已发布 · {draftPosts} 草稿 · {scheduledPosts} 定时
         </p>
       </CardContent>
     </Card>
@@ -97,6 +114,76 @@ const recentPosts = await db.select().from(posts).orderBy(desc(posts.updatedAt))
     </Card>
   </div>
 
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)] mb-8">
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div>
+          <CardTitle>发布任务状态</CardTitle>
+          <CardDescription>
+            自动 cron 每分钟检查一次，你也可以在这里手动补跑发布检查。
+          </CardDescription>
+        </div>
+        <form action="/api/admin/publishing/run" method="POST">
+          <Button type="submit" variant="outline">立即执行检查</Button>
+        </form>
+      </CardHeader>
+      <CardContent className="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border border-border/70 bg-muted/20 px-4 py-4">
+          <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Cron 频率</p>
+          <p class="mt-2 text-xl font-semibold">每分钟</p>
+          <p class="mt-1 text-xs text-muted-foreground">当前配置 `* * * * *`</p>
+        </div>
+        <div class="rounded-2xl border border-border/70 bg-muted/20 px-4 py-4">
+          <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">待发布文章</p>
+          <p class="mt-2 text-xl font-semibold">{scheduledPosts}</p>
+          <p class="mt-1 text-xs text-muted-foreground">处于 scheduled 状态的文章数量</p>
+        </div>
+        <div class="rounded-2xl border border-border/70 bg-muted/20 px-4 py-4">
+          <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">最近执行</p>
+          <p class="mt-2 text-xl font-semibold">
+            {recentPublishRuns[0]?.createdAt ? format(recentPublishRuns[0].createdAt, "MM-dd HH:mm") : "暂无"}
+          </p>
+          <p class="mt-1 text-xs text-muted-foreground">
+            {recentPublishRuns[0] ? `${formatTriggerType(recentPublishRuns[0].triggerType)} · 发布 ${recentPublishRuns[0].publishedCount} 篇` : "尚未记录发布任务"}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>最近发布记录</CardTitle>
+        <CardDescription>
+          展示自动任务、手动执行和兜底发布的最近日志。
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-4">
+          {recentPublishRuns.map((run) => (
+            <div class="rounded-2xl border border-border/70 px-4 py-3">
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-sm font-medium">{formatTriggerType(run.triggerType)}</p>
+                <p class="text-xs text-muted-foreground">
+                  {run.createdAt ? format(run.createdAt, "yyyy-MM-dd HH:mm:ss") : "无时间"}
+                </p>
+              </div>
+              <p class="mt-2 text-sm text-muted-foreground">
+                发布 {run.publishedCount} 篇
+                {run.triggerLabel ? ` · ${run.triggerLabel}` : ""}
+              </p>
+              <p class="mt-1 text-xs text-muted-foreground break-all">
+                {run.publishedSlugs ? `Slug: ${run.publishedSlugs}` : "本次没有到点可发布的文章。"}
+              </p>
+            </div>
+          ))}
+          {recentPublishRuns.length === 0 && (
+            <p class="text-sm text-muted-foreground">还没有发布任务记录。</p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
     <!-- Recent Activity -->
     <Card className="col-span-4">
@@ -117,7 +204,7 @@ const recentPosts = await db.select().from(posts).orderBy(desc(posts.updatedAt))
                   </a>
                 </p>
                 <p class="text-xs text-muted-foreground">
-                  {post.status === 'published' ? '已发布' : '草稿'} · {post.updatedAt ? format(post.updatedAt, "yyyy-MM-dd HH:mm") : "无时间"}
+                  {post.status === 'published' ? '已发布' : post.status === 'scheduled' ? '定时发布' : '草稿'} · {post.updatedAt ? format(post.updatedAt, "yyyy-MM-dd HH:mm") : "无时间"}
                 </p>
               </div>
               <div class="ml-auto font-medium text-sm">
