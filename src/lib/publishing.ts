@@ -11,6 +11,53 @@ type PublishRunOptions = {
     triggerType?: PublishTriggerType;
     triggerLabel?: string | null;
 };
+type PublishRunStatus = "success" | "failed";
+
+const MAX_ERROR_MESSAGE_LENGTH = 500;
+
+const serializeErrorMessage = (error: unknown) => {
+    if (error instanceof Error) {
+        return error.message.slice(0, MAX_ERROR_MESSAGE_LENGTH);
+    }
+
+    return String(error).slice(0, MAX_ERROR_MESSAGE_LENGTH);
+};
+
+const insertPublishRun = async (
+    dbBinding: DbBinding,
+    {
+        triggerType,
+        triggerLabel,
+        status,
+        publishedCount,
+        publishedSlugs,
+        errorMessage,
+        durationMs,
+        createdAt,
+    }: {
+        triggerType: PublishTriggerType;
+        triggerLabel: string | null;
+        status: PublishRunStatus;
+        publishedCount: number;
+        publishedSlugs: string;
+        errorMessage?: string | null;
+        durationMs: number;
+        createdAt: Date;
+    }
+) => {
+    const db = getDb(dbBinding);
+
+    await db.insert(publishRuns).values({
+        triggerType,
+        triggerLabel,
+        status,
+        publishedCount,
+        publishedSlugs,
+        errorMessage: errorMessage ?? null,
+        durationMs,
+        createdAt,
+    });
+};
 
 export const createPublicPostVisibilityFilter = (now = new Date()) =>
     and(eq(posts.status, "published"), lte(posts.publishedAt, now));
@@ -31,62 +78,94 @@ export const publishDueScheduledPostsByBinding = async (
     const db = getDb(dbBinding);
     const triggerType = options?.triggerType ?? "request";
     const triggerLabel = options?.triggerLabel ?? null;
+    const startedAt = Date.now();
 
-    const duePosts = await db
-        .select({ id: posts.id, slug: posts.slug })
-        .from(posts)
-        .where(
-            and(
-                eq(posts.status, "scheduled"),
-                lte(posts.publishedAt, now)
+    try {
+        const duePosts = await db
+            .select({ id: posts.id, slug: posts.slug })
+            .from(posts)
+            .where(
+                and(
+                    eq(posts.status, "scheduled"),
+                    lte(posts.publishedAt, now)
+                )
             )
-        )
-        .all();
+            .all();
 
-    const shouldLog = triggerType !== "request" || duePosts.length > 0;
-    if (duePosts.length === 0) {
+        const shouldLog = triggerType !== "request" || duePosts.length > 0;
+        const durationMs = Date.now() - startedAt;
+
+        if (duePosts.length === 0) {
+            if (shouldLog) {
+                await insertPublishRun(dbBinding, {
+                    triggerType,
+                    triggerLabel,
+                    status: "success",
+                    publishedCount: 0,
+                    publishedSlugs: "",
+                    durationMs,
+                    createdAt: now,
+                });
+            }
+
+            return {
+                publishedCount: 0,
+                postIds: [] as number[],
+                slugs: [] as string[],
+            };
+        }
+
+        await db
+            .update(posts)
+            .set({
+                status: "published",
+                updatedAt: now,
+            })
+            .where(
+                and(
+                    eq(posts.status, "scheduled"),
+                    inArray(posts.id, duePosts.map((post) => post.id))
+                )
+            );
+
         if (shouldLog) {
-            await db.insert(publishRuns).values({
+            await insertPublishRun(dbBinding, {
                 triggerType,
                 triggerLabel,
-                publishedCount: 0,
-                publishedSlugs: "",
+                status: "success",
+                publishedCount: duePosts.length,
+                publishedSlugs: duePosts.map((post) => post.slug).join(","),
+                durationMs,
                 createdAt: now,
             });
         }
+
         return {
-            publishedCount: 0,
-            postIds: [] as number[],
-            slugs: [] as string[],
-        };
-    }
-
-    await db
-        .update(posts)
-        .set({
-            status: "published",
-            updatedAt: now,
-        })
-        .where(
-            and(
-                eq(posts.status, "scheduled"),
-                inArray(posts.id, duePosts.map((post) => post.id))
-            )
-        );
-
-    if (shouldLog) {
-        await db.insert(publishRuns).values({
-            triggerType,
-            triggerLabel,
             publishedCount: duePosts.length,
-            publishedSlugs: duePosts.map((post) => post.slug).join(","),
-            createdAt: now,
-        });
-    }
+            postIds: duePosts.map((post) => post.id),
+            slugs: duePosts.map((post) => post.slug),
+        };
+    } catch (error) {
+        const shouldLog = triggerType !== "request";
+        const durationMs = Date.now() - startedAt;
 
-    return {
-        publishedCount: duePosts.length,
-        postIds: duePosts.map((post) => post.id),
-        slugs: duePosts.map((post) => post.slug),
-    };
+        if (shouldLog) {
+            try {
+                await insertPublishRun(dbBinding, {
+                    triggerType,
+                    triggerLabel,
+                    status: "failed",
+                    publishedCount: 0,
+                    publishedSlugs: "",
+                    errorMessage: serializeErrorMessage(error),
+                    durationMs,
+                    createdAt: now,
+                });
+            } catch (logError) {
+                console.error("Failed to record publish run error", logError);
+            }
+        }
+
+        throw error;
+    }
 };

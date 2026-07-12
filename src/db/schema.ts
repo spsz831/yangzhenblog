@@ -39,8 +39,11 @@ export const publishRuns = sqliteTable("publish_runs", {
     id: integer("id").primaryKey({ autoIncrement: true }),
     triggerType: text("trigger_type", { enum: ["cron", "manual", "request"] }).notNull(),
     triggerLabel: text("trigger_label"),
+    status: text("status", { enum: ["success", "failed"] }).default("success").notNull(),
     publishedCount: integer("published_count").default(0).notNull(),
     publishedSlugs: text("published_slugs"),
+    errorMessage: text("error_message"),
+    durationMs: integer("duration_ms"),
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(strftime('%s', 'now'))`),
 });
 

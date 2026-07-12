@@ -9,14 +9,19 @@ export const POST: APIRoute = async ({ cookies, locals, redirect }) => {
         return authRedirect;
     }
 
-    const result = await publishDueScheduledPostsByBinding(
-        locals.runtime.env.DB,
-        new Date(),
-        {
-            triggerType: "manual",
-            triggerLabel: "admin-dashboard",
-        }
-    );
+    try {
+        const result = await publishDueScheduledPostsByBinding(
+            locals.runtime.env.DB,
+            new Date(),
+            {
+                triggerType: "manual",
+                triggerLabel: "admin-dashboard",
+            }
+        );
 
-    return redirect(`/admin?success=publishing_run&count=${result.publishedCount}`);
+        return redirect(`/admin?success=publishing_run&count=${result.publishedCount}`);
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "发布检查执行失败。";
+        return redirect(`/admin?error=${encodeURIComponent(message)}`);
+    }
 };
