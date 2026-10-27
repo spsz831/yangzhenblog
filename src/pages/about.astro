@@ -20,7 +20,7 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
 
       <section class="animate-item" style="--delay: 1;">
         <div class="mb-5 flex items-baseline justify-between gap-4">
-          <h2 class="text-sm font-semibold tracking-wide">最近在做</h2>
+          <h2 class="text-base font-semibold tracking-wide">最近在做</h2>
           <span class="text-xs text-muted-foreground">持续更新</span>
         </div>
         <div class="divide-y divide-border border-y border-border">
@@ -28,36 +28,68 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
             <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">01</span>
             <div class="space-y-1.5">
               <h3 class="font-medium tracking-tight">AI 短视频创作</h3>
-              <p class="text-sm leading-6 text-muted-foreground">探索 AI 参与短视频创作的方式，边做边记录实践过程。</p>
+              <p class="text-base leading-7 text-muted-foreground">探索 AI 参与短视频创作的方式，边做边记录实践过程。</p>
             </div>
           </article>
           <article class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 py-5 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-4">
             <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">02</span>
             <div class="space-y-1.5">
               <h3 class="font-medium tracking-tight">宝宝成长记录网站</h3>
-              <p class="text-sm leading-6 text-muted-foreground">探索用一个网站记录宝宝成长中的点滴，目前还在构思和开发中。</p>
+              <p class="text-base leading-7 text-muted-foreground">探索用一个网站记录宝宝成长中的点滴，目前还在构思和开发中。</p>
             </div>
           </article>
           <article class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 py-5 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-4">
             <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">03</span>
             <div class="space-y-1.5">
               <h3 class="font-medium tracking-tight">八字命理 App</h3>
-              <p class="text-sm leading-6 text-muted-foreground">正在开发一款八字命理方向的应用，持续打磨产品想法与实现。</p>
+              <p class="text-base leading-7 text-muted-foreground">正在开发一款八字命理方向的应用，持续打磨产品想法与实现。</p>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="space-y-3 animate-item" style="--delay: 2;">
-        <h2 class="text-sm font-semibold tracking-wide">工作之外</h2>
-        <p class="text-sm leading-6 text-muted-foreground">
+      <section class="animate-item" style="--delay: 2;">
+        <h2 class="mb-5 text-base font-semibold tracking-wide">技能与实践</h2>
+        <dl class="divide-y divide-border border-y border-border">
+          <div class="grid gap-1 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4">
+            <dt class="font-medium">前端开发</dt>
+            <dd class="text-base leading-7 text-muted-foreground">HTML、CSS、JavaScript、Vue、React、TypeScript、Tailwind CSS、Astro / Next.js</dd>
+          </div>
+          <div class="grid gap-1 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4">
+            <dt class="font-medium">后端与数据</dt>
+            <dd class="text-base leading-7 text-muted-foreground">Node.js、Drizzle ORM、Prisma、Cloudflare D1</dd>
+          </div>
+          <div class="grid gap-1 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4">
+            <dt class="font-medium">AI 辅助开发</dt>
+            <dd class="text-base leading-7 text-muted-foreground">Claude Code、Google Antigravity、Cherry Studio</dd>
+          </div>
+          <div class="grid gap-1 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4">
+            <dt class="font-medium">内容创作</dt>
+            <dd class="text-base leading-7 text-muted-foreground">自媒体运营、短视频运营与剪辑、AI 短视频创作</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="animate-item" style="--delay: 3;">
+        <h2 class="mb-5 text-base font-semibold tracking-wide">证书与资质</h2>
+        <ul class="flex flex-wrap gap-2.5">
+          <li class="rounded-full border border-border px-4 py-2 text-base">C1 驾驶证</li>
+          <li class="rounded-full border border-border px-4 py-2 text-base">深圳证券交易所 ETF 策略师</li>
+          <li class="rounded-full border border-border px-4 py-2 text-base">AIGC 应用工程师（高级）</li>
+          <li class="rounded-full border border-border px-4 py-2 text-base">全国广播电视编辑记者资格证</li>
+        </ul>
+      </section>
+
+      <section class="space-y-3 animate-item" style="--delay: 4;">
+        <h2 class="text-base font-semibold tracking-wide">工作之外</h2>
+        <p class="text-base leading-7 text-muted-foreground">
           也喜欢电影和自驾，偶尔把路上的见闻与生活片段写下来。
         </p>
       </section>
 
-      <section class="space-y-4 border-t border-border pt-8 animate-item" style="--delay: 3;">
-        <h2 class="text-sm font-semibold tracking-wide">保持联系</h2>
-        <p class="text-sm leading-6 text-muted-foreground">
+      <section class="space-y-4 border-t border-border pt-8 animate-item" style="--delay: 5;">
+        <h2 class="text-base font-semibold tracking-wide">保持联系</h2>
+        <p class="text-base leading-7 text-muted-foreground">
           坐标上海，欢迎交流。内容合作或项目交流，可以通过下面的方式联系我。
         </p>
         <div class="flex flex-wrap gap-3 pt-1">
