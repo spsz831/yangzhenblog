@@ -141,7 +141,7 @@ const {
     </script>
   </head>
   <body class="flex flex-col min-h-screen bg-background text-foreground font-sans antialiased">
-    <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header data-site-header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-transform duration-300 motion-reduce:transition-none supports-[backdrop-filter]:bg-background/60">
       <div class="container flex h-16 items-center justify-between">
         <div class="flex items-center gap-4">
             <a href="/" class="flex items-center gap-2">
@@ -192,6 +192,26 @@ const {
         </nav>
       </div>
     </footer>
+    <script is:inline>
+      const siteHeader = document.querySelector('[data-site-header]');
+      let previousScrollY = window.scrollY;
+
+      window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        const scrollingUp = currentScrollY < previousScrollY - 4;
+        const scrollingDown = currentScrollY > previousScrollY + 8;
+        const menuIsOpen = siteHeader?.querySelector('details[open]');
+        const headerHasFocus = siteHeader?.contains(document.activeElement);
+
+        if (currentScrollY < 80 || scrollingUp || menuIsOpen || headerHasFocus) {
+          siteHeader?.classList.remove('-translate-y-full');
+        } else if (currentScrollY > 100 && scrollingDown) {
+          siteHeader?.classList.add('-translate-y-full');
+        }
+
+        previousScrollY = currentScrollY;
+      }, { passive: true });
+    </script>
     <WebVitals />
   </body>
 </html>
