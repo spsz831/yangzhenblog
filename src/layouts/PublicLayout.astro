@@ -1,8 +1,7 @@
 ---
 import "@/styles/global.css";
 import { ModeToggle } from "@/components/ModeToggle";
-import { Rss } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, Rss } from "lucide-react";
 import WebVitals from "@/components/WebVitals.astro";
 
 interface Props {
@@ -13,7 +12,7 @@ interface Props {
 
 const {
   title,
-  description = "杨振的个人技术博客，分享前端开发、生活感悟和独立开发故事",
+  description = "杨振的个人博客，记录 AI 工具体验、AI 短视频创作、项目探索与生活观察。",
   image = new URL("/avatar.jpg", Astro.site).toString(),
 } = Astro.props;
 ---
@@ -25,6 +24,7 @@ const {
     <title>{title} - 杨振博客</title>
     <meta name="baidu-site-verification" content="codeva-PGmpZDM43W" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
 
     
@@ -61,7 +61,7 @@ const {
           "name": "杨振",
           "url": "https://yangzhenai.top/about"
         },
-        "description": "杨振的个人技术博客，分享前端开发、生活感悟和独立开发故事"
+        "description": "杨振的个人博客，记录 AI 工具体验、AI 短视频创作、项目探索与生活观察。"
       }
     </script>
 
@@ -152,16 +152,27 @@ const {
             </a>
         </div>
         
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3 md:gap-6">
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/">首页</a>
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/posts">博客</a>
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/projects">项目</a>
                 <a class="transition-colors hover:text-foreground/80 text-foreground/60" href="/about">关于</a>
             </nav>
+            <details class="relative md:hidden">
+                <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-md transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="打开导航菜单">
+                    <Menu className="h-5 w-5" aria-hidden="true" />
+                </summary>
+                <nav aria-label="移动导航" class="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-border bg-popover p-2 text-sm shadow-lg">
+                    <a class="block rounded-lg px-3 py-3 transition-colors hover:bg-accent" href="/">首页</a>
+                    <a class="block rounded-lg px-3 py-3 transition-colors hover:bg-accent" href="/posts">博客</a>
+                    <a class="block rounded-lg px-3 py-3 transition-colors hover:bg-accent" href="/projects">项目</a>
+                    <a class="block rounded-lg px-3 py-3 transition-colors hover:bg-accent" href="/about">关于</a>
+                </nav>
+            </details>
             <div class="flex items-center gap-4">
                 <ModeToggle client:load />
-                <a href="/rss.xml" target="_blank" aria-label="RSS Feed" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
+                <a href="/rss.xml" target="_blank" rel="noopener noreferrer" aria-label="RSS Feed" class="inline-flex h-11 w-11 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-accent hover:text-accent-foreground">
                     <Rss className="h-[1.2rem] w-[1.2rem]" />
                 </a>
             </div>
@@ -171,10 +182,14 @@ const {
     <main class="flex-1 container py-6 md:py-10">
       <slot />
     </main>
-    <footer class="py-6 md:px-8 md:py-0">
-      <div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-        <p class="text-center text-sm leading-loose text-muted-foreground md:text-left">
-        </p>
+    <footer class="mt-8 border-t border-border py-6 md:px-8">
+      <div class="container flex flex-col items-center justify-between gap-3 text-sm text-muted-foreground sm:flex-row">
+        <p class="text-center leading-relaxed sm:text-left">© {new Date().getFullYear()} 杨振 · 记录 AI 实践、创作与生活</p>
+        <nav aria-label="页脚导航" class="flex items-center gap-5">
+          <a class="transition-colors hover:text-foreground" href="/rss.xml" target="_blank" rel="noopener noreferrer">RSS</a>
+          <a class="transition-colors hover:text-foreground" href="https://github.com/spsz831" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="transition-colors hover:text-foreground" href="mailto:yangzhen0806@gmail.com">联系我</a>
+        </nav>
       </div>
     </footer>
     <WebVitals />

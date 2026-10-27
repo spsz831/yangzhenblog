@@ -11,16 +11,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tags, postsToTags } from "@/db/schema";
 import { createPublicPostVisibilityFilter } from "@/lib/publishing";
+import { getPostCategorySlugs, postCategories } from "@/lib/post-categories";
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const q = Astro.url.searchParams.get("q") || "";
+const categorySlug = Astro.url.searchParams.get("category") || "";
+const activeCategory = postCategories.find((category) => category.slug === categorySlug);
+const requestedPage = Number.parseInt(Astro.url.searchParams.get("page") || "1", 10);
+const pageSize = 10;
 
 const whereClause = and(
   createPublicPostVisibilityFilter(),
   q ? or(like(posts.title, `%${q}%`), like(posts.content, `%${q}%`)) : undefined
 );
 
-const publishedPosts = await db.select().from(posts)
+const matchingPosts = await db.select().from(posts)
   .where(whereClause)
   .orderBy(desc(posts.publishedAt)).all();
 
@@ -33,36 +38,94 @@ allPostTags.forEach(pt => {
     const tag = allTags.find(t => t.id === pt.tagId);
     if (tag) tagsMap.get(pt.postId)!.push(tag);
 });
+
+const categoryMap = new Map<number, string[]>();
+matchingPosts.forEach((post) => {
+  const tagNames = (tagsMap.get(post.id) ?? []).map((tag) => tag.name);
+  categoryMap.set(post.id, getPostCategorySlugs(post, tagNames));
+});
+
+const categoryCounts = postCategories.map((category) => ({
+  ...category,
+  count: matchingPosts.filter((post) => categoryMap.get(post.id)?.includes(category.slug)).length,
+}));
+
+const filteredPosts = activeCategory
+  ? matchingPosts.filter((post) => categoryMap.get(post.id)?.includes(activeCategory.slug))
+  : matchingPosts;
+const totalPages = Math.max(1, Math.ceil(filteredPosts.length / pageSize));
+const currentPage = Number.isFinite(requestedPage)
+  ? Math.min(Math.max(requestedPage, 1), totalPages)
+  : 1;
+const pagePosts = filteredPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+const buildPostsUrl = (page: number, category?: string) => {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (category) params.set("category", category);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/posts?${query}` : "/posts";
+};
 ---
 
-<PublicLayout title="博客">
+<PublicLayout title="博客" description="浏览 AI、生活、理财、学习与八字等主题文章。">
   <section class="container max-w-6xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
       <div class="flex-1 space-y-4">
         <h1 class="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
           最新文章
         </h1>
-        <p class="text-xl text-muted-foreground">
-          分享技术、生活和思考。
+        <p class="text-base text-muted-foreground md:text-lg">
+          按主题浏览，找到感兴趣的文章。
         </p>
       </div>
-      <form action="/posts" method="GET" class="flex items-center gap-2">
+      <form action="/posts" method="GET" class="flex w-full items-center gap-2 md:w-auto">
         <div class="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             name="q"
+            aria-label="搜索文章"
             placeholder="搜索文章..."
-            className="pl-9 w-[200px] md:w-[300px]"
+            className="w-full pl-9 md:w-[300px]"
             defaultValue={q}
           />
         </div>
+        {activeCategory && <input type="hidden" name="category" value={activeCategory.slug} />}
       </form>
     </div>
-    <hr class="my-8" />
+
+    <nav aria-label="文章分类" class="my-7 flex flex-wrap gap-2">
+      <a
+        href={buildPostsUrl(1)}
+        aria-current={!activeCategory ? "page" : undefined}
+        class={!activeCategory
+          ? "inline-flex items-center gap-2 rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          : "inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"}
+      >
+        全部 <span class="text-xs opacity-75">{matchingPosts.length}</span>
+      </a>
+      {categoryCounts.map((category) => (
+        <a
+          href={buildPostsUrl(1, category.slug)}
+          aria-current={activeCategory?.slug === category.slug ? "page" : undefined}
+          class={activeCategory?.slug === category.slug
+            ? "inline-flex items-center gap-2 rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            : "inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"}
+        >
+          {category.name} <span class="text-xs opacity-75">{category.count}</span>
+        </a>
+      ))}
+    </nav>
+
+    <div class="mb-5 flex items-center justify-between text-sm text-muted-foreground">
+      <p>{filteredPosts.length} 篇文章{q ? ` · 搜索“${q}”` : ""}</p>
+      {filteredPosts.length > 0 && <p>第 {currentPage} / {totalPages} 页</p>}
+    </div>
     
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
-      {publishedPosts.map((post) => (
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6">
+      {pagePosts.map((post) => (
         <a href={`/posts/${post.slug}`} class="group transition-all hover:scale-[1.01] block h-full">
           <Card className="h-full flex flex-col overflow-hidden border shadow-sm hover:shadow-md transition-all bg-card">
             <CardHeader className="pb-2">
@@ -71,7 +134,7 @@ allPostTags.forEach(pt => {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-4">
-              <p class="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
+              <p class="text-muted-foreground line-clamp-3 text-base leading-relaxed">
                 {post.excerpt || "暂无摘要"}
               </p>
             </CardContent>
@@ -93,10 +156,33 @@ allPostTags.forEach(pt => {
       ))}
     </div>
     
-    {publishedPosts.length === 0 && (
+    {filteredPosts.length === 0 && (
       <div class="py-12 text-center">
-        <p class="text-muted-foreground text-lg">暂无文章。</p>
+        <p class="text-lg text-muted-foreground">
+          {q ? "没有找到符合条件的文章。" : activeCategory ? "这个分类暂时还没有文章。" : "暂无文章。"}
+        </p>
       </div>
+    )}
+
+    {totalPages > 1 && (
+      <nav aria-label="文章分页" class="mt-8 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
+        <p class="text-sm text-muted-foreground">
+          显示 {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredPosts.length)} 篇，共 {filteredPosts.length} 篇
+        </p>
+        <div class="flex items-center gap-2">
+          {currentPage > 1 && (
+            <Button variant="outline" size="sm" asChild>
+              <a href={buildPostsUrl(currentPage - 1, activeCategory?.slug)}>上一页</a>
+            </Button>
+          )}
+          <span class="px-2 text-sm text-muted-foreground">{currentPage} / {totalPages}</span>
+          {currentPage < totalPages && (
+            <Button variant="outline" size="sm" asChild>
+              <a href={buildPostsUrl(currentPage + 1, activeCategory?.slug)}>下一页</a>
+            </Button>
+          )}
+        </div>
+      </nav>
     )}
   </section>
 </PublicLayout>

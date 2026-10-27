@@ -29,7 +29,37 @@ const postTags = await db.select({ name: tags.name })
   .where(eq(postsToTags.postId, post.id))
   .all();
 
-const content = marked.parse(post.content);
+const toc: { id: string; title: string; level: number }[] = [];
+const slugOccurrences = new Map<string, number>();
+const parsedContent = marked.parse(post.content);
+const content = parsedContent.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_match, level: string, headingHtml: string) => {
+  const title = headingHtml
+    .replace(/<[^>]*>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+  const baseId = title
+    .toLocaleLowerCase()
+    .replace(/[^\w\u4e00-\u9fff]+/g, "-")
+    .replace(/^-+|-+$/g, "") || `section-${toc.length + 1}`;
+  const occurrence = slugOccurrences.get(baseId) ?? 0;
+  slugOccurrences.set(baseId, occurrence + 1);
+  const id = occurrence === 0 ? baseId : `${baseId}-${occurrence + 1}`;
+
+  toc.push({ id, title, level: Number(level) });
+  return `<h${level} id="${id}" style="scroll-margin-top: 6rem">${headingHtml}</h${level}>`;
+});
+const readingText = post.content
+  .replace(/```[\s\S]*?```/g, "")
+  .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+  .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+  .replace(/<[^>]*>/g, "")
+  .replace(/[#*`_~>\[\]()]/g, "")
+  .replace(/\s/g, "");
+const estimatedReadingMinutes = Math.max(1, Math.ceil(readingText.length / 400));
 
 
 
@@ -52,9 +82,12 @@ const schema = {
 
 <PublicLayout
   title={post.metaTitle || post.title}
-  description={post.metaDescription || post.excerpt || ""}
+  description={post.metaDescription || post.excerpt || undefined}
   image={post.coverImage || undefined}
 >
+    <div aria-hidden="true" class="fixed inset-x-0 top-0 z-[60] h-1 bg-transparent">
+      <div data-reading-progress class="h-full origin-left scale-x-0 bg-primary"></div>
+    </div>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <article class="container max-w-3xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 border-b pb-10">
@@ -64,6 +97,8 @@ const schema = {
                     <time datetime={post.publishedAt?.toISOString()}>
                         {post.publishedAt ? format(post.publishedAt, "yyyy年MM月dd日") : ""}
                     </time>
+                    <span aria-hidden="true">·</span>
+                    <span>约 {estimatedReadingMinutes} 分钟</span>
                 </div>
             </div>
             <div class="flex gap-2">
@@ -83,7 +118,23 @@ const schema = {
           />
         )}
     </div>
-    <div class="prose prose-stone dark:prose-invert max-w-none py-10" set:html={content} />
+    {toc.length >= 3 && (
+      <details class="my-8 rounded-xl border border-border bg-muted/20 px-4 py-3">
+        <summary class="cursor-pointer font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          文章目录 <span class="ml-1 text-sm font-normal text-muted-foreground">{toc.length} 个章节</span>
+        </summary>
+        <nav aria-label="文章目录" class="pt-3">
+          <ol class="space-y-2 text-sm">
+            {toc.map((item) => (
+              <li class={item.level === 3 ? "pl-4" : ""}>
+                <a class="text-muted-foreground transition-colors hover:text-foreground" href={`#${item.id}`}>{item.title}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </details>
+    )}
+    <div class="post-content prose prose-stone dark:prose-invert max-w-none py-10" set:html={content} />
     
     <PostActions 
       client:load 
@@ -92,4 +143,20 @@ const schema = {
       postUrl={Astro.url.href} 
     />
   </article>
+  <script is:inline>
+    (() => {
+      const progressBar = document.querySelector("[data-reading-progress]");
+      if (!(progressBar instanceof HTMLElement)) return;
+
+      const updateReadingProgress = () => {
+        const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+        progressBar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
+      };
+
+      window.addEventListener("scroll", updateReadingProgress, { passive: true });
+      window.addEventListener("resize", updateReadingProgress);
+      updateReadingProgress();
+    })();
+  </script>
 </PublicLayout>
