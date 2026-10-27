@@ -3,90 +3,84 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
 ---
 
 <PublicLayout title="关于">
-  <section class="container max-w-3xl py-8 lg:py-12">
-    <div class="space-y-6 animate-stagger-container">
-      
-      <!-- Header / Who am I -->
-      <div class="space-y-3 animate-item">
-        <h1 class="font-heading text-3xl font-bold tracking-tight lg:text-4xl">
-          我是谁
+  <section class="container max-w-2xl py-12 md:py-20">
+    <div class="space-y-14 md:space-y-16 animate-stagger-container">
+      <header class="space-y-6 animate-item">
+        <p class="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <span class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+          About · 关于我
+        </p>
+        <h1 class="font-heading text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
+          把感兴趣的事，慢慢做出来
         </h1>
-        <p class="text-base text-muted-foreground leading-normal">
-          Hi~ 我是杨振（spsz0831），一名独立开发者、内容创作者、AGI实践者
+        <p class="max-w-xl text-lg leading-8 text-muted-foreground">
+          我是杨振（spsz0831），一名独立开发者、AI 玩家和自媒体作者。最近在探索 AI 短视频创作，开发宝宝成长记录网站，也在做一款八字命理方向的 App。这里会记录尝试、进展和过程中的思考。
         </p>
-      </div>
+      </header>
 
-      <!-- Current Status -->
-      <div class="space-y-3 animate-item" style="--delay: 1;">
-        <h2 class="text-xl font-bold tracking-tight">目前</h2>
-        <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
-          <li>一边搬砖，一边做产品。</li>
-          <li>做自媒体，持续创作分享。</li>
-          <li>坐标上海，欢迎各位小伙伴面基~</li>
-        </ul>
-      </div>
-
-      <!-- Skills -->
-      <div class="space-y-3 animate-item" style="--delay: 2;">
-        <h2 class="text-xl font-bold tracking-tight">我的技能</h2>
-        
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold mt-2">前端</h3>
-          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
-            <li>Vue + JavaScript，会一点</li>
-            <li>React + TypeScript，会一点</li>
-            <li>HTML + CSS + Tailwind CSS，会一点</li>
-            <li>Next.js / Astro，会一点</li>
-          </ul>
+      <section class="animate-item" style="--delay: 1;">
+        <div class="mb-5 flex items-baseline justify-between gap-4">
+          <h2 class="text-sm font-semibold tracking-wide">最近在做</h2>
+          <span class="text-xs text-muted-foreground">持续更新</span>
         </div>
-
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold mt-2">后端</h3>
-          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
-            <li>Node.js，简单 CRUD 水平</li>
-            <li>Drizzle ORM / Prisma 会一点</li>
-          </ul>
+        <div class="divide-y divide-border border-y border-border">
+          <article class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 py-5 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-4">
+            <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">01</span>
+            <div class="space-y-1.5">
+              <h3 class="font-medium tracking-tight">AI 短视频创作</h3>
+              <p class="text-sm leading-6 text-muted-foreground">探索 AI 参与短视频创作的方式，边做边记录实践过程。</p>
+            </div>
+          </article>
+          <article class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 py-5 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-4">
+            <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">02</span>
+            <div class="space-y-1.5">
+              <h3 class="font-medium tracking-tight">宝宝成长记录网站</h3>
+              <p class="text-sm leading-6 text-muted-foreground">探索用一个网站记录宝宝成长中的点滴，目前还在构思和开发中。</p>
+            </div>
+          </article>
+          <article class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 py-5 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-4">
+            <span class="pt-1 font-mono text-xs tracking-wider text-muted-foreground">03</span>
+            <div class="space-y-1.5">
+              <h3 class="font-medium tracking-tight">八字命理 App</h3>
+              <p class="text-sm leading-6 text-muted-foreground">正在开发一款八字命理方向的应用，持续打磨产品想法与实现。</p>
+            </div>
+          </article>
         </div>
+      </section>
 
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold mt-2">其它</h3>
-          <ul class="list-disc list-outside pl-5 text-base text-muted-foreground leading-normal space-y-1">
-            <li>新媒体运营、内容创作、短视频运营、短视频剪辑~</li>
-            <li>Google Antigravity、Claude Code 敲代码用起来爽飞~</li>
-            <li>Cherry Studio，用起来还不错</li>
-            <li>熟练使用 Google / GitHub + Stack Overflow + AI 解决遇到的各种问题，复制粘贴我最行 🙋</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Contact -->
-      <div class="space-y-3 animate-item" style="--delay: 3;">
-        <h2 class="text-xl font-bold tracking-tight">联系我</h2>
-        <p class="text-base text-muted-foreground leading-normal">
-          你可以通过👇下面任意一种方式联系我
+      <section class="space-y-3 animate-item" style="--delay: 2;">
+        <h2 class="text-sm font-semibold tracking-wide">工作之外</h2>
+        <p class="text-sm leading-6 text-muted-foreground">
+          也喜欢电影和自驾，偶尔把路上的见闻与生活片段写下来。
         </p>
-        <div class="flex flex-wrap gap-4 mt-2">
-          <a href="https://github.com/spsz831" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+      </section>
+
+      <section class="space-y-4 border-t border-border pt-8 animate-item" style="--delay: 3;">
+        <h2 class="text-sm font-semibold tracking-wide">保持联系</h2>
+        <p class="text-sm leading-6 text-muted-foreground">
+          坐标上海，欢迎交流。内容合作或项目交流，可以通过下面的方式联系我。
+        </p>
+        <div class="flex flex-wrap gap-3 pt-1">
+          <a href="https://github.com/spsz831" target="_blank" aria-label="GitHub" title="GitHub" class="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <img src="https://image-bed-worker.yangzhen0806.workers.dev/api/file/mio460ow-53of5g5q3p" alt="GitHub" width="20" height="20" class="w-5 h-5" />
           </a>
-          <a href="https://yangzhenai.top/images/1764923526016-杨振个人微信.jpg" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <a href="https://yangzhenai.top/images/1764923526016-杨振个人微信.jpg" target="_blank" aria-label="微信二维码" title="微信二维码" class="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <img src="https://image-bed-worker.yangzhen0806.workers.dev/api/file/mio42yct-3h2p2x5n5j6k" alt="WeChat" width="20" height="20" class="w-5 h-5" />
           </a>
-          <a href="https://yangzhenai.top/images/1764684680875-四知先生公众号二维码.jpg" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <a href="https://yangzhenai.top/images/1764684680875-四知先生公众号二维码.jpg" target="_blank" aria-label="公众号二维码" title="公众号二维码" class="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <img src="https://image-bed-worker.yangzhen0806.workers.dev/api/file/mio41xub-z7158441a5a" alt="Official Account" width="20" height="20" class="w-5 h-5" />
           </a>
-          <a href="https://x.com/spsz0831" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <a href="https://x.com/spsz0831" target="_blank" aria-label="X" title="X" class="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <img src="https://image-bed-worker.yangzhen0806.workers.dev/api/file/mio41nl8-6a75e4s4qn" alt="Twitter" width="20" height="20" class="w-5 h-5" />
           </a>
-          <a href="mailto:yangzhen0806@gmail.com" class="flex items-center justify-center w-10 h-10 rounded-lg border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <a href="mailto:yangzhen0806@gmail.com" aria-label="邮件" title="邮件" class="flex h-10 w-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             <img src="https://image-bed-worker.yangzhen0806.workers.dev/api/file/mio427ef-2pw4s4v303p" alt="Email" width="20" height="20" class="w-5 h-5" />
           </a>
           <a href="/reward" target="_blank" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-yellow-400 text-black hover:bg-yellow-500 h-10 px-4 py-2">
             ☕ Buy me a coffee
           </a>
         </div>
-      </div>
-
+      </section>
     </div>
   </section>
 </PublicLayout>
