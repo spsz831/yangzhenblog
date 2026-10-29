@@ -1,0 +1,36 @@
+---
+import PublicLayout from "@/layouts/PublicLayout.astro";
+import { FolderGit2, Sparkles } from "lucide-react";
+---
+
+<PublicLayout title="Skill 工具箱" description="杨振常用、创建和精选的 AI Skills。">
+  <section class="container max-w-5xl py-10 lg:py-16">
+    <div class="max-w-2xl">
+      <p class="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">SKILLS · 技能项目</p>
+      <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">好用的 Skill，值得留下</h1>
+      <p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+        整理我自己创建的 Skills，以及在日常工作中常用、值得推荐的他人作品。
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-5 md:grid-cols-2">
+      <section class="rounded-2xl border border-border p-6 sm:p-8" aria-labelledby="my-skills-title">
+        <FolderGit2 className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+        <h2 id="my-skills-title" class="mt-4 text-xl font-semibold">我创建的</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">
+          展示我制作并持续维护的 Skill 项目，附上用途说明、适用场景和仓库链接。
+        </p>
+        <p class="mt-6 rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">项目清单整理中</p>
+      </section>
+
+      <section class="rounded-2xl border border-border p-6 sm:p-8" aria-labelledby="featured-skills-title">
+        <Sparkles className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+        <h2 id="featured-skills-title" class="mt-4 text-xl font-semibold">常用与精选</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">
+          收录我经常使用或实际体验后愿意推荐的他人 Skills，并注明作者和原始来源。
+        </p>
+        <p class="mt-6 rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">精选清单整理中</p>
+      </section>
+    </div>
+  </section>
+</PublicLayout>

@@ -53,7 +53,14 @@ const projects = [
     
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => (
-        <Card className="h-full flex flex-col overflow-hidden border-muted-foreground/20 hover:border-primary/50 transition-colors p-6">
+        <Card className="group relative h-full flex flex-col overflow-hidden border-muted-foreground/20 p-6 transition-colors hover:border-primary/50 hover:shadow-md">
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`打开 ${project.title} 项目主页`}
+            class="absolute inset-0 z-10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          ><span class="sr-only">打开 {project.title} 项目主页</span></a>
           <div class="flex justify-between items-start mb-4">
             <div class="space-y-1">
               <CardTitle className="text-xl font-bold">
@@ -74,14 +81,14 @@ const projects = [
             </p>
           </CardContent>
           
-          <CardFooter className="flex gap-3 p-0">
+          <CardFooter className="relative z-20 flex gap-3 p-0">
             <Button variant="outline" size="sm" className="h-9 px-4 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground rounded-md" asChild>
-              <a href={project.url} target="_blank">
+              <a href={project.url} target="_blank" rel="noopener noreferrer">
                 查看主页
               </a>
             </Button>
             <Button variant="outline" size="sm" className="h-9 px-4 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground rounded-md" asChild>
-              <a href={project.url} target="_blank">
+              <a href={project.url} target="_blank" rel="noopener noreferrer">
                 Github
               </a>
             </Button>
