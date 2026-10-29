@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { parsePostForm, PostFormError, requireAdminSession, syncPostTags } from "@/lib/admin-posts";
+import { parsePostForm, PostFormError, requireAdminSession, syncPostCategory, syncPostTags } from "@/lib/admin-posts";
 
 export const POST: APIRoute = async ({ request, locals, params, redirect, cookies }) => {
     const { id } = params;
@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect, cookie
     }
 
     try {
-        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, tags } = await parsePostForm(
+        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, categorySlug, tags } = await parsePostForm(
             { request, locals },
             { postId: Number(id) }
         );
@@ -36,6 +36,7 @@ export const POST: APIRoute = async ({ request, locals, params, redirect, cookie
             .where(eq(posts.id, Number(id)));
 
         await syncPostTags({ locals }, Number(id), tags);
+        await syncPostCategory({ locals }, Number(id), categorySlug);
     } catch (e) {
         if (e instanceof PostFormError) {
             return redirect(`/admin/posts/${id}/edit?error=${encodeURIComponent(e.message)}`);

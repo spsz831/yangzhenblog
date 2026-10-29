@@ -1,7 +1,7 @@
 ---
 import AdminLayout from "@/layouts/AdminLayout.astro";
 import { getDb } from "@/db";
-import { posts, tags, postsToTags } from "@/db/schema";
+import { categories, posts, postsToCategories, postsToTags, tags } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import FormAlert from "@/components/admin/FormAlert.astro";
@@ -25,6 +25,11 @@ const postTags = await db.select({ name: tags.name })
   .all();
 
 const tagsString = postTags.map(t => t.name).join(", ");
+const postCategory = await db.select({ slug: categories.slug })
+  .from(postsToCategories)
+  .innerJoin(categories, eq(categories.id, postsToCategories.categoryId))
+  .where(eq(postsToCategories.postId, post.id))
+  .get();
 ---
 
 <AdminLayout title="Edit Post">
@@ -43,7 +48,7 @@ const tagsString = postTags.map(t => t.name).join(", ");
       submitLabel="保存修改"
       autosaveKey={`admin-post-edit-${post.id}`}
       tags={tagsString}
-      values={post}
+      values={{ ...post, categorySlug: postCategory?.slug }}
     />
   </div>
 </AdminLayout>

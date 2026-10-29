@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getDb } from "@/db";
 import { posts } from "@/db/schema";
-import { parsePostForm, PostFormError, requireAdminSession, syncPostTags } from "@/lib/admin-posts";
+import { parsePostForm, PostFormError, requireAdminSession, syncPostCategory, syncPostTags } from "@/lib/admin-posts";
 
 export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => {
     const authRedirect = await requireAdminSession({ cookies, locals, redirect });
@@ -10,7 +10,7 @@ export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => 
     }
 
     try {
-        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, tags } = await parsePostForm(
+        const { title, slug, content, excerpt, metaTitle, metaDescription, coverImage, status, publishedAt, categorySlug, tags } = await parsePostForm(
             { request, locals }
         );
         const db = getDb(locals.runtime.env.DB);
@@ -28,6 +28,7 @@ export const POST: APIRoute = async ({ request, locals, redirect, cookies }) => 
         }).returning({ id: posts.id });
 
         const postId = result[0].id;
+        await syncPostCategory({ locals }, postId, categorySlug);
         await syncPostTags({ locals }, postId, tags);
     } catch (e) {
         if (e instanceof PostFormError) {

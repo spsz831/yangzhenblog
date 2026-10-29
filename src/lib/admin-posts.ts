@@ -2,7 +2,8 @@ import type { APIContext } from "astro";
 import { and, eq, ne } from "drizzle-orm";
 
 import { getDb } from "@/db";
-import { posts, tags, postsToTags } from "@/db/schema";
+import { categories, posts, postsToCategories, tags, postsToTags } from "@/db/schema";
+import { isPostCategorySlug, postCategories, type PostCategorySlug } from "@/lib/post-categories";
 import { requireAuthenticatedUser } from "@/lib/auth";
 
 type PostStatus = "draft" | "published" | "scheduled";
@@ -17,6 +18,7 @@ export type PostFormValues = {
     coverImage: string;
     status: PostStatus;
     publishedAt: Date | null;
+    categorySlug: PostCategorySlug;
     tags: Array<{ name: string; slug: string }>;
 };
 
@@ -115,6 +117,7 @@ export const parsePostForm = async (
     const coverImage = formData.get("coverImage")?.toString().trim() ?? "";
     const rawStatus = formData.get("status")?.toString() ?? "draft";
     const tagsInput = formData.get("tags")?.toString() ?? "";
+    const categorySlugInput = formData.get("category")?.toString() ?? "";
 
     if (!title || !slug || !content) {
         throw new PostFormError("missing_fields", "标题、Slug 和正文不能为空。");
@@ -122,6 +125,10 @@ export const parsePostForm = async (
 
     if (!["draft", "published", "scheduled"].includes(rawStatus)) {
         throw new PostFormError("invalid_status", "文章状态无效。");
+    }
+
+    if (!isPostCategorySlug(categorySlugInput)) {
+        throw new PostFormError("invalid_category", "请选择一项主分类。");
     }
 
     if (!isLikelyUrl(coverImage)) {
@@ -182,8 +189,28 @@ export const parsePostForm = async (
         coverImage,
         status,
         publishedAt,
+        categorySlug: categorySlugInput,
         tags: Array.from(tagMap.values()),
     };
+};
+
+export const syncPostCategory = async (
+    context: Pick<APIContext, "locals">,
+    postId: number,
+    categorySlug: PostCategorySlug,
+) => {
+    const db = getDb(context.locals.runtime.env.DB);
+    const categoryDefinition = postCategories.find((category) => category.slug === categorySlug);
+    if (!categoryDefinition) throw new PostFormError("invalid_category", "文章分类无效。");
+
+    let category = await db.select().from(categories).where(eq(categories.slug, categorySlug)).get();
+    if (!category) {
+        const inserted = await db.insert(categories).values(categoryDefinition).returning();
+        category = inserted[0];
+    }
+
+    await db.delete(postsToCategories).where(eq(postsToCategories.postId, postId));
+    await db.insert(postsToCategories).values({ postId, categoryId: category.id });
 };
 
 export const findNextNumericSlug = async (

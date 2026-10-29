@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import SlugFieldHint from "@/components/admin/SlugFieldHint.astro";
+import { getSuggestedPostCategorySlug, postCategories } from "@/lib/post-categories";
 
 type PostEditorValues = {
   id?: number;
@@ -16,6 +17,7 @@ type PostEditorValues = {
   status?: "draft" | "published" | "scheduled" | null;
   publishedAt?: Date | null;
   content?: string | null;
+  categorySlug?: string | null;
 };
 
 interface Props {
@@ -49,6 +51,8 @@ const publishedAt = values.publishedAt
   ? new Date(values.publishedAt).toISOString().slice(0, 16)
   : "";
 const content = values.content ?? "";
+const suggestedCategorySlug = getSuggestedPostCategorySlug({ title, excerpt }, tags.split(","));
+const categorySlug = values.categorySlug ?? suggestedCategorySlug ?? "";
 const slugPostId = values.id;
 ---
 
@@ -213,6 +217,22 @@ const slugPostId = values.id;
             </div>
             <div class="rounded-2xl border border-border/70 bg-muted/10 px-4 py-3 text-xs text-muted-foreground" data-publish-status-hint>
               草稿不会对外发布；正式发布时若未填写发布时间，会默认使用当前时间。
+            </div>
+
+            <div class="space-y-2">
+              <Label htmlFor="category">主分类</Label>
+              <select
+                id="category"
+                name="category"
+                required
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="" selected={!categorySlug}>选择主分类</option>
+                {postCategories.map((category) => (
+                  <option value={category.slug} selected={categorySlug === category.slug}>{category.name}</option>
+                ))}
+              </select>
+              <p class="text-xs text-muted-foreground">每篇文章选择一个最主要的分类；标签可继续用于补充主题。</p>
             </div>
 
             <div class="space-y-2">

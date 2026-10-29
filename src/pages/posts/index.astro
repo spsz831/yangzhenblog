@@ -1,8 +1,8 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
-import { posts } from "@/db/schema";
-import { desc, and, like, or } from "drizzle-orm";
+import { categories, posts, postsToCategories } from "@/db/schema";
+import { desc, and, eq, like, or } from "drizzle-orm";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { tags, postsToTags } from "@/db/schema";
 import { createPublicPostVisibilityFilter } from "@/lib/publishing";
-import { getPostCategorySlugs, postCategories } from "@/lib/post-categories";
+import { getSuggestedPostCategorySlug, postCategories, type PostCategorySlug } from "@/lib/post-categories";
 
 const db = getDb(Astro.locals.runtime.env.DB);
 const q = Astro.url.searchParams.get("q") || "";
@@ -39,19 +39,30 @@ allPostTags.forEach(pt => {
     if (tag) tagsMap.get(pt.postId)!.push(tag);
 });
 
-const categoryMap = new Map<number, string[]>();
+const assignedCategories = await db.select({ postId: postsToCategories.postId, slug: categories.slug })
+  .from(postsToCategories)
+  .innerJoin(categories, eq(categories.id, postsToCategories.categoryId))
+  .all();
+const assignedCategoryMap = new Map<number, PostCategorySlug>();
+assignedCategories.forEach(({ postId, slug }) => {
+  if (postCategories.some((category) => category.slug === slug)) {
+    assignedCategoryMap.set(postId, slug as PostCategorySlug);
+  }
+});
+
+const categoryMap = new Map<number, PostCategorySlug | null>();
 matchingPosts.forEach((post) => {
   const tagNames = (tagsMap.get(post.id) ?? []).map((tag) => tag.name);
-  categoryMap.set(post.id, getPostCategorySlugs(post, tagNames));
+  categoryMap.set(post.id, assignedCategoryMap.get(post.id) ?? getSuggestedPostCategorySlug(post, tagNames));
 });
 
 const categoryCounts = postCategories.map((category) => ({
   ...category,
-  count: matchingPosts.filter((post) => categoryMap.get(post.id)?.includes(category.slug)).length,
+  count: matchingPosts.filter((post) => categoryMap.get(post.id) === category.slug).length,
 }));
 
 const filteredPosts = activeCategory
-  ? matchingPosts.filter((post) => categoryMap.get(post.id)?.includes(activeCategory.slug))
+  ? matchingPosts.filter((post) => categoryMap.get(post.id) === activeCategory.slug)
   : matchingPosts;
 const totalPages = Math.max(1, Math.ceil(filteredPosts.length / pageSize));
 const currentPage = Number.isFinite(requestedPage)
@@ -145,6 +156,11 @@ const buildPostsUrl = (page: number, category?: string) => {
                   {post.publishedAt ? format(post.publishedAt, "yyyy年MM月dd日") : ""}
                 </time>
               </div>
+              {categoryMap.get(post.id) && (
+                <Badge variant="outline" className="font-normal text-xs">
+                  {postCategories.find((category) => category.slug === categoryMap.get(post.id))?.name}
+                </Badge>
+              )}
               <div class="flex flex-wrap gap-2">
                  {tagsMap.get(post.id)?.map(tag => (
                     <Badge variant="secondary" className="font-normal text-xs px-2 py-0.5">#{tag.name}</Badge>

@@ -1,13 +1,14 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
 import { getDb } from "@/db";
-import { posts, tags, postsToTags } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { categories, posts, postsToCategories, postsToTags, tags } from "@/db/schema";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { marked } from "marked";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { PostActions } from "@/components/PostActions";
 import { createPublicPostVisibilityFilter } from "@/lib/publishing";
+import { getSuggestedPostCategorySlug, postCategories, type PostCategorySlug } from "@/lib/post-categories";
 
 // export const prerender = true;
 
@@ -23,11 +24,73 @@ const post = await db
 
 if (!post) return Astro.redirect("/404");
 
-const postTags = await db.select({ name: tags.name })
+const postTags = await db.select({ id: tags.id, name: tags.name })
   .from(tags)
   .innerJoin(postsToTags, eq(tags.id, postsToTags.tagId))
   .where(eq(postsToTags.postId, post.id))
   .all();
+
+const candidatePosts = await db.select({
+  id: posts.id,
+  title: posts.title,
+  slug: posts.slug,
+  excerpt: posts.excerpt,
+  publishedAt: posts.publishedAt,
+})
+  .from(posts)
+  .where(and(createPublicPostVisibilityFilter(), ne(posts.id, post.id)))
+  .orderBy(desc(posts.publishedAt))
+  .limit(40)
+  .all();
+
+const candidateIds = candidatePosts.map((candidate) => candidate.id);
+const categoryRows = candidateIds.length
+  ? await db.select({ postId: postsToCategories.postId, slug: categories.slug })
+      .from(postsToCategories)
+      .innerJoin(categories, eq(categories.id, postsToCategories.categoryId))
+      .where(inArray(postsToCategories.postId, [post.id, ...candidateIds]))
+      .all()
+  : [];
+const assignedCategoryByPost = new Map<number, PostCategorySlug>();
+categoryRows.forEach(({ postId, slug }) => {
+  if (postCategories.some((category) => category.slug === slug)) {
+    assignedCategoryByPost.set(postId, slug as PostCategorySlug);
+  }
+});
+
+const tagRows = candidateIds.length
+  ? await db.select({ postId: postsToTags.postId, tagId: postsToTags.tagId, name: tags.name })
+      .from(postsToTags)
+      .innerJoin(tags, eq(tags.id, postsToTags.tagId))
+      .where(inArray(postsToTags.postId, candidateIds))
+      .all()
+  : [];
+const candidateTags = new Map<number, Set<number>>();
+const candidateTagNames = new Map<number, string[]>();
+tagRows.forEach(({ postId, tagId, name }) => {
+  if (!candidateTags.has(postId)) candidateTags.set(postId, new Set());
+  candidateTags.get(postId)!.add(tagId);
+  if (!candidateTagNames.has(postId)) candidateTagNames.set(postId, []);
+  candidateTagNames.get(postId)!.push(name);
+});
+
+const currentCategory = assignedCategoryByPost.get(post.id)
+  ?? getSuggestedPostCategorySlug(post, postTags.map((tag) => tag.name));
+const currentTagIds = new Set(postTags.map((tag) => tag.id));
+const rankedCandidates = candidatePosts.map((candidate) => {
+  const candidateCategory = assignedCategoryByPost.get(candidate.id)
+    ?? getSuggestedPostCategorySlug(candidate, candidateTagNames.get(candidate.id) ?? []);
+  const sharedTags = [...(candidateTags.get(candidate.id) ?? [])]
+    .filter((tagId) => currentTagIds.has(tagId)).length;
+  const sameCategory = Boolean(currentCategory && candidateCategory === currentCategory);
+  return { candidate, score: (sameCategory ? 100 : 0) + sharedTags * 10 };
+});
+const rankedRelatedPosts = rankedCandidates
+  .filter(({ score }) => score > 0)
+  .sort((a, b) => b.score - a.score || (b.candidate.publishedAt?.getTime() ?? 0) - (a.candidate.publishedAt?.getTime() ?? 0));
+const relatedPosts = (rankedRelatedPosts.length >= 3 ? rankedRelatedPosts : candidatePosts.map((candidate) => ({ candidate, score: 0 })))
+  .slice(0, 3)
+  .map(({ candidate }) => candidate);
 
 const toc: { id: string; title: string; level: number }[] = [];
 const slugOccurrences = new Map<string, number>();
@@ -89,7 +152,7 @@ const schema = {
       <div data-reading-progress class="h-full origin-left scale-x-0 bg-primary"></div>
     </div>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
-  <article class="container max-w-3xl py-6 lg:py-10">
+  <article class="container min-w-0 max-w-3xl py-6 lg:py-10">
     <div class="flex flex-col items-start gap-4 border-b pb-10">
         <div class="flex w-full flex-col gap-2">
             <div class="flex items-center justify-between w-full">
@@ -101,13 +164,13 @@ const schema = {
                     <span>约 {estimatedReadingMinutes} 分钟</span>
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 {postTags.map(tag => (
-                    <Badge variant="secondary" className="font-normal text-xs">#{tag.name}</Badge>
+                    <Badge variant="secondary" className="max-w-full break-all font-normal text-xs">#{tag.name}</Badge>
                 ))}
             </div>
         </div>
-        <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">
+        <h1 class="break-words text-4xl font-extrabold tracking-tight lg:text-5xl">
             {post.title}
         </h1>
         {post.coverImage && (
@@ -142,6 +205,23 @@ const schema = {
       initialLikes={post.likes} 
       postUrl={Astro.url.href} 
     />
+
+    {relatedPosts.length > 0 && (
+      <section aria-labelledby="related-posts-title" class="mt-10 border-t border-border pt-8">
+        <h2 id="related-posts-title" class="mb-4 text-xl font-semibold tracking-tight">继续阅读</h2>
+        <div class="grid gap-3 sm:grid-cols-3">
+          {relatedPosts.map((relatedPost) => (
+            <a
+              href={`/posts/${relatedPost.slug}`}
+              class="group min-w-0 rounded-xl border border-border p-4 transition-colors hover:bg-accent/50"
+            >
+              <h3 class="line-clamp-2 font-medium leading-snug group-hover:text-primary">{relatedPost.title}</h3>
+              {relatedPost.excerpt && <p class="mt-2 line-clamp-2 text-sm text-muted-foreground">{relatedPost.excerpt}</p>}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
   </article>
   <script is:inline>
     (() => {
@@ -159,4 +239,30 @@ const schema = {
       updateReadingProgress();
     })();
   </script>
+  <style>
+    @media (max-width: 639px) {
+      .post-content {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .post-content :global(pre) {
+        box-sizing: border-box;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      .post-content :global(img),
+      .post-content :global(video),
+      .post-content :global(iframe) {
+        max-width: 100%;
+      }
+
+      .post-content :global(table) {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+    }
+  </style>
 </PublicLayout>
