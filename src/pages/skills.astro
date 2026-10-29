@@ -1,6 +1,75 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
-import { Film, FolderGit2, Sparkles } from "lucide-react";
+
+const skillCategories = [
+  { slug: "video", name: "视频 Skill" },
+  { slug: "coding", name: "AI 编程" },
+  { slug: "design", name: "图像与设计" },
+  { slug: "writing", name: "写作与内容" },
+  { slug: "office", name: "办公效率" },
+  { slug: "research", name: "搜索与研究" },
+  { slug: "other", name: "其他" },
+] as const;
+
+type SkillCategorySlug = (typeof skillCategories)[number]["slug"];
+type SkillSource = "mine" | "others";
+
+const skills: Array<{
+  name: string;
+  author: string;
+  description: string;
+  category: SkillCategorySlug;
+  source: SkillSource;
+  url: string;
+}> = [
+  {
+    name: "Motion Skill",
+    author: "derek-zhuolin",
+    description: "面向不想出镜的创作者，用文稿或录音配合 Codex 与 Remotion 编排视频，支持真实素材、字幕和可编辑工程。",
+    category: "video",
+    source: "others",
+    url: "https://github.com/derek-zhuolin/motion-skill",
+  },
+  {
+    name: "code-brand-film",
+    author: "nutllwhy",
+    description: "用 HTML 和 GSAP 编排画面，通过 HyperFrames 渲染，并用 Python 合成配乐，制作 15 秒品牌宣传片。",
+    category: "video",
+    source: "others",
+    url: "https://github.com/nutllwhy/code-brand-film",
+  },
+];
+
+const requestedCategory = new URL(Astro.request.url).searchParams.get("category") ?? "all";
+const requestedSource = new URL(Astro.request.url).searchParams.get("source") ?? "all";
+const activeCategory: SkillCategorySlug | "all" =
+  skillCategories.some((category) => category.slug === requestedCategory)
+    ? requestedCategory as SkillCategorySlug
+    : "all";
+const activeSource: SkillSource | "all" = requestedSource === "mine" || requestedSource === "others"
+  ? requestedSource
+  : "all";
+
+const buildSkillsUrl = (category: SkillCategorySlug | "all", source: SkillSource | "all") => {
+  const params = new URLSearchParams();
+  if (category !== "all") params.set("category", category);
+  if (source !== "all") params.set("source", source);
+  const query = params.toString();
+  return query ? `/skills?${query}` : "/skills";
+};
+
+const categorySkills = skills.filter((skill) => activeSource === "all" || skill.source === activeSource);
+const categoryCounts = skillCategories.map((category) => ({
+  ...category,
+  count: categorySkills.filter((skill) => skill.category === category.slug).length,
+}));
+const sourceFilteredSkills = skills.filter((skill) => activeCategory === "all" || skill.category === activeCategory);
+const sourceCounts = {
+  all: sourceFilteredSkills.length,
+  mine: sourceFilteredSkills.filter((skill) => skill.source === "mine").length,
+  others: sourceFilteredSkills.filter((skill) => skill.source === "others").length,
+};
+const visibleSkills = sourceFilteredSkills.filter((skill) => activeSource === "all" || skill.source === activeSource);
 ---
 
 <PublicLayout title="Skill 工具箱" description="杨振常用、创建和精选的 AI Skills。">
@@ -9,69 +78,84 @@ import { Film, FolderGit2, Sparkles } from "lucide-react";
       <p class="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">SKILLS · 技能项目</p>
       <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">好用的 Skill，值得留下</h1>
       <p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-        整理我自己创建的 Skills，以及在日常工作中常用、值得推荐的他人作品。
+        按用途浏览 Skill，也可以筛选我创建的项目或他人作品。
       </p>
     </div>
 
-    <section class="mt-10" aria-labelledby="video-skills-title">
-      <div class="mb-5 flex items-center gap-3">
-        <Film className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
-        <h2 id="video-skills-title" class="text-2xl font-semibold tracking-tight">视频 Skill</h2>
-      </div>
-      <div class="grid gap-4 md:grid-cols-2">
+    <section class="mt-9" aria-labelledby="skill-categories-title">
+      <h2 id="skill-categories-title" class="mb-3 text-sm font-medium text-muted-foreground">主题分类</h2>
+      <nav aria-label="Skill 主题分类" class="flex flex-wrap gap-2">
         <a
-          href="https://github.com/derek-zhuolin/motion-skill"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="打开 Motion Skill，作者 derek-zhuolin"
-          class="group rounded-2xl border border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
-        >
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h3 class="text-lg font-semibold group-hover:text-primary">Motion Skill</h3>
-              <p class="mt-1 text-sm text-muted-foreground">作者：derek-zhuolin</p>
-            </div>
-            <span class="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">文稿 / 录音转视频</span>
-          </div>
-          <p class="mt-4 text-sm leading-6 text-muted-foreground">
-            面向不想出镜的创作者，用文稿或录音配合 Codex 与 Remotion 编排视频，支持真实素材、字幕和可编辑工程。
-          </p>
-          <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
-        </a>
-
-        <a
-          href="https://github.com/nutllwhy/code-brand-film"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="打开 code-brand-film，作者 nutllwhy"
-          class="group rounded-2xl border border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
-        >
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h3 class="text-lg font-semibold group-hover:text-primary">code-brand-film</h3>
-              <p class="mt-1 text-sm text-muted-foreground">作者：nutllwhy</p>
-            </div>
-            <span class="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">品牌宣传片</span>
-          </div>
-          <p class="mt-4 text-sm leading-6 text-muted-foreground">
-            用 HTML 和 GSAP 编排画面，通过 HyperFrames 渲染，并用 Python 合成配乐，制作 15 秒品牌宣传片。
-          </p>
-          <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
-        </a>
-      </div>
+          href={buildSkillsUrl("all", activeSource)}
+          aria-current={activeCategory === "all" ? "page" : undefined}
+          class={activeCategory === "all"
+            ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            : "rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"}
+        >全部 <span class="ml-1 text-xs opacity-75">{categorySkills.length}</span></a>
+        {categoryCounts.map((category) => (
+          <a
+            href={buildSkillsUrl(category.slug, activeSource)}
+            aria-current={activeCategory === category.slug ? "page" : undefined}
+            class={activeCategory === category.slug
+              ? "rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+              : "rounded-full border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"}
+          >{category.name} <span class="ml-1 text-xs opacity-75">{category.count}</span></a>
+        ))}
+      </nav>
     </section>
 
-    <div class="mt-8 grid gap-4 md:grid-cols-2">
-      <section class="rounded-2xl border border-dashed border-border p-6" aria-labelledby="my-skills-title">
-        <FolderGit2 className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
-        <h2 id="my-skills-title" class="mt-3 text-lg font-semibold">我创建的 Skill</h2>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">后续会在这里收录我自己制作和维护的 Skill 项目。</p>
-      </section>
-      <section class="rounded-2xl border border-dashed border-border p-6" aria-labelledby="other-skills-title">
-        <Sparkles className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
-        <h2 id="other-skills-title" class="mt-3 text-lg font-semibold">其他常用 Skill</h2>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">持续整理实际使用过、值得推荐的其他 Skill。</p>
-      </section>
+    <section class="mt-6" aria-labelledby="skill-sources-title">
+      <h2 id="skill-sources-title" class="mb-3 text-sm font-medium text-muted-foreground">来源</h2>
+      <nav aria-label="Skill 来源" class="flex flex-wrap gap-2">
+        {([
+          { slug: "all", name: "全部来源", count: sourceCounts.all },
+          { slug: "mine", name: "我创建的", count: sourceCounts.mine },
+          { slug: "others", name: "他人精选", count: sourceCounts.others },
+        ] as const).map((source) => (
+          <a
+            href={buildSkillsUrl(activeCategory, source.slug)}
+            aria-current={activeSource === source.slug ? "page" : undefined}
+            class={activeSource === source.slug
+              ? "rounded-full bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground"
+              : "rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"}
+          >{source.name} <span class="ml-1 text-xs opacity-75">{source.count}</span></a>
+        ))}
+      </nav>
+    </section>
+
+    <div class="mb-4 mt-8 flex items-center justify-between border-b border-border pb-3 text-sm text-muted-foreground">
+      <p>{visibleSkills.length} 个 Skill</p>
+      {activeCategory !== "all" && <p>{skillCategories.find((category) => category.slug === activeCategory)?.name}</p>}
     </div>
+
+    {visibleSkills.length > 0 ? (
+      <div class="grid gap-4 md:grid-cols-2">
+        {visibleSkills.map((skill) => (
+          <a
+            href={skill.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-2xl border border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-semibold group-hover:text-primary">{skill.name}</h3>
+                <p class="mt-1 text-sm text-muted-foreground">作者：{skill.author}</p>
+              </div>
+              <span class="shrink-0 rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">
+                {skillCategories.find((category) => category.slug === skill.category)?.name}
+              </span>
+            </div>
+            <p class="mt-4 text-sm leading-6 text-muted-foreground">{skill.description}</p>
+            <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
+        <h3 class="text-base font-medium">这个筛选下暂时没有 Skill</h3>
+        <p class="mt-2 text-sm text-muted-foreground">之后收录到该分类的项目会显示在这里。</p>
+      </div>
+    )}
   </section>
 </PublicLayout>
