@@ -1,6 +1,6 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
-import { FolderGit2, Sparkles } from "lucide-react";
+import { Film, FolderGit2, Sparkles } from "lucide-react";
 ---
 
 <PublicLayout title="Skill 工具箱" description="杨振常用、创建和精选的 AI Skills。">
@@ -13,23 +13,64 @@ import { FolderGit2, Sparkles } from "lucide-react";
       </p>
     </div>
 
-    <div class="mt-10 grid gap-5 md:grid-cols-2">
-      <section class="rounded-2xl border border-border p-6 sm:p-8" aria-labelledby="my-skills-title">
-        <FolderGit2 className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-        <h2 id="my-skills-title" class="mt-4 text-xl font-semibold">我创建的</h2>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">
-          展示我制作并持续维护的 Skill 项目，附上用途说明、适用场景和仓库链接。
-        </p>
-        <p class="mt-6 rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">项目清单整理中</p>
-      </section>
+    <section class="mt-10" aria-labelledby="video-skills-title">
+      <div class="mb-5 flex items-center gap-3">
+        <Film className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+        <h2 id="video-skills-title" class="text-2xl font-semibold tracking-tight">视频 Skill</h2>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        <a
+          href="https://github.com/derek-zhuolin/motion-skill"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="打开 Motion Skill，作者 derek-zhuolin"
+          class="group rounded-2xl border border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-lg font-semibold group-hover:text-primary">Motion Skill</h3>
+              <p class="mt-1 text-sm text-muted-foreground">作者：derek-zhuolin</p>
+            </div>
+            <span class="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">文稿 / 录音转视频</span>
+          </div>
+          <p class="mt-4 text-sm leading-6 text-muted-foreground">
+            面向不想出镜的创作者，用文稿或录音配合 Codex 与 Remotion 编排视频，支持真实素材、字幕和可编辑工程。
+          </p>
+          <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
+        </a>
 
-      <section class="rounded-2xl border border-border p-6 sm:p-8" aria-labelledby="featured-skills-title">
-        <Sparkles className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
-        <h2 id="featured-skills-title" class="mt-4 text-xl font-semibold">常用与精选</h2>
-        <p class="mt-2 text-sm leading-6 text-muted-foreground">
-          收录我经常使用或实际体验后愿意推荐的他人 Skills，并注明作者和原始来源。
-        </p>
-        <p class="mt-6 rounded-xl bg-muted/40 px-4 py-3 text-sm text-muted-foreground">精选清单整理中</p>
+        <a
+          href="https://github.com/nutllwhy/code-brand-film"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="打开 code-brand-film，作者 nutllwhy"
+          class="group rounded-2xl border border-border p-6 transition-colors hover:border-primary/50 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-lg font-semibold group-hover:text-primary">code-brand-film</h3>
+              <p class="mt-1 text-sm text-muted-foreground">作者：nutllwhy</p>
+            </div>
+            <span class="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">品牌宣传片</span>
+          </div>
+          <p class="mt-4 text-sm leading-6 text-muted-foreground">
+            用 HTML 和 GSAP 编排画面，通过 HyperFrames 渲染，并用 Python 合成配乐，制作 15 秒品牌宣传片。
+          </p>
+          <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="mt-8 grid gap-4 md:grid-cols-2">
+      <section class="rounded-2xl border border-dashed border-border p-6" aria-labelledby="my-skills-title">
+        <FolderGit2 className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+        <h2 id="my-skills-title" class="mt-3 text-lg font-semibold">我创建的 Skill</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">后续会在这里收录我自己制作和维护的 Skill 项目。</p>
+      </section>
+      <section class="rounded-2xl border border-dashed border-border p-6" aria-labelledby="other-skills-title">
+        <Sparkles className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+        <h2 id="other-skills-title" class="mt-3 text-lg font-semibold">其他常用 Skill</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">持续整理实际使用过、值得推荐的其他 Skill。</p>
       </section>
     </div>
   </section>
