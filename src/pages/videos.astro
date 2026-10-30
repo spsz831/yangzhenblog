@@ -1,24 +1,44 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
-import { Film } from "lucide-react";
 ---
 
-<PublicLayout title="视频" description="杨振的 AI 短视频作品、创作实验与制作记录。">
+<PublicLayout title="视频作品" description="杨振的 AI 漫剧与短视频作品，记录创作过程和实践。">
   <section class="container max-w-5xl py-10 lg:py-16">
-    <div class="max-w-2xl">
+    <header class="max-w-2xl">
       <p class="mb-3 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">VIDEO · 视频作品</p>
       <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">把想法做成视频</h1>
       <p class="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-        这里会收录 AI 短视频、内容创作实验，以及制作过程中的一些记录。
+        AI 短片与创作实验。这里记录作品，也记录从想法到成片的过程。
       </p>
-    </div>
+    </header>
 
-    <div class="mt-10 rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-14 text-center sm:px-10">
-      <Film className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden="true" />
-      <h2 class="mt-4 text-lg font-medium">视频作品正在整理中</h2>
-      <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
-        作品上线后会在这里展示视频、作品简介和观看入口。
-      </p>
-    </div>
+    <article class="mt-10 grid gap-8 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-12">
+      <div class="mx-auto w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
+        <video
+          class="block max-h-[78svh] w-full object-contain"
+          controls
+          playsinline
+          preload="none"
+          poster="/videos/hengwen-an-poster.jpg"
+          aria-label="鉴画师收下新徒"
+        >
+          <source src="/media/videos/hengwen-an.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <div class="py-2">
+        <p class="mb-3 text-sm font-medium text-muted-foreground">AI 漫剧 <span aria-hidden="true">·</span> 清河镇 · 旧事</p>
+        <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">鉴画师收下新徒</h2>
+        <p class="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
+          我的第一部 AI 漫剧短片，记录一次从创意到成片的创作实践。
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <span>时长 3:14</span>
+          <a class="font-medium text-foreground underline-offset-4 hover:underline" href="/media/videos/hengwen-an.mp4" target="_blank" rel="noreferrer">
+            单独打开视频 ↗
+          </a>
+        </div>
+      </div>
+    </article>
   </section>
 </PublicLayout>
