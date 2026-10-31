@@ -1,5 +1,32 @@
 ---
 import PublicLayout from "@/layouts/PublicLayout.astro";
+
+const videos = [
+  {
+    title: "iPhone Duo",
+    kind: "AI 概念短片",
+    description: "围绕 iPhone Duo 概念创作的产品短片。",
+    duration: "0:15",
+    poster: "/videos/iphone-duo-poster.jpg",
+    src: "/media/videos/iphone-duo-film.mp4",
+  },
+  {
+    title: "观月瑞幸",
+    kind: "AI 品牌短片",
+    description: "以清晨与咖啡为灵感的瑞幸创意短片。",
+    duration: "0:15",
+    poster: "/videos/luckin-morning-poster.jpg",
+    src: "/media/videos/luckin-morning-v10.mp4",
+  },
+  {
+    title: "NBA 揭幕战：雷霆 VS 马刺",
+    kind: "AI 体育短片",
+    description: "记录雷霆对阵马刺的 NBA 揭幕战创作实验。",
+    duration: "1:00",
+    poster: "/videos/nba-thunder-spurs-poster.jpg",
+    src: "/media/videos/nba-thunder-spurs-60s-v2.mp4",
+  },
+];
 ---
 
 <PublicLayout title="视频作品" description="杨振的 AI 漫剧与短视频作品，记录创作过程和实践。">
@@ -40,5 +67,50 @@ import PublicLayout from "@/layouts/PublicLayout.astro";
         </div>
       </div>
     </article>
+
+    <section class="mt-16" aria-labelledby="more-videos-title">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="mb-2 text-sm font-medium text-muted-foreground">更多作品</p>
+          <h2 id="more-videos-title" class="text-2xl font-semibold tracking-tight sm:text-3xl">短片与创作实验</h2>
+        </div>
+        <p class="text-sm text-muted-foreground">3 部作品</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        {videos.map((video) => (
+          <article class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            <div class="flex h-64 items-center justify-center bg-black sm:h-80">
+              <video
+                class="h-full max-h-full max-w-full object-contain"
+                controls
+                playsinline
+                preload="none"
+                poster={video.poster}
+                aria-label={`播放 ${video.title}`}
+              >
+                <source src={video.src} type="video/mp4">
+              </video>
+            </div>
+            <div class="p-5 sm:p-6">
+              <div class="mb-3 flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
+                <span class="rounded-full bg-muted px-2.5 py-1">{video.kind}</span>
+                <span>{video.duration}</span>
+              </div>
+              <h3 class="text-xl font-semibold tracking-tight">{video.title}</h3>
+              <p class="mt-2 text-sm leading-6 text-muted-foreground">{video.description}</p>
+              <a
+                class="mt-4 inline-flex text-sm font-medium text-foreground underline-offset-4 hover:underline"
+                href={video.src}
+                target="_blank"
+                rel="noreferrer"
+              >
+                单独打开视频 ↗
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   </section>
 </PublicLayout>
