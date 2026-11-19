@@ -9,6 +9,7 @@ const skillCategories = [
   { slug: "writing", name: "写作与内容" },
   { slug: "office", name: "办公效率" },
   { slug: "research", name: "搜索与研究" },
+  { slug: "bazi", name: "八字命理" },
   { slug: "other", name: "其他" },
 ] as const;
 
@@ -78,6 +79,14 @@ const skills: Array<{
     category: "music",
     source: "others",
     url: "https://github.com/debpalash/VoiceStudio",
+  },
+  {
+    name: "赛博算命 Skill",
+    author: "jinchenma94",
+    description: "通过交互收集出生信息，自动排出四柱、大运与流年，并结合传统典籍辅助八字分析；供传统文化学习与娱乐参考。",
+    category: "bazi",
+    source: "others",
+    url: "https://github.com/jinchenma94/bazi-skill",
   },
   {
     name: "baoyu-design",
