@@ -6,6 +6,7 @@ const skillCategories = [
   { slug: "music", name: "音乐与音频" },
   { slug: "coding", name: "AI 编程" },
   { slug: "design", name: "图像与设计" },
+  { slug: "dataviz", name: "数据可视化" },
   { slug: "writing", name: "写作与内容" },
   { slug: "office", name: "办公效率" },
   { slug: "research", name: "搜索与研究" },
@@ -23,6 +24,7 @@ const skills: Array<{
   category: SkillCategorySlug;
   source: SkillSource;
   url: string;
+  linkLabel?: string;
 }> = [
   {
     name: "Archify",
@@ -127,6 +129,15 @@ const skills: Array<{
     category: "research",
     source: "others",
     url: "https://github.com/Panniantong/Agent-Reach",
+  },
+  {
+    name: "Minicharts",
+    author: "April Zhu",
+    description: "把 CSV、Excel 或输入数字绘制成按比例的手绘插画风图表，适合文章、社交内容和演示。",
+    category: "dataviz",
+    source: "others",
+    url: "https://april-zhu.com/minicharts",
+    linkLabel: "访问官网与下载资源 ↗",
   },
 ];
 
@@ -237,7 +248,7 @@ const visibleSkills = sourceFilteredSkills.filter((skill) => activeSource === "a
               </span>
             </div>
             <p class="mt-4 text-sm leading-6 text-muted-foreground">{skill.description}</p>
-            <span class="mt-5 inline-flex text-sm font-medium text-primary">查看 GitHub 项目 ↗</span>
+            <span class="mt-5 inline-flex text-sm font-medium text-primary">{skill.linkLabel ?? "查看 GitHub 项目 ↗"}</span>
           </a>
         ))}
       </div>
